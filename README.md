@@ -20,9 +20,9 @@
 
 ```mermaid
 flowchart TD
-    GOAL[[SIH26098<br/>155mm PGK Kit<br/>CEP ≤30m | ₹8-11L | STANAG 2916<br/>YIL / ATAGS / M777]]
+    GOAL[[SIH26098<br/>155mm PGK Kit<br/>CEP ≤30m • ₹8-11L • STANAG 2916<br/>YIL / ATAGS / M777]]
 
-    subgraph M1 [1 — SYSTEM ARCHITECT / LEAD<br/>Mech+Systems | research/A_system + H_mfg]
+    subgraph M1 [1 — SYSTEM ARCHITECT / LEAD<br/>Mech+Systems • research/A_system + H_mfg]
         direction TB
         M1_R["🔍 RESEARCH<br/>A1-A12 kit architectures<br/>H1-H8 clean-sheet cost / SAMM AM<br/>STANAG 2916 220/124.7mm/770g<br/>YIL+MIL+BEL+ARDE chain"]
         M1_C["💡 COME UP WITH<br/>Baseline: A1 PGK-Clone<br/>SWaP budget + BoM ₹8-11L<br/>Trade: A1 vs A3 vs A4"]
@@ -30,7 +30,7 @@ flowchart TD
         M1_R --> M1_C --> M1_D
     end
 
-    subgraph M2 [2 — AERODYNAMICS + GNC<br/>Aero/Mech | research/B_aero + C_gnc]
+    subgraph M2 [2 — AERODYNAMICS + GNC<br/>Aero/Mech • research/B_aero + C_gnc]
         direction TB
         M2_R["🔍 RESEARCH<br/>B1-B16 canard actuation<br/>B1 fixed canted -4/+4° + brake<br/>C10 PID / C11 MPC / C12 Glide"]
         M2_C["💡 COME UP WITH<br/>No-servo brake steering<br/>PID 20-line + MPC tuning<br/>B14 topology CFD @ Mach 0.8"]
@@ -38,7 +38,7 @@ flowchart TD
         M2_R --> M2_C --> M2_D
     end
 
-    subgraph M3 [3 — EMBEDDED / FLIGHT COMPUTER<br/>ECE/CSE | research/C_gnc + D_sensors]
+    subgraph M3 [3 — EMBEDDED / FLIGHT COMPUTER<br/>ECE/CSE • research/C_gnc + D_sensors]
         direction TB
         M3_R["🔍 RESEARCH<br/>D1-D16 NavIC/GPS/IMU<br/>C3 GNSS-SDR NavIC L5 (2MSPS)<br/>C6 gyroless mag+acc / C7 LSTM"]
         M3_C["💡 COME UP WITH<br/>Dual GNSS board (STA8090/MeitY)<br/>LIS3MDL+HMC + MS5611 10cm<br/>LSTM <5m backup on STM32H7"]
@@ -46,7 +46,7 @@ flowchart TD
         M3_R --> M3_C --> M3_D
     end
 
-    subgraph M4 [4 — RF + FUZE ELECTRONICS<br/>ECE | research/E_fuze + D_sensors]
+    subgraph M4 [4 — RF + FUZE ELECTRONICS<br/>ECE • research/E_fuze + D_sensors]
         direction TB
         M4_R["🔍 RESEARCH<br/>E1-E10 fuze modes<br/>E1 FMCW 24GHz 6/12/18m<br/>E8 MEMS S&A 15x17x5mm"]
         M4_C["💡 COME UP WITH<br/>FMCW 3s HOB + CW backup<br/>PD <250μs / 60ms delay<br/>J1 EPIAFS inductive coil"]
@@ -54,7 +54,7 @@ flowchart TD
         M4_R --> M4_C --> M4_D
     end
 
-    subgraph M5 [5 — STRUCTURES + POWER<br/>Mech/Materials | research/F_power + G_structure]
+    subgraph M5 [5 — STRUCTURES + POWER<br/>Mech/Materials • research/F_power + G_structure]
         direction TB
         M5_R["🔍 RESEARCH<br/>F1-F10 power + G1-G10 mat.<br/>F1 super-cap+alternator 20yr<br/>G6 bearing 630 25kG / G3 Inconel718"]
         M5_C["💡 COME UP WITH<br/>F5 dual-use motor/brake<br/>Bearing shield + LPBF HIP<br/>G5 Dow 3140 potting + G8 radome"]
@@ -62,7 +62,7 @@ flowchart TD
         M5_R --> M5_C --> M5_D
     end
 
-    subgraph M6 [6 — SIMULATION + INTEGRATION<br/>CSE/Mech | research/I_test + J_integration]
+    subgraph M6 [6 — SIMULATION + INTEGRATION<br/>CSE/Mech • research/I_test + J_integration]
         direction TB
         M6_R["🔍 RESEARCH<br/>I1-I6 Test / J1-J6 Integration<br/>I2 PRESIMEN SDR HIL<br/>J3 ATAGS/Dhanush/K9 fire ctrl"]
         M6_C["💡 COME UP WITH<br/>HIL rig SiGe GN3S IQ<br/>Wind tunnel AoA 0-6°<br/>J5 telemetry + J6 modular bay"]
@@ -73,7 +73,7 @@ flowchart TD
     GOAL --> M1 & M2 & M3 & M4 & M5 & M6
 
     M2_D -. feeds roll ref D12 .-> M3
-    M5_D -. powers <6s .-> M3
+    M5_D -. powers 6s .-> M3
     M3_D -. programs .-> M4
     M4_D -. HOB triggers .-> M6
     M1_D -. SWaP/cost gates .-> M5
