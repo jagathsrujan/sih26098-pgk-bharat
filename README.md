@@ -21,53 +21,53 @@
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'fontSize':'15px', 'primaryTextColor':'#f8fafc', 'lineColor':'#94a3b8'}}}%%
 flowchart TD
-    GOAL[[OUR GOAL<br/>Make a cheap add-on kit<br/>so the shell lands within 30m<br/>instead of 267m away]]
+    GOAL[[OUR GOAL<br>Make a cheap add-on kit<br>so the shell lands within 30m<br>instead of 267m away]]
 
-    subgraph M1 [1 - THE PLANNER (Team Lead)<br/>Folder: research/A_system]
+    subgraph M1 ["1 - THE PLANNER<br>Folder: research/A_system"]
         direction TB
-        M1_R["Step 1: Learn<br/>• Look at old kits<br/>• Check size limits<br/>• See who can build what"]
-        M1_C["Step 2: Decide<br/>• Pick the simplest design<br/>• Make weight + cost list"]
-        M1_D["Step 3: Show<br/>• Main drawing + PPT<br/>• Prove we save 74% shells"]
+        M1_R["Step 1: Learn<br>• Look at old kits<br>• Check size limits<br>• See who can build what"]
+        M1_C["Step 2: Decide<br>• Pick the simplest design<br>• Make weight + cost list"]
+        M1_D["Step 3: Show<br>• Main drawing + PPT<br>• Prove we save 74% shells"]
         M1_R --> M1_C --> M1_D
     end
 
-    subgraph M2 [2 - THE STEERING PERSON<br/>Aero | Folder: research/B_aero]
+    subgraph M2 ["2 - THE STEERING PERSON<br>Folder: research/B_aero"]
         direction TB
-        M2_R["Step 1: Learn<br/>• How small wings steer<br/>• Why shell spins<br/>• How to use spin to turn"]
-        M2_C["Step 2: Decide<br/>• Simple brake to steer<br/>• No fancy motors"]
-        M2_D["Step 3: Show<br/>• Simulation video<br/>• Graph: miss goes down"]
+        M2_R["Step 1: Learn<br>• How small wings steer<br>• Why shell spins<br>• How to use spin to turn"]
+        M2_C["Step 2: Decide<br>• Simple brake to steer<br>• No fancy motors"]
+        M2_D["Step 3: Show<br>• Simulation video<br>• Graph: miss goes down"]
         M2_R --> M2_C --> M2_D
     end
 
-    subgraph M3 [3 - THE BRAIN (Sensors + Code)<br/>ECE/CSE | Folder: research/D_sensors]
+    subgraph M3 ["3 - THE BRAIN<br>Folder: research/D_sensors"]
         direction TB
-        M3_R["Step 1: Learn<br/>• How GPS finds place<br/>• Which sensors survive firing"]
-        M3_C["Step 2: Decide<br/>• Choose GPS + backup sensors<br/>• Tiny AI if GPS fails"]
-        M3_D["Step 3: Show<br/>• Sensor demo on table<br/>• Shows location on screen"]
+        M3_R["Step 1: Learn<br>• How GPS finds place<br>• Which sensors survive firing"]
+        M3_C["Step 2: Decide<br>• Choose GPS + backup sensors<br>• Tiny AI if GPS fails"]
+        M3_D["Step 3: Show<br>• Sensor demo on table<br>• Shows location on screen"]
         M3_R --> M3_C --> M3_D
     end
 
-    subgraph M4 [4 - THE FUZE PERSON<br/>Electronics | Folder: research/E_fuze]
+    subgraph M4 ["4 - THE FUZE PERSON<br>Folder: research/E_fuze"]
         direction TB
-        M4_R["Step 1: Learn<br/>• How fuze decides when to burst<br/>• What is safe / not safe"]
-        M4_C["Step 2: Decide<br/>• Radar to see ground<br/>• Safe switch before firing"]
-        M4_D["Step 3: Show<br/>• Circuit diagram<br/>• Phone programs the fuze"]
+        M4_R["Step 1: Learn<br>• How fuze decides when to burst<br>• What is safe / not safe"]
+        M4_C["Step 2: Decide<br>• Radar to see ground<br>• Safe switch before firing"]
+        M4_D["Step 3: Show<br>• Circuit diagram<br>• Phone programs the fuze"]
         M4_R --> M4_C --> M4_D
     end
 
-    subgraph M5 [5 - THE BODY BUILDER<br/>Mech | Folder: research/F_power]
+    subgraph M5 ["5 - THE BODY BUILDER<br>Folder: research/F_power"]
         direction TB
-        M5_R["Step 1: Learn<br/>• How to power without battery<br/>• What material survives shock"]
-        M5_C["Step 2: Decide<br/>• Make power from spin<br/>• Strong but light body"]
-        M5_D["Step 3: Show<br/>• 3D printed model<br/>• Power turns on in 6 sec"]
+        M5_R["Step 1: Learn<br>• How to power without battery<br>• What material survives shock"]
+        M5_C["Step 2: Decide<br>• Make power from spin<br>• Strong but light body"]
+        M5_D["Step 3: Show<br>• 3D printed model<br>• Power turns on in 6 sec"]
         M5_R --> M5_C --> M5_D
     end
 
-    subgraph M6 [6 - THE TESTER<br/>CSE/Mech | Folder: research/I_test]
+    subgraph M6 ["6 - THE TESTER<br>Folder: research/I_test"]
         direction TB
-        M6_R["Step 1: Learn<br/>• How to test without firing<br/>• What army checks"]
-        M6_C["Step 2: Decide<br/>• Fake flight on computer<br/>• Drop test for fuze"]
-        M6_D["Step 3: Show<br/>• Final demo video<br/>• Proof it works"]
+        M6_R["Step 1: Learn<br>• How to test without firing<br>• What army checks"]
+        M6_C["Step 2: Decide<br>• Fake flight on computer<br>• Drop test for fuze"]
+        M6_D["Step 3: Show<br>• Final demo video<br>• Proof it works"]
         M6_R --> M6_C --> M6_D
     end
 
