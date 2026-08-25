@@ -15,7 +15,8 @@ RESEARCH_GLOB = str(ROOT / "research" / "*" / "entry_*.md")
 EXCLUDE_TEMPLATES = "templates"
 
 def parse_entry(md_path):
-    text = Path(md_path).read_text(errors="ignore")
+    md_path = Path(md_path)
+    text = md_path.read_text(errors="ignore")
     # naive frontmatter parse
     return {
         "file": str(md_path.relative_to(ROOT)),
@@ -50,7 +51,7 @@ def main():
     lines.append("")
     lines.append("| Date | Category | Title | TRL | Source | File |")
     lines.append("|------|----------|-------|-----|--------|------|")
-    for e in sorted(entries, reverse=True)[:50]:
+    for e in sorted(entries, key=lambda x: x["file"], reverse=True)[:50]:
         date = e["file"].split("entry_")[1][:8] if "entry_" in e["file"] else ""
         src = e["source"][:40] + "..." if len(e["source"]) > 40 else e["source"]
         if src == "MISSING":
