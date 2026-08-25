@@ -12,6 +12,7 @@ ROOT = Path(__file__).parent.parent
 DB = ROOT / "SIH26098_Ideas_Database.json"
 LIVEBOARD = ROOT / "SIH26098_LIVEBOARD.md"
 RESEARCH_GLOB = str(ROOT / "research" / "*" / "entry_*.md")
+EXCLUDE_TEMPLATES = "templates"
 
 def parse_entry(md_path):
     text = Path(md_path).read_text(errors="ignore")
@@ -27,6 +28,8 @@ def parse_entry(md_path):
 def main():
     entries = []
     for f in sorted(glob.glob(RESEARCH_GLOB)):
+        if EXCLUDE_TEMPLATES in f:
+            continue
         try:
             entries.append(parse_entry(f))
         except Exception as e:
