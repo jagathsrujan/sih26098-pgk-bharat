@@ -19,7 +19,7 @@
 > **New here? Start here.** 3 Mech now + 3 ECE/CSE to hire. We all work towards the top goal. Each colored box = 1 person. Read top to bottom: **Learn → Decide → Show**.
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'fontSize':'15px', 'primaryTextColor':'#f8fafc', 'lineColor':'#94a3b8'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1e293b','primaryTextColor':'#f1f5f9','primaryBorderColor':'#475569','lineColor':'#94a3b8','secondaryColor':'#334155','tertiaryColor':'#0f172a','fontSize':'16px'}}}%%
 flowchart TD
     GOAL[[OUR GOAL<br>Make a cheap add-on kit<br>so the shell lands within 30m<br>instead of 267m away]]
 
@@ -78,12 +78,13 @@ flowchart TD
     M3_D -. tells when to burst to .-> M4
     M6_D -. checks all .-> M1
 
-    classDef lead fill:#0f172a,stroke:#fbbf24,stroke-width:2px,color:#fef3c7
-    classDef aero fill:#0f172a,stroke:#60a5fa,stroke-width:2px,color:#dbeafe
-    classDef emb fill:#0f172a,stroke:#4ade80,stroke-width:2px,color:#dcfce7
-    classDef rf fill:#0f172a,stroke:#f472b6,stroke-width:2px,color:#fce7f3
-    classDef str fill:#0f172a,stroke:#818cf8,stroke-width:2px,color:#e0e7ff
-    classDef sim fill:#0f172a,stroke:#fb923c,stroke-width:2px,color:#ffedd5
+    classDef lead fill:#1e293b,stroke:#fbbf24,stroke-width:2.5px,color:#fef3c7
+    classDef aero fill:#1e293b,stroke:#60a5fa,stroke-width:2.5px,color:#dbeafe
+    classDef emb fill:#1e293b,stroke:#4ade80,stroke-width:2.5px,color:#dcfce7
+    classDef rf fill:#1e293b,stroke:#f472b6,stroke-width:2.5px,color:#fce7f3
+    classDef str fill:#1e293b,stroke:#818cf8,stroke-width:2.5px,color:#e0e7ff
+    classDef sim fill:#1e293b,stroke:#fb923c,stroke-width:2.5px,color:#ffedd5
+    classDef darkNode fill:#0f172a,stroke:#475569,stroke-width:1.5px,color:#f1f5f9
 
     class M1 lead
     class M2 aero
@@ -91,6 +92,7 @@ flowchart TD
     class M4 rf
     class M5 str
     class M6 sim
+    class M1_R,M1_C,M1_D,M2_R,M2_C,M2_D,M3_R,M3_C,M3_D,M4_R,M4_C,M4_D,M5_R,M5_C,M5_D,M6_R,M6_C,M6_D,GOAL darkNode
 ```
 
 **How to read for beginners:**
