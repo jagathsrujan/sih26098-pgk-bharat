@@ -1,0 +1,40 @@
+# CAD & Simulation
+*.FCStd
+*.FCStd1
+*.blend
+*.blend1
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+*.egg-info/
+.DS_Store
+Thumbs.db
+
+# Large binaries
+*.step
+*.stl
+*.obj
+*.iges
+*.igs
+*.fcbak
+
+# Simulation outputs
+*.csv
+!SIH2026_*.csv
+!SIH26098_*.csv
+results/
+outputs/
+*.log
+
+# Secrets
+.env
+.env.local
+*.key
+*.pem
+
+# OS
+.AppleDouble
+.LSOverride

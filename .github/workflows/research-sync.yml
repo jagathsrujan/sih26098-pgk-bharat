@@ -1,0 +1,27 @@
+name: Research Sync — SIH26098
+on:
+  push:
+    paths: ['research/**', 'SIH26098_*.json', 'SIH26098_*.md']
+  workflow_dispatch:
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Merge research entries
+        run: |
+          python research/merge.py
+          cat SIH26098_LIVEBOARD.md
+      - name: Commit liveboard if changed
+        run: |
+          git config user.name "research-bot"
+          git config user.email "research-bot@users.noreply.github.com"
+          git add SIH26098_LIVEBOARD.md
+          git diff --staged --quiet || git commit -m "chore: auto-update LIVEBOARD [skip ci]"
+          git push || echo "No push needed"
