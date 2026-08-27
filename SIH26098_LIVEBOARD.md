@@ -1,15 +1,15 @@
-# SIH26098 Live Research Board — 2026-08-27 16:05 IST
+# SIH26098 Live Research Board — 2026-08-27 10:35 IST
 
-**DB:** 108 ideas in `SIH26098_Ideas_Database.json` | **New entries:** 6 | **Auto-merged:** 2026-08-27T16:05:08.751528
+**DB:** 108 ideas in `SIH26098_Ideas_Database.json` | **New entries:** 6 | **Auto-merged:** 2026-08-27T10:35:24.418943
 
 | Date | Category | Title | TRL | Source | File |
 |------|----------|-------|-----|--------|------|
-| 20260825 | I_test | 7 Flight Tests in 30 Days with Open | 7 | file:///Users/jagathsrujan/Downloads/Can... | `research\I_test\entry_20260825_lshang_7flight_iterative_validation.md` |
-| 20260827 | E_fuze | FMCW 24GHz vs CW Doppler for 155mm  | 6 | https://www.infineon.com/cms/en/product/... | `research\E_fuze\entry_20260827_fmcw24_vs_cw_doppler_trade.md` |
-| 20260826 | D_sensors | Welcome — Anvita Pranjal (ECE 2nd y | ? | ⚠️ MISSING URL | `research\D_sensors\entry_20260826_welcome_anvitapranjal18-glitch.md` |
-| 20260825 | C_gnc | L Shang ADRC Simulink + Adaptive Ka | 6 | file:///Users/jagathsrujan/Downloads/Can... | `research\C_gnc\entry_20260825_lshang_adrc_adaptive_kalman_gnc.md` |
-| 20260825 | B_aero | L Shang ICEM/Fluent Aero Database M | 6 | file:///Users/jagathsrujan/Downloads/Can... | `research\B_aero\entry_20260825_lshang_cfd_aero_database_icem_fluent.md` |
-| 20260825 | A_system | L Shang Canard-Control Vertical-Rec | 7 | file:///Users/jagathsrujan/Downloads/Can... | `research\A_system\entry_20260825_lshang_system_teardown_pgka1.md` |
+| 20260825 | I_test | 7 Flight Tests in 30 Days with Open | 7 | file:///Users/jagathsrujan/Downloads/Can... | `research/I_test/entry_20260825_lshang_7flight_iterative_validation.md` |
+| 20260827 | E_fuze | FMCW 24GHz vs CW Doppler for 155mm  | 6 | https://www.infineon.com/cms/en/product/... | `research/E_fuze/entry_20260827_fmcw24_vs_cw_doppler_trade.md` |
+| 20260826 | D_sensors | Welcome — Anvita Pranjal (ECE 2nd y | ? | ⚠️ MISSING URL | `research/D_sensors/entry_20260826_welcome_anvitapranjal18-glitch.md` |
+| 20260825 | C_gnc | L Shang ADRC Simulink + Adaptive Ka | 6 | file:///Users/jagathsrujan/Downloads/Can... | `research/C_gnc/entry_20260825_lshang_adrc_adaptive_kalman_gnc.md` |
+| 20260825 | B_aero | L Shang ICEM/Fluent Aero Database M | 6 | file:///Users/jagathsrujan/Downloads/Can... | `research/B_aero/entry_20260825_lshang_cfd_aero_database_icem_fluent.md` |
+| 20260825 | A_system | L Shang Canard-Control Vertical-Rec | 7 | file:///Users/jagathsrujan/Downloads/Can... | `research/A_system/entry_20260825_lshang_system_teardown_pgka1.md` |
 
 ## How to add research
 1. Copy `research/templates/entry_template.md` to `research/<your-category>/entry_YYYYMMDD_topic.md`
