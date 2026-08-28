@@ -1,15 +1,24 @@
 # ============================================================================
-# SIH26098 - Precision Guidance Kit (PGK) nose module - INERT DEMONSTRATOR
+# SIH26098 - PGK public-architecture demonstrator - INERT / BENCH ONLY
 # ----------------------------------------------------------------------------
-# Purpose : Educational, 3D-printable demonstrator showing the inner working
-#           of a canard-actuated 155 mm guidance kit: motors + face-gear drive,
-#           radial canard shafts, de-spun alternator power concept, PCB stack
-#           (power / GNC / GNSS), battery bay, and a purely mechanical
-#           safe-&-arm slider demo.  NO energetic or functional fuze parts.
-# Fit     : Shank slip-fits the Ø50 x 90 mm fuze bore of the shell mockup
-#           (generate_shell_155.py).  Local z=0 sits at the bore floor.
-# Run     : freecadcmd generate_pgk_155.py
-# Outputs : out_pgk/pgk_assembly.FCStd, pgk_exploded.FCStd, STEP, per-part STL
+# Active baseline: a printed 155 mm shell mock-up with a common four-canard
+# carrier, coaxial bearing isolation, a shell-to-carrier alternator concept,
+# and one low-voltage torque-emulator placeholder. This is an educational
+# model, not a flight article and not a functional fuze.
+#
+# Important architecture boundary:
+#   * The projectile/outer housing is the spin-side frame.
+#   * One inner carrier holds all four fixed canards.
+#   * The carrier is free to rotate relative to the outer housing.
+#   * The generator and torque element bridge those two frames.
+#
+# The exact production M1156 internal stack is not public. This file is a
+# clearly labelled, non-launchable visual/mechanical demonstrator.
+#
+# Fit: uses a nonfunctional slip-fit adapter for the existing printed shell
+# mock-up. No live-compatible fuze interface, energetic part, or firing path.
+# Run: freecadcmd generate_pgk_155.py
+# Outputs: out_pgk/pgk_assembly.FCStd, pgk_exploded.FCStd, STEP, STL parts
 # ============================================================================
 
 import os
@@ -21,209 +30,290 @@ import Part
 import MeshPart
 import Import
 
+
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out_pgk")
 
-# ------------------------------------------------------------- key dimensions
-R_BODY   = 28.0      # module body outer radius (Ø56)
-R_ID     = 25.5      # body inner radius
-Z_SHANK  = 90.0      # shank length (into shell fuze bore)
-Z_BODY0  = 92.0      # body shell start (flange at 88..92)
-Z_BODY1  = 196.0     # body shell top / nose cap start
-Z_NOSE   = 228.0     # nose tip
-Z_SHAFT1 = 146.0     # x-axis canard pair centre height
-Z_SHAFT2 = 152.0     # y-axis canard pair centre height (staggered, no clash)
-FIN_TIP  = 75.5      # fin tip radius (span ~151 mm ~ shell diameter)
+# ---------------------------------------------------------------- dimensions
+# These are display dimensions inherited from the printed shell mock-up, not
+# a claim about production M1156 hardware.
+R_BODY = 28.0
+R_ID = 25.5
+Z_SHANK = 90.0
+Z_HOUSING0 = 92.0
+Z_HOUSING1 = 196.0
+Z_NOSE = 228.0
 
-doc  = App.newDocument("PGK_Assembly")
+R_CARRIER = 22.2
+R_CARRIER_ID = 17.5
+Z_CARRIER0 = 132.0
+Z_CARRIER1 = 188.0
+R_BEARING_OUTER = 24.8
+R_BEARING_INNER = 22.6
+BEARING_H = 5.0
+Z_FRONT_BEARING = 128.0
+Z_REAR_BEARING = 187.0
+
+Z_CANARD = 157.0
+FIN_TIP = 75.5
+FIN_THICK = 2.8
+
+doc = App.newDocument("PGK_Assembly")
 docE = App.newDocument("PGK_Exploded")
-PARTS = []   # (name, shape, explode_offset_vector)
+PARTS = []
 
-def add(name, shape, explode=(0, 0, 0), color=None):
-    o = doc.addObject("Part::Feature", name)
-    o.Shape = shape
-    s2 = shape.copy()
-    s2.translate(App.Vector(*explode))
-    oe = docE.addObject("Part::Feature", name)
-    oe.Shape = s2
-    PARTS.append((name, o))
-    return o
+
+def add(name, shape, explode=(0, 0, 0)):
+    obj = doc.addObject("Part::Feature", name)
+    obj.Shape = shape
+
+    exploded = shape.copy()
+    exploded.translate(App.Vector(*explode))
+    obj_e = docE.addObject("Part::Feature", name)
+    obj_e.Shape = exploded
+
+    PARTS.append((name, obj))
+    return obj
+
 
 def box(x0, y0, z0, dx, dy, dz):
     return Part.makeBox(dx, dy, dz, App.Vector(x0, y0, z0))
 
-def cyl(r, h, p=(0, 0, 0), d=(0, 0, 1)):
-    return Part.makeCylinder(r, h, App.Vector(*p), App.Vector(*d))
+
+def cyl(radius, height, p=(0, 0, 0), direction=(0, 0, 1)):
+    return Part.makeCylinder(radius, height, App.Vector(*p), App.Vector(*direction))
+
+
+def ring(outer, inner, height, z):
+    return cyl(outer, height, (0, 0, z)).cut(cyl(inner, height, (0, 0, z)))
+
 
 def fuse(*shapes):
-    out = shapes[0]
-    for s in shapes[1:]:
-        out = out.fuse(s)
-    return out.removeSplitter()
+    result = shapes[0]
+    for shape in shapes[1:]:
+        result = result.fuse(shape)
+    return result.removeSplitter()
 
-# ============================================================ 1. SHANK / BASE
-# Slip-fit shank into the shell's Ø50 fuze bore; holds battery + fuze PCB.
-prof = [
-    (24.8, 0.0), (24.8, 88.0), (28.0, 88.0), (28.0, 92.0),   # flange
+
+def compound(*shapes):
+    return Part.makeCompound(list(shapes))
+
+
+def polar_xy(radius, angle_deg):
+    angle = math.radians(angle_deg)
+    return radius * math.cos(angle), radius * math.sin(angle)
+
+
+# ============================================================ 1. BASE / POWER
+# A dummy mechanical adapter fits the existing printed shell. It is deliberately
+# a slip-fit display part rather than a reproduction of a live fuze interface.
+profile = [
+    (24.8, 0.0), (24.8, 88.0), (28.0, 88.0), (28.0, 92.0),
     (25.5, 92.0), (25.5, 90.0), (21.0, 90.0), (21.0, 75.0),
-    (19.0, 75.0), (19.0, 73.0), (21.0, 73.0), (21.0, 2.0),   # PCB ledge
+    (19.0, 75.0), (19.0, 73.0), (21.0, 73.0), (21.0, 2.0),
     (0.0, 2.0), (0.0, 0.0),
 ]
-edges = []
-for i in range(len(prof)):
-    a = prof[i]; b = prof[(i + 1) % len(prof)]
-    edges.append(Part.makeLine(App.Vector(a[0], 0, a[1]), App.Vector(b[0], 0, b[1])))
-shank = Part.Face(Part.Wire(edges)).revolve(App.Vector(0, 0, 0), App.Vector(0, 0, 1), 360)
-shank = shank.cut(cyl(2.5, 4, (0, 0, -1)))                    # wire pass-through
-add("01_ShankAdapter", shank, (0, 0, -120))
+profile_edges = []
+for index in range(len(profile)):
+    a = profile[index]
+    b = profile[(index + 1) % len(profile)]
+    profile_edges.append(
+        Part.makeLine(App.Vector(a[0], 0, a[1]), App.Vector(b[0], 0, b[1]))
+    )
+shank = Part.Face(Part.Wire(profile_edges)).revolve(
+    App.Vector(0, 0, 0), App.Vector(0, 0, 1), 360
+)
+shank = shank.cut(cyl(2.5, 4.0, (0, 0, -1)))
+add("01_DemoShankAdapter", shank, (0, 0, -120))
 
-add("02_Battery_18650", cyl(9.1, 65, (0, 0, 8)), (0, 0, -170))
+# A supercapacitor placeholder represents the display power store. It is not a
+# battery and is not connected to any firing or energetic function.
+supercap = fuse(cyl(8.0, 46.0, (0, 0, 12)), cyl(9.0, 2.0, (0, 0, 10)))
+add("02_Supercapacitor_Display", supercap, (0, 0, -165))
 
-fpcb = cyl(20.0, 1.6, (0, 0, 75))
-fpcb = fuse(fpcb, box(-4, -4, 76.6, 8, 8, 2.5))               # power stage block
-add("03_FuzePower_PCB", fpcb, (0, 0, -140))
+power_board = fuse(cyl(20.0, 1.6, (0, 0, 72)), box(-5, -4, 73.6, 10, 8, 2.5))
+add("03_PowerConditioning_PCB", power_board, (0, 0, -145))
 
-# ============================================ 2. SAFE & ARM DEMONSTRATOR (INERT)
-# Manual slider: an EMPTY through-hole (stand-in for out-of-line arming
-# concept) slides into alignment only when armed. No energetic parts at all.
-slider = box(-11, -6, 97, 22, 12, 7)
-slider = slider.cut(cyl(3.0, 7, (-7, 0, 97)))                 # empty alignment hole
-slider = fuse(slider, cyl(1.8, 20, (0, 6, 100.5), (0, 1, 0)))  # handle pin
-add("04_SA_Slider_inert", slider, (0, 0, -40))
 
-# ===================================================== 3. LOWER BODY (HOUSING)
-body = cyl(R_BODY, Z_BODY1 - Z_BODY0, (0, 0, Z_BODY0))
-body = body.cut(cyl(R_ID, Z_BODY1 - Z_BODY0 - 2, (0, 0, Z_BODY0 + 2)))  # cup, 2 mm floor
-body = body.cut(cyl(2.5, 4, (0, 0, Z_BODY0)))                 # wire hole in floor
-# canard shaft holes through the wall (x pair @146, y pair @152)
-for sgn in (1, -1):
-    body = body.cut(cyl(2.1, 6, (sgn * 23.5, 0, Z_SHAFT1), (sgn, 0, 0)))
-    body = body.cut(cyl(2.1, 6, (0, sgn * 23.5, Z_SHAFT2), (0, sgn, 0)))
-# S&A handle slot in wall (+y)
-body = body.cut(box(-6, R_ID - 2, 98.5, 12, R_BODY - R_ID + 3, 4.5))
-body = body.removeSplitter()
-add("10_LowerBody", body, (0, 0, 0))
+# ============================================ 2. INERT STATUS INDICATOR
+# A manually visible slider and empty alignment hole communicate the idea of a
+# safe/armed status indicator without containing any initiator or firing path.
+status_slider = box(-11, -6, 98, 22, 12, 7)
+status_slider = status_slider.cut(cyl(3.0, 7.0, (-7, 0, 98)))
+status_slider = fuse(status_slider, cyl(1.8, 20.0, (0, 6, 101.5), (0, 1, 0)))
+add("04_Inert_Status_Slider", status_slider, (0, 0, -55))
 
-# ==================================================== 4. ACTUATORS (x2 motors)
-# N20-style Ø12 gearmotors, vertical; pinion drives a face gear on each
-# radial canard shaft (orthogonal-axis 'bevel/crown' drive concept).
-m1 = cyl(6, 24, (-8, -13, 122))                               # motor 1 body
-m1 = fuse(m1, cyl(1.5, 3, (-8, -13, 146)))                    # shaft stub
-m1g = cyl(6, 3, (-8, -13, 146.5))                             # pinion (r6)
-add("11_Motor_Xpair", m1, (0, 0, 35))
-add("12_Pinion_X", m1g, (0, 0, 35))
-m2 = cyl(6, 24, (13, -8, 128))                                # motor 2 body
-m2 = fuse(m2, cyl(1.5, 3, (13, -8, 152)))
-m2g = cyl(6, 3, (13, -8, 150.5))                              # pinion (r6)
-add("13_Motor_Ypair", m2, (0, 0, 35))
-add("14_Pinion_Y", m2g, (0, 0, 35))
 
-# ============================================= 5. CANARD SHAFTS + FACE GEARS
-shx = cyl(2.0, 68, (-34, 0, Z_SHAFT1), (1, 0, 0))             # x-pair shaft
-gx = cyl(8, 3, (-6, 0, Z_SHAFT1 - 1.5), (1, 0, 0))            # face gear r8
-gx = gx.cut(cyl(2.05, 3, (-6, 0, Z_SHAFT1 - 1.5), (1, 0, 0)))
-add("15_CanardShaft_X", shx, (0, 0, 65))
-add("16_FaceGear_X", gx, (0, 0, 65))
-shy = cyl(2.0, 68, (0, -34, Z_SHAFT2), (0, 1, 0))             # y-pair shaft
-gy = cyl(8, 3, (0, -6, Z_SHAFT2 - 1.5), (0, 1, 0))
-gy = gy.cut(cyl(2.05, 3, (0, -6, Z_SHAFT2 - 1.5), (0, 1, 0)))
-add("17_CanardShaft_Y", shy, (0, 0, 65))
-add("18_FaceGear_Y", gy, (0, 0, 65))
+# ===================================================== 3. OUTER SPIN-SIDE BODY
+# The inspection window is intentional: the audience can see the separate
+# carrier, bearing pair, alternator rings, and electronics placeholders.
+outer_body = cyl(R_BODY, Z_HOUSING1 - Z_HOUSING0, (0, 0, Z_HOUSING0))
+outer_body = outer_body.cut(
+    cyl(R_ID, Z_HOUSING1 - Z_HOUSING0 - 2, (0, 0, Z_HOUSING0 + 2))
+)
+inspection_window = box(-12, R_ID - 3, 133, 24, R_BODY - R_ID + 6, 50)
+outer_body = outer_body.cut(inspection_window).removeSplitter()
+add("10_OuterHousing_SpinSide", outer_body, (0, 0, 0))
 
-# bearing rings (684-size) at wall exits
-bear = []
-for sgn in (1, -1):
-    bx = cyl(4.5, 4, (sgn * 24, 0, Z_SHAFT1), (sgn, 0, 0)).cut(
-         cyl(2.1, 4, (sgn * 24, 0, Z_SHAFT1), (sgn, 0, 0)))
-    by = cyl(4.5, 4, (0, sgn * 24, Z_SHAFT2), (0, sgn, 0)).cut(
-         cyl(2.1, 4, (0, sgn * 24, Z_SHAFT2), (0, sgn, 0)))
-    bear += [bx, by]
-add("19_Bearings_x4", fuse(*bear), (0, 0, 65))
 
-# ================================================================= 6. CANARDS
-def fin(zc):
-    p = [(28.5, zc - 13), (FIN_TIP, zc - 12), (FIN_TIP, zc + 4), (28.5, zc + 13)]
-    w = Part.makePolygon([App.Vector(x, 0, z) for x, z in p] + [App.Vector(*p[0][:1], 0, p[0][1])])
-    f = Part.Face(w).extrude(App.Vector(0, 2.8, 0))
-    f.translate(App.Vector(0, -1.4, 0))
-    hub = cyl(5.5, 7.0, (28, 0, zc), (1, 0, 0))
-    f = fuse(f, hub)
-    f = f.cut(cyl(2.1, 9.0, (27.5, 0, zc), (1, 0, 0)))
-    return f
+# ================================================= 4. DE-SPIN BEARING INTERFACE
+def display_bearing(z):
+    outer = ring(R_BEARING_OUTER, R_BEARING_INNER, BEARING_H, z)
+    balls = []
+    for angle in range(0, 360, 45):
+        x, y = polar_xy((R_BEARING_OUTER + R_BEARING_INNER) / 2.0, angle)
+        balls.append(Part.makeSphere(1.45, App.Vector(x, y, z + BEARING_H / 2.0)))
+    return compound(outer, *balls)
 
-finPX = fin(Z_SHAFT1)
-finNX = fin(Z_SHAFT1); finNX.rotate(App.Vector(0, 0, 0), App.Vector(0, 0, 1), 180)
-finPY = fin(Z_SHAFT2); finPY.rotate(App.Vector(0, 0, 0), App.Vector(0, 0, 1), 90)
-finNY = fin(Z_SHAFT2); finNY.rotate(App.Vector(0, 0, 0), App.Vector(0, 0, 1), 270)
-add("20_Canard_+X", finPX, (30, 0, 65))
-add("21_Canard_-X", finNX, (-30, 0, 65))
-add("22_Canard_+Y", finPY, (0, 30, 65))
-add("23_Canard_-Y", finNY, (0, -30, 65))
 
-# ===================================================== 7. ELECTRONICS STACK
-def pcb(z, r=22.0):
-    return cyl(r, 1.6, (0, 0, z))
+add("12_FrontBearing_Demo", display_bearing(Z_FRONT_BEARING), (0, 0, 55))
+add("13_RearBearing_Demo", display_bearing(Z_REAR_BEARING), (0, 0, 65))
 
-pcb1 = fuse(pcb(158), box(2, -4, 159.6, 8, 8, 3))             # power mgmt
-add("30_PCB_Power", pcb1, (0, 0, 100))
-pcb2 = fuse(pcb(164), box(-3.5, -3.5, 165.6, 7, 7, 1),        # MCU
-            box(6, 2, 165.6, 5, 5, 1))                        # IMU
-add("31_PCB_GNC_IMU", pcb2, (0, 0, 115))
-pcb3 = fuse(pcb(170), box(-8, -6, 171.6, 16, 12, 2.4))        # GNSS receiver
-add("32_PCB_GNSS", pcb3, (0, 0, 130))
-so = []
-for ang in (30, 150, 270):
-    x, y = 17 * math.cos(math.radians(ang)), 17 * math.sin(math.radians(ang))
-    so += [cyl(1.5, 4.4, (x, y, 159.6)), cyl(1.5, 4.4, (x, y, 165.6))]
-add("33_PCB_Standoffs", fuse(*so), (0, 0, 107))
 
-# ================================================== 8. ALTERNATOR (DE-SPIN)
-# Rotor (spins with shell) carries magnets; stator (de-spun section) carries
-# coils -> spin-energy power harvesting concept, M1156-style.
-rotor = cyl(20, 3, (0, 0, 178))
-rotor = fuse(rotor, *[cyl(2.5, 2, (13 * math.cos(math.radians(45 * k)),
-                                   13 * math.sin(math.radians(45 * k)), 181))
-                      for k in range(8)])
-add("40_Alternator_Rotor", rotor, (0, 0, 150))
-stator = cyl(20, 2, (0, 0, 186))
-stator = fuse(stator, *[cyl(3.5, 2, (13 * math.cos(math.radians(60 * k)),
-                                    13 * math.sin(math.radians(60 * k)), 184))
-                        for k in range(6)])
-add("41_Alternator_Stator", stator, (0, 0, 165))
+# ==================================================== 5. COMMON CANARD CARRIER
+# This is one inner carrier. Every canard is fixed to it and all four move as
+# a single assembly; there are no independent fin hinges or fin motors.
+carrier = ring(R_CARRIER, R_CARRIER_ID, Z_CARRIER1 - Z_CARRIER0, Z_CARRIER0)
+carrier = fuse(
+    carrier,
+    ring(R_CARRIER, R_CARRIER_ID, 4.0, Z_CARRIER0 - 1.0),
+    ring(R_CARRIER, R_CARRIER_ID, 4.0, Z_CARRIER1 - 3.0),
+)
+add("14_CommonCanardCarrier", carrier, (0, 0, 75))
 
-# ======================================================= 9. TOP PLATE + GNSS
-plate = cyl(25.3, 3, (0, 0, 193))
-add("50_TopPlate", plate, (0, 0, 185))
-patch = cyl(12.5, 4, (0, 0, 196))
-add("51_GNSS_PatchAntenna", patch, (0, 0, 200))
 
-# ================================================================ 10. NOSE CAP
-nose = Part.makeCone(R_BODY, 7, Z_NOSE - Z_BODY0, App.Vector(0, 0, Z_BODY0))
-nose = nose.cut(Part.makeCone(25.3, 5, Z_NOSE - Z_BODY0 - 1, App.Vector(0, 0, Z_BODY0 + 1)))
-lip = cyl(R_BODY, 2, (0, 0, Z_BODY0)).cut(cyl(R_ID, 2, (0, 0, Z_BODY0)))
+def fixed_canard():
+    # A deliberately generic display fin. Its incidence is illustrative only;
+    # this model is not intended for aerodynamic or flight use.
+    points = [
+        (R_CARRIER - 1.0, Z_CANARD - 13.0),
+        (FIN_TIP, Z_CANARD - 10.0),
+        (FIN_TIP, Z_CANARD + 9.0),
+        (R_CARRIER - 1.0, Z_CANARD + 13.0),
+    ]
+    polygon = [App.Vector(x, -FIN_THICK / 2.0, z) for x, z in points]
+    polygon.append(polygon[0])
+    fin = Part.Face(Part.makePolygon(polygon)).extrude(App.Vector(0, FIN_THICK, 0))
+    root = box(R_CARRIER - 2.0, -3.5, Z_CANARD - 6.0, 5.0, 7.0, 12.0)
+    return fuse(fin, root)
+
+
+for index, angle in enumerate((0, 90, 180, 270), start=1):
+    fin = fixed_canard()
+    fin.rotate(App.Vector(0, 0, 0), App.Vector(0, 0, 1), angle)
+    explode = (38, 0, 70) if index == 1 else (
+        (-38, 0, 70) if index == 3 else (0, 38 if index == 2 else -38, 70)
+    )
+    add("20_FixedCanard_%02d" % index, fin, explode)
+
+
+# ================================================== 6. SINGLE TORQUE ELEMENT
+# A compact placeholder stands for the one relative-rotation torque element in
+# the exhibition rig. It is intentionally not a multi-fin gearbox assembly.
+torque_body = cyl(5.0, 18.0, (0, -14.0, 145))
+torque_mount = box(-5.0, -19.0, 150.0, 10.0, 5.0, 13.0)
+torque_link = box(-2.0, -11.0, 155.0, 4.0, 8.0, 5.0)
+add("22_Torque_Emulator_LowVoltage", compound(torque_body, torque_mount, torque_link), (0, 0, 95))
+
+
+# ================================================== 7. SPIN-POWER ALTERNATOR
+# The two rings are deliberately named by their mechanical reference frame:
+# rotor = outer shell/spin side; stator = inner carrier side.
+rotor_ring = ring(24.0, 19.0, 3.0, 166.0)
+rotor_magnets = []
+for angle in range(0, 360, 45):
+    x, y = polar_xy(21.5, angle)
+    rotor_magnets.append(box(x - 1.4, y - 1.4, 169.0, 2.8, 2.8, 2.0))
+add("40_AlternatorRotor_ShellSide", compound(rotor_ring, *rotor_magnets), (0, 0, 150))
+
+stator_ring = ring(18.8, 15.8, 3.0, 173.0)
+stator_coils = []
+for angle in range(0, 360, 60):
+    x, y = polar_xy(17.3, angle)
+    stator_coils.append(box(x - 1.6, y - 1.6, 171.0, 3.2, 3.2, 2.0))
+add("41_AlternatorStator_CarrierSide", compound(stator_ring, *stator_coils), (0, 0, 165))
+
+
+# ================================================ 8. DISPLAY ELECTRONICS STACK
+def pcb(z, radius=20.0):
+    return cyl(radius, 1.6, (0, 0, z))
+
+
+power_pcb = fuse(pcb(140), box(2, -4, 141.6, 8, 8, 3))
+add("30_PowerManagement_DisplayPCB", power_pcb, (0, 0, 105))
+
+controller_pcb = fuse(
+    pcb(146),
+    box(-4, -4, 147.6, 8, 8, 2.5),
+    box(7, 2, 147.6, 5, 5, 1.5),
+)
+add("31_Controller_IMU_DisplayPCB", controller_pcb, (0, 0, 120))
+
+sensor_board = fuse(pcb(180, 18.0), box(-7, -4, 181.6, 14, 8, 2.0))
+add("32_RelativeAngleSensor_DisplayPCB", sensor_board, (0, 0, 132))
+
+gnss_board = fuse(pcb(188, 18.0), box(-7, -5, 189.6, 14, 10, 2.0))
+add("33_GNSS_AntennaPlaceholderPCB", gnss_board, (0, 0, 143))
+
+standoffs = []
+for angle in (30, 150, 270):
+    x, y = polar_xy(16.0, angle)
+    standoffs.append(cyl(1.4, 4.0, (x, y, 141.6)))
+    standoffs.append(cyl(1.4, 4.0, (x, y, 147.6)))
+add("34_PCB_Standoffs", compound(*standoffs), (0, 0, 112))
+
+# A visible index marker and sensor body make the relative-angle measurement
+# easy to explain without implementing guidance or navigation.
+index_marker = box(22.0, -1.5, 158.0, 2.0, 3.0, 8.0)
+hall_sensor = box(18.0, -2.5, 158.0, 4.0, 5.0, 8.0)
+add("35_RelativeAngle_IndexAndSensor", compound(index_marker, hall_sensor), (0, 0, 155))
+
+
+# ================================================ 9. TOP PLATE / RADOME
+top_plate = ring(25.3, 15.5, 3.0, 193.0)
+add("50_TopPlate", top_plate, (0, 0, 185))
+
+antenna = cyl(12.5, 3.0, (0, 0, 196.0))
+add("51_GNSS_PatchAntenna_Placeholder", antenna, (0, 0, 200))
+
+nose = Part.makeCone(R_BODY, 7.0, Z_NOSE - Z_HOUSING0, App.Vector(0, 0, Z_HOUSING0))
+nose = nose.cut(
+    Part.makeCone(25.3, 5.0, Z_NOSE - Z_HOUSING0 - 1.0, App.Vector(0, 0, Z_HOUSING0 + 1.0))
+)
+lip = ring(R_BODY, R_ID, 2.0, Z_HOUSING0)
 nose = fuse(nose, lip)
-add("60_NoseCap_radome", nose, (0, 0, 230))
+add("60_NoseCap_InertRadome", nose, (0, 0, 230))
+
 
 # =================================================================== EXPORTS
 os.makedirs(OUT, exist_ok=True)
+doc.recompute()
+docE.recompute()
 doc.saveAs(os.path.join(OUT, "pgk_assembly.FCStd"))
 docE.saveAs(os.path.join(OUT, "pgk_exploded.FCStd"))
-Import.export([o for _, o in PARTS], os.path.join(OUT, "pgk_assembly.step"))
+Import.export([obj for _, obj in PARTS], os.path.join(OUT, "pgk_assembly.step"))
 
-for name, o in PARTS:
-    m = MeshPart.meshFromShape(Shape=o.Shape, LinearDeflection=0.05,
-                               AngularDeflection=0.3)
-    m.write(os.path.join(OUT, name + ".stl"))
+for name, obj in PARTS:
+    mesh = MeshPart.meshFromShape(
+        Shape=obj.Shape,
+        LinearDeflection=0.05,
+        AngularDeflection=0.3,
+    )
+    mesh.write(os.path.join(OUT, name + ".stl"))
+
 
 # ==================================================================== REPORT
-allb = Part.makeCompound([o.Shape for _, o in PARTS]).BoundBox
+all_shape = Part.makeCompound([obj.Shape for _, obj in PARTS])
+bound_box = all_shape.BoundBox
 report = {
     "units": "mm",
     "parts": len(PARTS),
-    "module_length": round(allb.ZLength, 1),
-    "module_max_diameter": round(max(allb.XLength, allb.YLength), 1),
+    "module_length": round(bound_box.ZLength, 1),
+    "module_max_diameter": round(max(bound_box.XLength, bound_box.YLength), 1),
     "body_diameter": R_BODY * 2,
-    "shank": "OD 49.6 x 90 -> slip-fits shell fuze bore 50 x 90",
-    "canard_span_across": round(2 * FIN_TIP, 1),
-    "note": "inert educational demonstrator; no energetic components",
+    "architecture": "common four-canard carrier + coaxial bearing pair + shell/carrier alternator",
+    "torque_element": "single low-voltage exhibition torque emulator placeholder",
+    "power_path": "shell-side rotor -> carrier-side stator -> rectifier/supercapacitor (concept)",
+    "adapter": "nonfunctional printed slip-fit display adapter; not a live-compatible fuze interface",
+    "note": "inert educational demonstrator; no energetic or functional fuze parts",
 }
-print("PGK REPORT: " + json.dumps(report, indent=2))
+print("PGK DEMO REPORT: " + json.dumps(report, indent=2))

@@ -30,7 +30,7 @@ try:
     ax.set_box_aspect((190, 190, 760))
     ax.view_init(elev=12, azim=-62)
     ax.set_axis_off()
-    ax.set_title("PGK mated on 155mm shell mockup (total ~743 mm)")
+    ax.set_title("Inert demonstrator on 155mm shell mockup (visual scale)")
     plt.tight_layout()
     plt.savefig(os.path.join(OUT, "preview_pgk_on_shell.png"), dpi=110)
     print("saved pgk_on_shell")

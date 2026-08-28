@@ -1,5 +1,7 @@
 # L Shang Canard Control Vertical Recovery Rocket — Frame-by-Frame Teardown vs SIH26098 Deliverables
 
+> **Status:** historical reference only. The earlier servo/face-gear comparison remains useful for trade-study context, but it is not the active PGK exhibition architecture. The active model is the common-carrier demonstrator in `cad_models/generate_pgk_155.py`; the superseded two-motor CAD is archived in `legacy/old_two_motor_design/`.
+
 **Video:** `Canard control vertical recovery guidance technology experimental rocket development - L Shang (720p, h264).mp4` | **Duration:** 23:16 | **Probe:** 1280x720 29.97fps 1071kb/s h264/aac | **Frames extracted:** 1397 JPG @1fps `thumb_%04d.jpg` (`/tmp/canard_frames/`) via `ffmpeg fps=1` | **Analysis date:** 2026-08-25
 
 > Teardown method: ffprobe + 1fps thumbs + visual OCR (read 35 key frames) + cross-ref `SIH26098_Exhaustive_Ideas_Catalog.md` (108 ideas A-J) + `cad_models/generate_pgk_155.py` + `simulate_trajectory_155.py`.
@@ -8,7 +10,7 @@
 
 ## TL;DR for Judges
 
-L Shang proves a student team can do a **complete guided-weapon loop** (CAD→CFD→PCB→ADRC→EKF→HITL→7 flights in 30 days) with <$200 BOM (JLCEDA/JLCPCB/STM32/KST). **70% transfers** to SIH26098 PGK. The 30% that does **not** transfer (and will fail SIH evaluation) is: **high-G survivability, STANAG thread, multi-mode fuze, power (thermal/super-cap), and NavIC/M-Code.** Keep his toolchain, switch mechanics from `A2 (4x servo)` to `A1 (canted brake, no servo)` and add `MEMS S&A + FMCW proximity` per `E` category.
+L Shang is useful historical evidence that a student team can complete a CAD/CFD/PCB/control workflow. It is not a template for the active physical exhibit: the rocket used four servo-driven control surfaces, while this workspace now uses one inert common carrier with four fixed illustrative canards. Keep the analysis as reference and keep flight, fuze, and performance work separate from the bench model.
 
 ---
 
@@ -72,17 +74,17 @@ Interconnect: 0.5mm FFC (vibration failure point)
 
 | # | SIH Deliverable | L Shang Coverage | Gap & Action |
 |---|-----------------|-----------------|--------------|
-| **1** | System arch doc A-J | 70%: 5-bay + 3-PCB + failures documented | Keep layout, **switch A2→A1**: canted 4° + alternator brake (₹8L vs ₹14L, 20yr life, no slip ring). See `research/A_system/entry_20260825_lshang_system_teardown_pgka1.md` |
-| **2** | CAD CAA | 85%: 150x34 ogive, staggered shafts 146/152mm, face-gear r8/pinion r6 | **Reuse** `generate_pgk_155.py:28-34` (OD 56, span 151, shank 49.6x90). Add `G6 bearing 630 shield` per patent 10295320 |
+| **1** | System arch doc A-J | 70%: 5-bay + 3-PCB + failures documented | Keep the modular documentation pattern only; the active physical baseline is the inert common-carrier demonstrator. See `research/A_system/entry_20260825_lshang_system_teardown_pgka1.md` |
+| **2** | CAD CAA | Historical CAD: 150x34 ogive, staggered shafts 146/152mm, face-gear r8/pinion r6 | **Use active** `cad_models/generate_pgk_155.py`: common carrier, front/rear display bearings, shell/carrier rotor-stator, and one low-voltage torque emulator |
 | **3** | Electronics block | 50%: STM32F4 circular 65mm proven, JLCPCB cheap | **Replace:** LiPo→super-cap+alternator `F1` (rotors 40/41), Beitian→ZED-F9P+NavIC `D2-D5`, FFC→Mezzanine, potting `G5` for 20kG. Keep his `KEY/GPIO/I2C` labels |
 | **4** | GNC algorithm | 60%: ADRC+adaptive EKF+HITL+rail test | **Adapt:** add spin 300Hz + Magnus + despin phase, baro out for flight, add `C7 LSTM GNSS-denied <5m` + `C11 MPC`. Port Simulink ADRC to STM32H743 |
 | **5** | Simulation trajectory correction | 80%: ICEM→Fluent Xeon→streamlines→Excel DB→Simulink | **Copy pipeline:** MID `30m/s` table header `升力/阻力/俯仰力矩/压心/升阻比` for Mach 0.8-3.0. Your `simulate_trajectory_155.py` already does ZEM; upgrade to 6DOF spin + Monte Carlo `I1` |
-| **6** | Prototype PoC | 40% (flying rocket) vs inert STL | **Do not gun-fire yet.** Do his 3-stage demo: HITL wave → 100cm rail → subscale rocket with PGK nose (7th flight) + 1x G5 soft recovery `I5` into sand. Enough for "preferred" |
+| **6** | Prototype PoC | 40% (flying rocket) vs inert STL | **Current scope is bench-only:** use a guarded, low-speed rotation stand with relative-angle and LED power demonstrations. Do not adapt the flight-test sequence or build a launch-capable article. |
 | **7** | Performance CEP ≤30m | No number (only telemetry) | **Must quantify:** Your `simulate_trajectory_155.py` Monte Carlo N300 → CEP ~6-10m guided vs 267m ballistic (H8). Plot histogram panel C alongside his A-range-vs-altitude |
 | **C1** | STANAG 2916 | None (150mm custom) | Add thread `2-12UN-1A`, bore `Ø50x90`, ramming `STANAG 4369` |
 | **C2** | High-G 15-20kG | Hobby servos fail ~200G | Implement **B3 hollow piezo 0.30N·m 450V 40.2kHz self-locking** or **B1 brake**. Pot `Dow3140 G5`, direct-write `G7` |
 | **C3** | Multi-mode fuze | **None** — only parachute `定高开伞` | Add `E1 FMCW 24GHz 6/12/18m + E3 Time 3-199.9s + E4 PD <250us` + `MEMS S&A 15x17x5mm E8 slapper 4088m/s`. Reuse his altitude-trigger as HOB logic |
-| **C4** | Power high-G | LiPo 2S | **F1 super-cap pre-charge + F2 reserve Li ampoule + F4 PZT setback** (DRDO task). Your `40_Alternator_Rotor/Stator` is inert — make functional `F5 dual-use motor` |
+| **C4** | Power high-G | LiPo 2S | **For the inert exhibit:** shell-side rotor + carrier-side stator → rectifier + supercapacitor + LEDs/controller. Keep any launch-power or fuze implementation out of the physical model. |
 | **C5** | Modular future bay | Fixed 5-bay | Keep his modular livery but save volume via MEMS S&A 95% reduction `J6` for laser/EO seeker |
 
 ---
@@ -108,14 +110,14 @@ Interconnect: 0.5mm FFC (vibration failure point)
 
 | Role | Folder | Learn | Decide (using this teardown) | Show |
 |------|--------|-------|------------------------------|------|
-| M1 Planner | `A_system` | Old kits, STANAG | **A1 brake wins over L Shang A2** | Arch doc + cost ₹8L sheet |
-| M2 Steering | `B_aero` | ICEM/Fluent his slides | **B1 + face-gear 146/152mm stagger** | CFD table + `generate_pgk_155.py` STEP |
+| M1 Planner | `A_system` | Old kits, public PGK references | **Freeze the inert common-carrier baseline** | Architecture map + safe exhibition brief |
+| M2 Steering | `B_aero` | ICEM/Fluent his slides | **Common carrier + fixed illustrative canards** | Safe bench rotation diagram + active `generate_pgk_155.py` STEP |
 | M3 Brain | `D_sensors` | Data10+GNSS | **STM32H7 + ZED-F9P/NavIC, adaptive EKF** | Table rail demo 0-100cm |
 | M4 Fuze | `E_fuze` | His missing fuze | **FMCW 24GHz + MEMS S&A** | Circuit + phone NFC demo |
-| M5 Body | `F_power` | LiPo vs alternator | **Super-cap+alternator PZT** | 3D print + spin power test 6s |
+| M5 Body | `F_power` | LiPo vs display alternator | **Shell/carrier rotor-stator + supercap** | 3D print + guarded low-speed LED power test |
 | M6 Tester | `I_test` | 7 flights | **HITL→rail→G5 soft recovery, Monte Carlo CEP** | Demo video + `trajectory_comparison.svg` |
 
-**PPD Checklist:** Arch doc (A-J) ✅ Catalog exists + this teardown adds evidence; CAD ✅ `out_pgk/`; Electronics ✅ his block → harden; Algorithm ✅ ADRC→spin MPC; Simulation ✅ add spin to your `simulate_trajectory_155.py:40`; PoC ✅ rail + subscale; CEP ✅ N300 scatter; SWaP-C ✅ YIL forging.
+**PPD Checklist:** Arch doc (A-J) ✅ Catalog exists + this teardown adds evidence; active CAD ✅ `cad_models/out_pgk/`; Electronics ✅ display controller + relative-angle sensor; PoC ✅ guarded low-speed bench rig; simulation and performance claims remain separate from the inert physical model.
 
 ---
 

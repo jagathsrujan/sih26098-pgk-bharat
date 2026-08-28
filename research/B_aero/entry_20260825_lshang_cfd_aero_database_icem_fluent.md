@@ -38,9 +38,9 @@ ARDE bourrelet design + nubless stability (TOI Nagpur) + DRDO 8 guided-artillery
 CFD: ₹0.05L per solve (cloud Xeon), 20 solves ₹1L. Wind tunnel validation I3 (LIS 1N.m dyno 25rpm 450V Liu IOP 1507/102008) ₹0.3L. Total aero DB ₹1.5L.
 
 ## Recommendation
-**Use.** Copy L Shang's Excel header structure for SIH deliverable "CAD model + aero". Immediate: run ICEM on `cad_models/out_pgk/pgk_assembly.step` cylindrical domain, sweep Mach 0.8/1.0/1.5/2.0/2.5, AoA 0/4/8deg, Delta 0/5/10deg, populate same table. Add Magnus term per ARDE.
+**Use as reference only.** Copy L Shang's Excel header structure for the SIH documentation deliverable, but do not treat the former face-gear geometry as active. The current physical artifact is an inert common-carrier bench model; any aerodynamic or flight analysis must remain a separate simulation task and must not be inferred from the printed demonstrator.
 
 ## Links to Code/CAD
-- cad_models/generate_pgk_155.py:144 (fin polygon 28.5->FIN_TIP 75.5, hub r5.5) + simulate_trajectory_155.py:40 Cd(Mach) table (needs canard delta columns)
+- cad_models/generate_pgk_155.py (active fixed-canard carrier geometry) + simulate_trajectory_155.py (separate simulation reference)
 - research/B_aero/ (topology-optimized canard B14)
 - SIH26098_Exhaustive_Ideas_Catalog.md:52 (B1-B16)

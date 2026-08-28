@@ -4,10 +4,11 @@
 
 > Development of a Low-Cost Precision Guidance and Smart Electronic Fuze System for a 155mm Artillery Shell (STANAG 2916, 39/45/52 cal - ATAGS/Dhanush/K9/M777)
 
-**Target:** CEP ≤30m (stretch 10m), 74% logistics saving 301→77 shells, ₹8-11L/kit
+**Current demonstrator baseline:** inert, low-speed exhibition model with one common four-canard carrier, coaxial bearing isolation, and a shell-to-carrier alternator/torque concept. Performance and cost figures elsewhere are project targets or public reference points, not results from this bench model.
 
 ### Quick Start for Team
 
+0. **NEW? Read the briefing first:** `SIH26098_TEAM_BRIEFING.md` — PS breakdown, artillery 101, shell glossary, physics with formulas, subsystems, roles, video watchlist, 3-week plan. For the active physical model, read `cad_models/PGK_DEMO_ASSEMBLY.md` and open the **Excalidraw board** (6 panels: problem → fix → mission → physics → anatomy → team).
 1. **Clone:** `git clone https://github.com/jagathsrujan/sih26098-pgk-bharat.git`
 2. **Pick your category** in `research/` (see table below)
 3. **Read:** `SIH26098_Exhaustive_Ideas_Catalog.md` (108 ideas) + `SIH26098_Ideas_Database.json`
@@ -125,10 +126,17 @@ Technical version is in `SIH26098_Exhaustive_Ideas_Catalog.md` — same 6 boxes 
 
 ```bash
 cd cad_models
-python generate_shell_155.py   # 155mm inert mockup
-python generate_pgk_155.py     # PGK nose module
-python simulate_trajectory_155.py # 6DOF ballistic vs guided
+freecadcmd generate_shell_155.py   # 155mm inert mockup
+freecadcmd generate_pgk_155.py     # active inert common-carrier PGK demonstrator
+python simulate_trajectory_155.py  # separate simulation/reference track
 ```
+
+The active model is a public-architecture demonstrator: the shell/outer housing is the spin-side frame, a single inner carrier holds all four fixed canards, two display bearings permit relative rotation, and a shell-side rotor/carrier-side stator show the power path. The earlier two-motor concept is preserved in `legacy/old_two_motor_design/` and is not part of the current baseline.
+
+### Active model and legacy reference
+
+- **Active:** `cad_models/generate_pgk_155.py` and `cad_models/PGK_DEMO_ASSEMBLY.md`
+- **Legacy only:** `legacy/old_two_motor_design/` — two N20 motors, orthogonal shafts, face gears, and individually mounted canards
 
 ### Live Research Board
 
@@ -142,7 +150,7 @@ python simulate_trajectory_155.py # 6DOF ballistic vs guided
 - [ ] CAD (FreeCAD/Fusion) + electronics block
 - [ ] GNC algorithm (PID/MPC/LSTM)
 - [ ] 6DOF simulation + Monte Carlo CEP
-- [ ] Prototype PoC (3D print + despin rig)
+- [ ] Prototype PoC (inert 3D print + guarded low-speed de-spin bench rig)
 - [ ] Cost + manufacturability (YIL forging, BEL electronics)
 
 ### References

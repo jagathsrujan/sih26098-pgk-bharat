@@ -10,6 +10,8 @@ trl: 7
 ## Idea Title
 L Shang Canard-Control Vertical-Recovery Rocket — Full System Teardown vs SIH26098 PGK Baseline A1
 
+> **Reference status:** This entry documents a student-rocket reference. It is not the active physical design. The active workspace artifact is the inert common-carrier exhibition demonstrator in `cad_models/PGK_DEMO_ASSEMBLY.md`; the former two-motor layout is archived in `legacy/old_two_motor_design/`.
+
 ## Summary (2-3 lines)
 23:16 video analysis (1397 frames @1fps, 1280x720) of L Shang's 4-canard guided rocket: 5-bay architecture (GNSS/canard/avionics/chute/motor), 3-PCB stack, ICEM/Fluent CFD, ADRC Simulink, 7 flight tests (2022.7.12-2022.7.17) with 2 documented failures. Architecture maps 1:1 to SIH26098 A1 (PGK-clone screw-in fuze, despun brake) but uses A2 (4x proportional servo) which is not gun-hard.
 
@@ -40,10 +42,11 @@ YIL Ambajhari 10,000-ton extrusion press (19 Jun 2026) for 56mm OD housing forgi
 L Shang BOM ~₹0.15L (PCB ₹0.02L x3 + KST x4 ₹0.08L + Data10 IMU ₹0.03L + PA12 print). PGK A1 clone target ₹8-11L (YIL forging ₹1.5L + BEL RF ₹2L + MEMS S&A ₹1L + NavIC ₹0.3L). Reusing his JLCPCB workflow saves ₹0.5L NRE.
 
 ## Recommendation
-**Use as system template, Park A2 servo for subscale rocket demo, Use A1 brake for SIH final.** Copy his 5-bay stacking and 3-PCB circular layout directly into `cad_models/generate_pgk_155.py:162-177`. Switch actuation from direct servo to `B1/B2 bearing-isolated` before MIL-STD-331 testing.
+**Use as historical system-template evidence only.** Park the A2 servo concept and the former two-motor CAD in `legacy/old_two_motor_design/`. The active SIH exhibition model is the inert A1/B1 public-architecture demonstrator: a common four-canard carrier, front/rear display bearings, shell/carrier rotor-stator, and one low-voltage torque emulator. See `cad_models/PGK_DEMO_ASSEMBLY.md`.
 
 ## Links to Code/CAD
-- cad_models/generate_pgk_155.py (R_BODY 28mm, FIN_TIP 75.5mm, staggered shafts Z_SHAFT1 146/Z_SHAFT2 152)
-- cad_models/out_pgk/pgk_assembly.FCStd + preview_pgk_on_shell.png
+- `cad_models/generate_pgk_155.py` (active common-carrier demonstrator)
+- `cad_models/out_pgk/pgk_assembly.FCStd` + `preview_pgk_on_shell.png` (generated active output)
+- `legacy/old_two_motor_design/` (archived former CAD/output)
 - SIH26098_Exhaustive_Ideas_Catalog.md:32 (Category A, A1 winner)
 - docs/LShang_Video_Teardown_Gap_Analysis.md (full 23min teardown)

@@ -1,5 +1,5 @@
 id,category,title,trl,cost_lakhs,idea,pros,cons
-A1,System Architecture,PGK-Clone Screw-In Fuze (Baseline Winner),9,8-11,"De-spun nose 4 fixed canards, alternator brake, GPS-only, no servo, 1 moving part, screw-in STANAG 2916","Proven 10m CEP, 20yr no battery, 97% reliability",Limited authority
+A1,System Architecture,PGK Public-Architecture Demonstrator (Active Baseline),reference,display build,"One common bearing-isolated carrier holds 4 fixed illustrative canards; shell-side rotor/carrier-side stator shows relative-rotation power; one low-voltage torque emulator; nonfunctional slip-fit adapter","Clear cutaway story and exhibition-safe mechanics",No flight, fuze, production, or launch claim
 A2,System Architecture,4x Proportional Servo Kit,7,14-18,"4 independent servos ±15° skid-to-turn, full 3D","CEP <15m, ±30% range",Servo must survive 20kG
 A3,System Architecture,Single-Axis 2-Canard Diehl,8,7-9,"2 canards one axis, differential bang-bang phased with roll quarter-rev",Cheapest servo,Lower accuracy
 A4,System Architecture,Airbrake 1D TCF,8,6,Deployable drag plates shorten range only,Zero aero servos,Only corrects long
@@ -11,7 +11,7 @@ A9,System Architecture,New-Build Excalibur-Class 50kg Shell,5,45-60,1m 50kg fin-
 A10,System Architecture,Ramjet 80km Propelled,3,80+,"Ramjet sustainer + kit, ARDE 5yr",World-class,Very hard
 A11,System Architecture,Parachute Soft-Delivery Submunitions,6,18,Cargo dispenses parachute-retarded submunitions,Top-attack,Not point impact
 A12,System Architecture,Hybrid + Drone Spotter,4,30,Tethered UAV at apogee images terminal,Moving target,Tether/EW
-B1,Aerodynamics/Canard,Fixed Canted Canards + Despun Brake,9,,"Spin pair -4°, steering +4°, alternator variable load despin",,
+B1,Aerodynamics/Canard,Fixed Canards + Common Carrier,reference,,"Four fixed illustrative canards attach to one bearing-isolated carrier; a single torque element represents relative-rotation control in the guarded bench model",,
 B2,Aerodynamics/Canard,Flat Pancake Motor Inside Bearing Shield 630,7,,Motor 605 inside bearing isolates 10-25kG (Pat 10295320),,
 B3,Aerodynamics/Canard,Hollow Piezoelectric Motor Retractile Fins,5,,"450V 40.2kHz, 0.30N·m wind, 25rpm, self-locking, fins retract until burn-out",,
 B4,Aerodynamics/Canard,Piezoelectric Beam Tip Fin,5,,"Flexible beam at tip bends AoA, adaptive control",,
@@ -67,7 +67,7 @@ E7,Fuze,Foliage Mode,,,First-return above canopy,,
 E8,Fuze,MEMS S&A 15x17x5mm,,,"4088m/s slapper 2500V, 16ms 508μm",,
 E9,Fuze,Muzzle Safety 100-200m Command-to-Arm,,,"850-1500g + 2900rpm, STANAG 4187",,
 E10,Fuze,ECM Hardened Overflight Safety,,,"Last 3s induction, redundant, IM booster",,
-F1,Power,Super-Cap + Alternator,,,"Pre-charge induction + de-spun differential generation, 20yr",,
+F1,Power,Super-Cap + Shell/Carrier Alternator Demonstration,reference,display build,"Shell-side rotor + carrier-side stator feed a rectifier, supercapacitor, LEDs, and controller from relative rotation in the inert bench model",,
 F2,Power,Reserve Lithium Ampoule,,,"Crushed at setback, 15yr, 1-2Wh",,
 F3,Power,Thermal Molten-Salt,,,Pyrotechnic activated,,
 F4,Power,PZT Setback Generator,,,DRDO PZT stack 100mJ boot,,

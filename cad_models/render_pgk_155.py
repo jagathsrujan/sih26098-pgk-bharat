@@ -56,11 +56,13 @@ def render(doc_path, png, title, shell_stl=None, lim=None):
     App.closeDocument(doc.Name)
 
 render(os.path.join(OUT, "pgk_assembly.FCStd"),
-       os.path.join(OUT, "preview_assembly.png"), "PGK 155mm - assembly (27 parts)")
+       os.path.join(OUT, "preview_assembly.png"),
+       "Inert PGK demonstrator - common carrier assembly")
 render(os.path.join(OUT, "pgk_exploded.FCStd"),
-       os.path.join(OUT, "preview_exploded.png"), "PGK 155mm - exploded view")
+       os.path.join(OUT, "preview_exploded.png"),
+       "Inert PGK demonstrator - exploded view")
 render(os.path.join(OUT, "pgk_assembly.FCStd"),
        os.path.join(OUT, "preview_pgk_on_shell.png"),
-       "PGK mated on 155mm shell mockup (total ~743 mm)",
+       "Inert demonstrator on 155mm shell mockup (visual scale)",
        shell_stl=os.path.join(SHELL, "155mm_shell_FULL.stl"),
        lim=((-90, 90), (-90, 90), (0, 760)))

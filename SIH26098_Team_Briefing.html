@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIH26098 — Team Briefing | PGK for 155mm Artillery Shell</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23fbbf24' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%23fbbf24'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0a0f1c; --bg2:#0f172a; --card:#111c33; --card2:#0d1626;
+  --line:#22304d; --line2:#2e4166;
+  --txt:#e8eef9; --mut:#93a4c3; --dim:#64748b;
+  --amber:#fbbf24; --amber2:#f59e0b; --blue:#60a5fa; --green:#4ade80;
+  --pink:#f472b6; --indigo:#818cf8; --orange:#fb923c; --red:#f87171;
+  --mono:'SF Mono',ui-monospace,'Cascadia Code',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1.65;font-size:16px}
+::selection{background:var(--amber2);color:#111}
+
+/* ---------- NAV ---------- */
+nav{position:sticky;top:0;z-index:100;background:rgba(10,15,28,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:6px;padding:10px 20px;overflow-x:auto;scrollbar-width:none}
+.nav-in::-webkit-scrollbar{display:none}
+.brand{font-weight:800;color:var(--amber);white-space:nowrap;margin-right:14px;font-size:15px;letter-spacing:.5px}
+nav a.nl{color:var(--mut);text-decoration:none;font-size:13.5px;padding:6px 11px;border-radius:8px;white-space:nowrap;transition:.15s}
+nav a.nl:hover{color:var(--txt);background:#1a2742}
+nav a.nl.active{color:#0a0f1c;background:var(--amber);font-weight:700}
+.count-chip{margin-left:auto;background:#1a2742;border:1px solid var(--line2);color:var(--amber);font-family:var(--mono);font-size:12.5px;padding:5px 12px;border-radius:99px;white-space:nowrap}
+
+/* ---------- LAYOUT ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+section{padding:72px 0 30px}
+.sec-tag{font-family:var(--mono);color:var(--amber);font-size:13px;letter-spacing:2px;text-transform:uppercase}
+h2{font-size:clamp(26px,4vw,38px);font-weight:800;margin:6px 0 8px;letter-spacing:-.5px}
+h3{font-size:20px;font-weight:700;margin:26px 0 10px}
+.sec-sub{color:var(--mut);max-width:820px;margin-bottom:26px}
+p{margin:10px 0}
+b,strong{color:#fff}
+.small{font-size:13.5px;color:var(--mut)}
+a{color:var(--blue)}
+
+/* ---------- HERO ---------- */
+.hero{padding:84px 0 60px;background:radial-gradient(1100px 500px at 75% -10%,rgba(251,191,36,.09),transparent 60%),radial-gradient(800px 400px at 10% 0%,rgba(96,165,250,.08),transparent 60%)}
+.hero-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.badge{font-family:var(--mono);font-size:12px;padding:5px 12px;border-radius:99px;border:1px solid var(--line2);background:var(--card2);color:var(--mut)}
+.badge.hot{color:var(--amber);border-color:#7c5a12}
+h1{font-size:clamp(38px,6vw,64px);font-weight:900;letter-spacing:-1.5px;line-height:1.05;max-width:900px}
+h1 .hl{color:var(--amber)}
+.hero-sub{color:var(--mut);font-size:clamp(16px,2.2vw,19px);max-width:840px;margin:20px 0 8px}
+.hero-org{font-family:var(--mono);font-size:13px;color:var(--dim);margin-bottom:26px}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:30px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.stat .v{font-size:26px;font-weight:800;color:var(--amber);font-family:var(--mono)}
+.stat .k{font-size:12.5px;color:var(--mut);margin-top:2px}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.btn{display:inline-block;padding:13px 26px;border-radius:12px;font-weight:700;text-decoration:none;font-size:15px;transition:.15s;border:1px solid transparent}
+.btn-p{background:var(--amber);color:#111}
+.btn-p:hover{background:var(--amber2);transform:translateY(-1px)}
+.btn-g{border-color:var(--line2);color:var(--txt);background:var(--card2)}
+.btn-g:hover{border-color:var(--amber);color:var(--amber)}
+
+/* ---------- CARDS / TABLES ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.card h3{margin-top:0}
+.callout{border-left:4px solid var(--amber);background:var(--card2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0}
+.callout.blue{border-color:var(--blue)}
+.callout.green{border-color:var(--green)}
+.callout.red{border-color:var(--red)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{background:#16223c;text-align:left;padding:11px 14px;font-size:12.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);white-space:nowrap}
+td{padding:11px 14px;border-top:1px solid var(--line);vertical-align:top;color:#cbd5e6}
+tr:hover td{background:#141f38}
+td b{color:var(--txt)}
+.mono{font-family:var(--mono);font-size:13px}
+pre{background:#070c17;border:1px solid var(--line);border-radius:12px;padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.7;color:#d7e3f5;margin:14px 0}
+pre .cm{color:#5b6b8c}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:6px;background:#1a2742;color:var(--mut);margin-right:5px}
+
+/* kill chain */
+.chain{display:flex;flex-direction:column;gap:0;max-width:720px}
+.chain-step{display:flex;gap:16px;align-items:flex-start}
+.chain-num{flex:0 0 34px;height:34px;border-radius:50%;background:#1a2742;border:2px solid var(--amber);color:var(--amber);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--mono);font-size:14px}
+.chain-body{padding-bottom:22px;border-left:2px solid var(--line2);margin-left:16px;padding-left:26px;position:relative;top:-2px}
+.chain-step:last-child .chain-body{border-left-color:transparent}
+.chain-body b{font-size:16px}
+
+/* glossary tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 18px}
+.tab-btn{background:var(--card2);border:1px solid var(--line2);color:var(--mut);padding:9px 18px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:var(--sans)}
+.tab-btn.active{background:var(--amber);color:#111;border-color:var(--amber)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+dl.gloss dt{font-weight:700;color:var(--amber);margin-top:14px;font-size:15px}
+dl.gloss dd{color:#c4d0e5;margin:2px 0 0 0;font-size:14.5px}
+
+/* physics blocks */
+.phys{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px}
+.phys h3{margin:0 0 4px;display:flex;align-items:center;gap:10px}
+.phys .num{background:#1a2742;color:var(--amber);font-family:var(--mono);font-size:12px;padding:3px 10px;border-radius:8px}
+.why{font-size:14px;color:var(--mut);border-top:1px dashed var(--line2);margin-top:12px;padding-top:10px}
+.why b{color:var(--amber)}
+
+/* calculator + cep */
+.widget{background:var(--card2);border:1px solid var(--line2);border-radius:16px;padding:24px;margin:22px 0}
+.widget label{font-size:13px;color:var(--mut);display:block;margin:12px 0 4px;font-family:var(--mono)}
+input[type=range]{width:100%;accent-color:var(--amber)}
+.calc-out{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+.calc-out .stat{padding:12px 14px}
+.calc-out .v{font-size:20px}
+canvas#cep{width:100%;max-width:560px;aspect-ratio:1;background:#070c17;border:1px solid var(--line);border-radius:14px;display:block;margin:0 auto}
+.cep-btns{display:flex;gap:10px;justify-content:center;margin:16px 0 8px;flex-wrap:wrap}
+
+/* roles */
+.role{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;border-top:4px solid var(--rc,#888)}
+.role h3{margin:0 0 2px}
+.role .who{font-family:var(--mono);font-size:13px;color:var(--mut)}
+.role ul{list-style:none;margin-top:10px}
+.role li{font-size:14px;padding:7px 0 7px 26px;position:relative;color:#c4d0e5;border-top:1px dashed var(--line)}
+.role li::before{content:attr(data-k);position:absolute;left:0;top:7px;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--rc,#888);border:1px solid var(--rc,#888);border-radius:5px;padding:1px 5px}
+.role li span{display:block;padding-left:0}
+.role li b{color:var(--txt)}
+.open-role{border-style:dashed;border-color:var(--amber)}
+.open-pill{background:var(--amber);color:#111;font-size:11px;font-weight:800;padding:3px 10px;border-radius:99px;font-family:var(--mono)}
+
+/* videos */
+.vid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.vid{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.vid .thumb{position:relative;aspect-ratio:16/9;background:#000;cursor:pointer;overflow:hidden}
+.vid .thumb img{width:100%;height:100%;object-fit:cover;opacity:.85;transition:.2s}
+.vid .thumb:hover img{opacity:1;transform:scale(1.02)}
+.vid .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vid .play span{width:56px;height:56px;border-radius:50%;background:rgba(251,191,36,.95);display:flex;align-items:center;justify-content:center;font-size:22px;color:#111;padding-left:4px}
+.vid iframe{width:100%;aspect-ratio:16/9;border:0;display:block}
+.vid .cap{padding:12px 14px;font-size:13.5px}
+.vid .cap b{display:block;font-size:14px}
+
+/* timeline */
+.tl{border-left:3px solid var(--line2);margin-left:10px;padding-left:26px}
+.tl-item{position:relative;padding-bottom:26px}
+.tl-item::before{content:'';position:absolute;left:-35px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 4px #0a0f1c}
+.tl-item .wk{font-family:var(--mono);color:var(--amber);font-size:13px}
+
+/* faq */
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:0}
+summary{cursor:pointer;padding:16px 20px;font-weight:700;font-size:15px;list-style:none}
+summary::before{content:'+';color:var(--amber);font-family:var(--mono);margin-right:10px}
+details[open] summary::before{content:'–'}
+details .ans{padding:0 20px 16px 38px;color:#c4d0e5;font-size:14.5px}
+
+/* svg anatomy */
+.shell-box{background:#070c17;border:1px solid var(--line);border-radius:16px;padding:14px}
+.shell-part{cursor:pointer;transition:opacity .15s}
+.shell-part:hover{opacity:.8}
+#shell-info{min-height:64px;background:var(--card2);border:1px solid var(--line2);border-radius:12px;padding:14px 18px;margin-top:12px;font-size:14.5px}
+#shell-info b{color:var(--amber)}
+
+footer{border-top:1px solid var(--line);margin-top:60px;padding:34px 0;color:var(--dim);font-size:13px;text-align:center}
+.toplink{position:fixed;right:22px;bottom:22px;background:var(--card);border:1px solid var(--line2);color:var(--amber);width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:800;opacity:0;pointer-events:none;transition:.2s;z-index:90}
+.toplink.show{opacity:1;pointer-events:auto}
+@media print{nav,.toplink,.btn-row,.cep-btns{display:none}body{background:#fff;color:#000}section{padding:24px 0}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <span class="brand">SIH26098 · PGK</span>
+    <a class="nl" href="#ps">1 · PS</a>
+    <a class="nl" href="#gun">2 · Gun 101</a>
+    <a class="nl" href="#shell">3 · Shell 101</a>
+    <a class="nl" href="#physics">4 · Physics</a>
+    <a class="nl" href="#solution">5 · Solution &amp; Roles</a>
+    <a class="nl" href="#pgks">6 · Real PGKs</a>
+    <a class="nl" href="#plan">7 · Plan</a>
+    <a class="nl" href="#faq">8 · FAQ</a>
+    <span class="count-chip" id="countdown">…</span>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-badges">
+      <span class="badge hot">Smart India Hackathon 2026</span>
+      <span class="badge">Hardware · S.No 98</span>
+      <span class="badge">Ministry of Defence / Yantra India Limited</span>
+      <span class="badge">Deadline: 20 Sep 2026</span>
+    </div>
+    <h1>We make a <span class="hl">dumb shell think</span> —<br>267&nbsp;m miss → <span class="hl">≤30&nbsp;m</span> hit.</h1>
+    <p class="hero-sub">The Army's normal 155&nbsp;mm shells miss the target by ~267&nbsp;m at long range. We design a <b>screw-on smart nose</b> — a Precision Guidance Kit + multi-mode electronic fuze — that makes the <i>same old shell</i> land within 30&nbsp;m, at <b>₹8–11 lakh per kit</b> instead of ₹60&nbsp;L+ for imported rounds. YIL, the factory that already makes India's 155&nbsp;mm shells, asked for exactly this.</p>
+    <p class="hero-org">PS SIH26098 · STANAG 2916 · Fits ATAGS / Dhanush / K9 Vajra / M777 (39/45/52 cal) · 0/500 submissions so far — wide open</p>
+    <p class="hero-org" style="color:#fbbf24">ACTIVE EXHIBITION MODEL: inert common carrier + 4 fixed canards · display bearings · shell/carrier rotor-stator · one low-voltage torque emulator · guarded low-speed bench only</p>
+    <div class="stat-row">
+      <div class="stat"><div class="v">267 m → ≤30 m</div><div class="k">CEP (accuracy) — the whole point</div></div>
+      <div class="stat"><div class="v">301 → 77</div><div class="k">shells needed per target (−74%)</div></div>
+      <div class="stat"><div class="v">₹8–11 L</div><div class="k">per kit vs ₹60 L – 2 Cr imported</div></div>
+      <div class="stat"><div class="v">LOW-SPEED</div><div class="k">guarded exhibition rotation</div></div>
+    </div>
+    <div class="btn-row">
+      <a class="btn btn-p" href="#ps">Start the briefing →</a>
+      <a class="btn btn-g" href="#videos">Watch real PGKs first</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ================= 1. PS BREAKDOWN ================= -->
+<section id="ps">
+  <div class="sec-tag">Section 1</div>
+  <h2>The Problem Statement, decoded</h2>
+  <p class="sec-sub">Official PS: <span class="mono">SIH2026_Hardware_PS.md</span> · S.No 98 · PS ID 26098 · Category: <b>Hardware</b> · Theme: Miscellaneous · Org: Ministry of Defence, <b>Yantra India Limited, Ambajhari, Nagpur</b> (the factory that forges India's 155&nbsp;mm shells).</p>
+
+  <div class="callout">
+    <b>The official one-liner:</b> “Design and Development of a Precision Guidance Kit with Canard Actuation and Multi-Mode Electronic Fuze for a 155&nbsp;mm Artillery Shell.”
+  </div>
+
+  <h3>Every bullet in the PS = a thing we must build</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>The PS literally says</th><th>Plain English</th><th>Our answer</th></tr>
+    <tr><td>“Canard Actuation Assembly (CAA) for in-flight trajectory correction”</td><td>Small wings near the nose that steer the shell mid-flight</td><td>One common carrier with 4 fixed illustrative canards; bearings and one torque element demonstrate relative rotation</td></tr>
+    <tr><td>“GNC system capable of improving terminal accuracy”</td><td>A future flight article would need a brain; the exhibit only shows the electronics story</td><td>Low-voltage display controller + relative-angle sensor + LEDs; flight GNC remains simulation/reference work</td></tr>
+    <tr><td>“Multi-mode Electronic Fuze: Proximity / Time / Impact”</td><td>A project requirement to explain, not hardware to reproduce in the exhibit</td><td>Clearly labelled mock state machine/UI only; no radar, initiator, arming, fuze, or firing hardware</td></tr>
+    <tr><td>“Embedded electronics and software for real-time flight control”</td><td>A future flight-article requirement</td><td>Display controller and status electronics only; no launch-survivability claim</td></tr>
+    <tr><td>“Power management suitable for high-g launch”</td><td>How the exhibit demonstrates spin-derived power</td><td>Shell-side rotor + carrier-side stator → rectifier → supercapacitor → low-voltage LEDs/controller</td></tr>
+    <tr><td>“Communication and programming interface for fuze configuration prior to firing”</td><td>A project requirement to explain, not hardware to reproduce in the exhibit</td><td>Optional mock phone UI only; no live fuze, setter, initiator, or firing interface</td></tr>
+    <tr><td>“CEP of 30 meters or better”</td><td>A future flight-performance target</td><td>Simulation/public reference only; not a result from the printed bench model</td></tr>
+    <tr><td>“Compatibility with existing 155&nbsp;mm shell design”</td><td>A future interface requirement</td><td>Nonfunctional slip-fit display adapter; no live-compatible thread or launch interface</td></tr>
+    <tr><td>“Survive extreme mechanical and environmental conditions”</td><td>A future flight-article requirement</td><td>Lightweight printed housing, guarded low-speed operation, and no launch-survivability claim</td></tr>
+    <tr><td>“Low SWaP-C, high reliability, modular”</td><td>Small, light, cheap, upgradeable</td><td>~770&nbsp;g nose module, ₹8–11&nbsp;L, bay reserved for future seekers</td></tr>
+  </table></div>
+
+  <h3>What we must SUBMIT (PS “Desired Deliverables” → our files)</h3>
+  <div class="grid3">
+    <div class="card"><b>1 · System architecture document</b><p class="small">108 ideas catalogued, inert common-carrier demonstrator frozen and documented.</p></div>
+    <div class="card"><b>2 · CAD model of canard actuation assembly</b><p class="small mono">cad_models/generate_pgk_155.py + cad_models/PGK_DEMO_ASSEMBLY.md (FreeCAD, inert bench model)</p></div>
+    <div class="card"><b>3 · Electronics block diagram</b><p class="small">Sensors + fuze + power + setter combined diagram.</p></div>
+    <div class="card"><b>4 · Guidance &amp; control algorithm</b><p class="small">PID + impact prediction (MPC-style), documented.</p></div>
+    <div class="card"><b>5 · Simulation demonstrating trajectory correction</b><p class="small mono">cad_models/simulate_trajectory_155.py (3DOF→6DOF, Monte Carlo CEP)</p></div>
+    <div class="card"><b>6 · Prototype / proof-of-concept</b><p class="small">3D-printed nose + bench de-spin rig + drop test plan.</p></div>
+    <div class="card"><b>7 · Performance estimation, CEP ≤ 30 m</b><p class="small">Monte Carlo histogram + report.</p></div>
+  </div>
+
+  <h3>Why judges will care (our pitch spine)</h3>
+  <div class="grid2">
+    <div class="callout red"><b>The pain:</b> unguided shell at 30&nbsp;km has CEP ~267&nbsp;m → “danger close” fire missions are impossible and ammunition is wasted by the tonne.</div>
+    <div class="callout green"><b>The logistics win:</b> killing one target takes ~301 dumb shells (18.2&nbsp;t, 959 propellant charges) vs <b>77 with our kit</b> (4.5&nbsp;t) → 74% fewer shells, 75% less weight.</div>
+    <div class="callout blue"><b>Atmanirbhar:</b> NavIC (India's own GPS) primary, YIL forging, BEL/ECIL electronics — a fully Indian supply chain.</div>
+    <div class="callout"><b>The price:</b> ₹8–11&nbsp;L per kit vs ₹60&nbsp;L–2&nbsp;Cr imported rounds (Excalibur ≈ $100k each).</div>
+  </div>
+</section>
+
+<!-- ================= 2. GUN 101 ================= -->
+<section id="gun">
+  <div class="sec-tag">Section 2</div>
+  <h2>Artillery Gun 101 — what it is, how it works</h2>
+  <p class="sec-sub">Before you can upgrade a shell, you need to understand the thing that throws it.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>What is an artillery gun (howitzer)?</h3>
+      <p>A big cannon that fires shells <b>indirectly</b> — the shell flies in a high arc (like a basketball shot) over hills and lands tens of kilometres away. The gun crew never sees the target.</p>
+      <p>Unlike a tank gun (flat, direct fire), a howitzer lobs shells at 45°+ elevation. Range comes from muzzle velocity + elevation angle, not from pointing at the target.</p>
+    </div>
+    <div class="card">
+      <h3>The kill chain — how a fire mission works</h3>
+      <div class="chain">
+        <div class="chain-step"><div class="chain-num">1</div><div class="chain-body"><b>Forward Observer</b> sees the target → radios grid coordinates + “fire for effect”.</div></div>
+        <div class="chain-step"><div class="chain-num">2</div><div class="chain-body"><b>Fire Direction Centre</b> runs the ballistic computer: range, wind, charge, angle.</div></div>
+        <div class="chain-step"><div class="chain-num">3</div><div class="chain-body"><b>Gun crew</b> sets the fuze → loads SHELL → loads PROPELLANT CHARGE → closes breech → FIRE.</div></div>
+        <div class="chain-step"><div class="chain-num">4</div><div class="chain-body"><b>Shell arcs 20–30 km</b> for ~60–90 seconds.</div></div>
+        <div class="chain-step"><div class="chain-num">5</div><div class="chain-body"><b>Fuze triggers</b> → detonation at or above the target.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Inside the gun — 0 to 800 m/s in 17 milliseconds</h3>
+  <div class="grid3">
+    <div class="card"><b>1 · Propellant ignition</b><p class="small">Primer ignites the charge (bags of nitrocellulose). Pressure spikes to ~300–400 MPa — about 3,000–4,000 atmospheres.</p></div>
+    <div class="card"><b>2 · Shot start</b><p class="small">Pressure pushes the shell; its soft copper <b>rotating band</b> is engraved by the barrel's <b>rifling</b> (spiral grooves).</p></div>
+    <div class="card"><b>3 · Spin-up</b><p class="small">Rifling (~1 turn in 20 calibers) spins the shell to ~250 rev/s. That gyroscopic spin keeps it stable — like a thrown American football.</p></div>
+    <div class="card"><b>4 · Muzzle exit</b><p class="small">A real flight article sees extreme launch acceleration. The printed exhibition model is not tested for it and must stay outside any launch path.</p></div>
+    <div class="card"><b>5 · Recoil</b><p class="small">The gun jumps back ~1 m; hydro-pneumatic cylinders absorb it and return the barrel to battery.</p></div>
+    <div class="card"><b>Scope boundary</b><p class="small">15,000 g is a future flight-article requirement, not a claim about our printed model. The exhibit uses low-voltage parts, retained components, a guard, and a documented low-speed operating envelope.</p></div>
+  </div>
+
+  <h3>The 4 guns our kit must fit (all share the STANAG 2916 fuze thread)</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Gun</th><th>Barrel</th><th>Range</th><th>Made by</th><th>Note</th></tr>
+    <tr><td><b>ATAGS</b></td><td>52 cal (~8.06 m)</td><td>~40–48 km</td><td>DRDO + Bharat Forge / Tata</td><td>India's newest; 307 ordered (₹6,900 Cr)</td></tr>
+    <tr><td><b>Dhanush</b></td><td>45 cal</td><td>~38 km</td><td>YIL / AWEIL</td><td>“Desi Bofors”</td></tr>
+    <tr><td><b>K9 Vajra-T</b></td><td>52 cal</td><td>~40+ km</td><td>L&amp;T + Hanwha (Korea)</td><td>Self-propelled, tracked</td></tr>
+    <tr><td><b>M777</b></td><td>39 cal (~6.05 m)</td><td>~24–30 km</td><td>BAE (USA)</td><td>Ultra-light 4.2 t, Chinook-liftable</td></tr>
+  </table></div>
+  <p class="small">“Caliber length” = barrel length in multiples of bore diameter: 52 cal × 155 mm ≈ 8.06 m.</p>
+</section>
+
+<!-- ================= 3. SHELL 101 ================= -->
+<section id="shell">
+  <div class="sec-tag">Section 3</div>
+  <h2>Artillery Shell 101 — anatomy + every term you need</h2>
+  <p class="sec-sub">A 155 mm high-explosive shell (M107/M795 class) weighs ~43–47 kg. <b>Our kit replaces only the fuze at the nose — everything else stays stock.</b> Hover/tap each part:</p>
+
+  <div class="shell-box">
+    <svg viewBox="0 0 940 300" width="100%" role="img" aria-label="155mm shell anatomy">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#93a4c3"/></marker>
+      </defs>
+      <!-- labels top -->
+      <g font-family="monospace" font-size="13" fill="#93a4c3">
+        <text x="838" y="40" text-anchor="middle" fill="#fbbf24" font-weight="bold">FUZE — our PGK goes HERE</text>
+        <line x1="838" y1="48" x2="838" y2="118" stroke="#fbbf24" stroke-width="1.4" marker-end="url(#arr)"/>
+        <text x="688" y="70" text-anchor="middle">OGIVE</text>
+        <line x1="688" y1="78" x2="700" y2="122" stroke="#93a4c3" stroke-width="1" marker-end="url(#arr)"/>
+        <text x="556" y="40" text-anchor="middle">BOURRELET</text>
+        <line x1="556" y1="48" x2="556" y2="108" stroke="#93a4c3" stroke-width="1" marker-end="url(#arr)"/>
+      </g>
+      <!-- labels bottom -->
+      <g font-family="monospace" font-size="13" fill="#93a4c3">
+        <text x="360" y="262" text-anchor="middle">BODY — ~10 kg HE fill</text>
+        <line x1="360" y1="254" x2="360" y2="196" stroke="#93a4c3" stroke-width="1" marker-end="url(#arr)"/>
+        <text x="205" y="288" text-anchor="middle" fill="#fb923c">ROTATING BAND</text>
+        <line x1="205" y1="280" x2="205" y2="196" stroke="#fb923c" stroke-width="1" marker-end="url(#arr)"/>
+        <text x="128" y="240" text-anchor="middle">BOAT TAIL</text>
+        <line x1="128" y1="248" x2="140" y2="196" stroke="#93a4c3" stroke-width="1" marker-end="url(#arr)" transform="rotate(180 134 222)"/>
+        <line x1="128" y1="232" x2="142" y2="198" stroke="#93a4c3" stroke-width="1" marker-end="url(#arr)"/>
+        <text x="92" y="288" text-anchor="middle">BASE</text>
+        <line x1="92" y1="280" x2="96" y2="200" stroke="#93a4c3" stroke-width="1" marker-end="url(#arr)"/>
+      </g>
+      <!-- BASE -->
+      <g class="shell-part" data-n="Base" data-d="The flat back end. Special shells use base-bleed (gas generator that cuts base drag) or rocket-assist here. Ours stays stock.">
+        <rect x="86" y="128" width="12" height="74" rx="2" fill="#33415e" stroke="#4a5b80"/>
+      </g>
+      <!-- BOAT TAIL -->
+      <g class="shell-part" data-n="Boat tail" data-d="Tapered tail cone. Cuts the vacuum wake behind the shell, reducing base drag and adding range.">
+        <path d="M98,128 L172,112 L172,218 L98,202 Z" fill="#3b4a6b" stroke="#4a5b80"/>
+      </g>
+      <!-- BODY -->
+      <g class="shell-part" data-n="Body (HE fill)" data-d="Forged steel case filled with ~10 kg of TNT / Composition-B. This is the part YIL already manufactures by the lakh — we never touch it.">
+        <rect x="172" y="112" width="368" height="106" fill="#2c3a5c" stroke="#4a5b80"/>
+        <text x="356" y="170" text-anchor="middle" font-family="monospace" font-size="14" fill="#64748b">43.2 kg forged steel + explosive</text>
+      </g>
+      <!-- ROTATING BAND -->
+      <g class="shell-part" data-n="Rotating band" data-d="Soft copper band. Seals the propellant gas behind the shell AND gets engraved by the rifling — that's what spins the shell to ~250 rev/s.">
+        <rect x="196" y="106" width="22" height="118" rx="3" fill="#b0662a" stroke="#fb923c" stroke-width="1.5"/>
+      </g>
+      <!-- BOURRELET -->
+      <g class="shell-part" data-n="Bourrelet" data-d="Machined bearing surface that rides the barrel wall (front support). Together with the rotating band it keeps the shell centred in the bore.">
+        <rect x="540" y="106" width="18" height="118" rx="3" fill="#4a5b80" stroke="#93a4c3"/>
+      </g>
+      <!-- OGIVE -->
+      <g class="shell-part" data-n="Ogive" data-d="The curved aerodynamic nose cone (pronounced oh-jive). Its shape decides supersonic drag.">
+        <path d="M558,112 C 640,112 720,124 778,134 L778,196 C720,206 640,218 558,218 Z" fill="#354468" stroke="#4a5b80"/>
+      </g>
+      <!-- FUZE / PGK -->
+      <g class="shell-part" data-n="DISPLAY MODULE" data-d="The active exhibit shows a nonfunctional common-carrier display module on a slip-fit adapter. It contains no fuze, initiator, arming, or firing path.">
+        <rect x="778" y="134" width="86" height="62" rx="6" fill="#7c5a12" stroke="#fbbf24" stroke-width="2"/>
+        <path d="M864,140 L906,155 L906,175 L864,190 Z" fill="#7c5a12" stroke="#fbbf24" stroke-width="2"/>
+        <text x="821" y="170" text-anchor="middle" font-family="monospace" font-size="13" fill="#fbbf24" font-weight="bold">PGK</text>
+      </g>
+      <!-- thread marker -->
+      <line x1="778" y1="126" x2="778" y2="204" stroke="#fbbf24" stroke-dasharray="4 4" stroke-width="1.4"/>
+      <text x="770" y="216" text-anchor="end" font-family="monospace" font-size="11" fill="#fbbf24">BENCH-ONLY ADAPTER ▸</text>
+    </svg>
+    <div id="shell-info"><b>Hover a part</b> — every part except the nose stays exactly as YIL makes it today.</div>
+  </div>
+
+  <h3>The glossary — memorize these, you'll hear them in reviews</h3>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="g1">Ballistics terms</button>
+    <button class="tab-btn" data-tab="g2">Fuze terms</button>
+    <button class="tab-btn" data-tab="g3">Our project terms</button>
+  </div>
+  <div class="tab-panel active" id="g1">
+    <dl class="gloss">
+      <dt>CEP (Circular Error Probable)</dt><dd>Radius around the target inside which 50% of shells land. <b>Smaller = better.</b> Unguided ≈267 m at 30 km → our goal ≤30 m.</dd>
+      <dt>Muzzle velocity (v₀)</dt><dd>Speed leaving the barrel: 684 m/s (charge M3A1) up to ~827 m/s (max charge).</dd>
+      <dt>Ballistic trajectory</dt><dd>Unpowered arc under gravity + drag. Once it leaves the barrel, a dumb shell cannot change anything.</dd>
+      <dt>Apogee</dt><dd>Highest point of the arc (~10–12 km at max range).</dd>
+      <dt>Quadrant Elevation (QE)</dt><dd>Gun barrel angle; ~45° gives max range.</dd>
+      <dt>Drag</dt><dd>Air resistance, F = ½ρv²C<sub>d</sub>A. Eats about half the ideal range.</dd>
+      <dt>Spin stabilization</dt><dd>Rifling spins the shell ~250 rev/s; gyroscopic stiffness keeps the nose forward.</dd>
+      <dt>Magnus effect / Coriolis</dt><dd>Small aerodynamic + Earth-rotation forces pushing the shell sideways 50–150 m at long range — part of why dumb shells miss.</dd>
+      <dt>Probable Error (PEr / PEd)</dt><dd>Army way of saying scatter in range / deflection.</dd>
+    </dl>
+  </div>
+  <div class="tab-panel" id="g2">
+    <dl class="gloss">
+      <dt>Fuze</dt><dd>The “nose computer” that decides WHEN the shell detonates. (Not “fuse” — a fuze is a munition device.)</dd>
+      <dt>PD (Point Detonating)</dt><dd>Explodes on contact. <i>Superquick</i> &lt;250 µs; <i>Delay</i> 0–60 ms (digs into bunkers first).</dd>
+      <dt>Proximity (VT) mode</dt><dd>Radar measures height, explodes in air 6/12/18 m above ground (HOB = Height Of Burst) — lethal against troops in trenches.</dd>
+      <dt>Time mode</dt><dd>Explodes at a set time (3.0–199.9 s) — used for cargo / smoke / illumination shells.</dd>
+      <dt>S&amp;A (Safe &amp; Arm)</dt><dd>Lock that keeps the fuze SAFE in storage and ARMS only after real launch signatures: setback ≥850 g + spin ≥2900 rpm + distance ≥100 m (STANAG 4187).</dd>
+      <dt>Setback</dt><dd>The massive backward acceleration at firing — used by the fuze as “proof we were actually fired”.</dd>
+      <dt>EPIAFS / inductive setter</dt><dd>Wireless (no pins) coil that programs the fuze inside the breech: target coords, mode, GPS keys.</dd>
+      <dt>MOFA</dt><dd>Multi-Option Fuze for Artillery — the existing Indian fuze family (ECIL/BEL).</dd>
+    </dl>
+  </div>
+  <div class="tab-panel" id="g3">
+    <dl class="gloss">
+      <dt>PGK (Precision Guidance Kit)</dt><dd>A fuze-shaped module with GPS + canards that replaces the standard fuze and steers the shell. <b>Our whole project.</b></dd>
+      <dt>Canards</dt><dd>Small wings near the nose (“duck” in French). Ours are fixed at a tilt; rolling the nose aims their lift.</dd>
+      <dt>Common carrier / de-spin</dt><dd>In our inert model, one inner carrier holds all four fixed canards and rides on a bearing pair so it can rotate relative to the outer shell. A low-voltage torque emulator represents carrier-level control.</dd>
+      <dt>GNC</dt><dd>Guidance (where should I go), Navigation (where am I), Control (move canards to get there).</dd>
+      <dt>IMU</dt><dd>Inertial Measurement Unit — accelerometers + gyroscopes.</dd>
+      <dt>GNSS / NavIC / GPS</dt><dd>Satellite navigation. NavIC = India's own constellation (L5 band) — sovereign, can't be switched off by anyone else.</dd>
+      <dt>FMCW radar</dt><dd>Frequency-Modulated Continuous Wave — tiny radar that measures distance precisely (our proximity fuze).</dd>
+      <dt>SWaP-C</dt><dd>Size, Weight, Power and Cost — the four things we keep LOW.</dd>
+      <dt>TRL</dt><dd>Technology Readiness Level (1 = paper idea, 9 = in service). Real PGK = TRL 9.</dd>
+      <dt>STANAG 2916</dt><dd>NATO standard for fuze threads/wells — screw our kit in and it fits every 155 mm shell &amp; gun.</dd>
+      <dt>6DOF</dt><dd>Six Degrees Of Freedom simulation (3 position + 3 rotation) — how we prove CEP without firing.</dd>
+      <dt>Monte Carlo</dt><dd>Run the sim 1000× with random wind/sensor errors → get the CEP histogram.</dd>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 4. PHYSICS ================= -->
+<section id="physics">
+  <div class="sec-tag">Section 4</div>
+  <h2>The physics of a shell — formulas + one worked example</h2>
+  <p class="sec-sub">You don't need to derive these — you need to <b>quote</b> them in reviews. All numbers use our sim's parameters (<span class="mono">cad_models/simulate_trajectory_155.py</span>): M107 shell, m = 43.2 kg, d = 0.155 m, v₀ = 684 m/s, QE = 45°.</p>
+
+  <div class="phys">
+    <h3><span class="num">4.1</span> Inside the barrel — how hard is the launch?</h3>
+<pre>Average acceleration:   a = v² / (2L)        <span class="cm">(v² = u² + 2as, u = 0)</span>
+  a = 684² / (2 × 6.045) = 467,856 / 12.09 ≈ 38,700 m/s² ≈ <b>3,950 g average</b>
+  Peak (pressure spike ≈ 2.5–4× average) → <b>10,000–15,000 g</b>  ← future flight-article reference
+
+Time inside barrel:     t = 2L / v = 12.09 / 684 ≈ 17.7 ms
+
+Spin from rifling:      n = v / (twist × d) = 684 / (20 × 0.155) ≈ 220 rev/s ≈ 13,000 rpm
+
+Kinetic energy:         KE = ½mv² = ½ × 43.2 × 684² ≈ <b>10.1 MJ</b>
+  <span class="cm">(≈ a 1.5-tonne car at 420 km/h — in something the size of a fire extinguisher)</span></pre>
+    <div class="why"><b>For this exhibit:</b> the hard requirement is safe low-speed operation—retained parts, guarded rotation, soft edges, and a nonfunctional adapter. Do not claim launch survivability.</div>
+  </div>
+
+  <div class="phys">
+    <h3><span class="num">4.2</span> In flight — how far does it go?</h3>
+<pre>Ideal (vacuum) range:   R = v₀² · sin(2θ) / g
+  R = 684² × sin(90°) / 9.81 = 467,856 / 9.81 ≈ <b>47.7 km</b>   ← physics-class answer
+
+Real range with drag:   ≈ <b>24 km</b> (drag eats ~half!)
+Drag force:             F = ½ ρ v² C<sub>d</sub> A
+  at muzzle: ½ × 1.225 × 684² × 0.15 × 0.0189 ≈ 810 N → ~1.9 g of deceleration
+  <span class="cm">(Cd spikes to ~0.31 near Mach 1 — the transonic region is the worst)</span>
+
+Apogee:                 h = v₀² sin²θ / 2g ≈ 11.9 km
+Time of flight:         t = 2 v₀ sinθ / g ≈ 99 s (vacuum) / ~70–80 s real</pre>
+    <div class="why"><b>Why this matters:</b> the shell spends ~80 s in the air. Every aiming error has 80 seconds to grow — which is exactly why dumb shells miss (next block).</div>
+  </div>
+
+  <div class="phys">
+    <h3><span class="num">4.3</span> Why do dumb shells MISS? (the whole reason we exist)</h3>
+    <p>The gun is aimed by calculation, but reality adds errors:</p>
+    <ul style="margin:8px 0 8px 22px;color:#c4d0e5;font-size:14.5px">
+      <li>Muzzle velocity varies shot-to-shot (±1–2 m/s from propellant temperature)</li>
+      <li>Wind aloft is unknown (the shell flies 12 km high, through jet stream)</li>
+      <li>Coriolis (Earth rotation) &amp; Magnus (spin × airflow) forces</li>
+      <li>Manufacturing tolerances (mass, asymmetry)</li>
+    </ul>
+    <div class="why"><b>Each error grows with time of flight → CEP ≈ 267 m at 30 km.</b> To reliably kill one target you must fire <b>~301 shells = 18.2 tonnes + 959 charges</b>. With our kit: 77 shells, 4.5 t.</div>
+  </div>
+
+  <div class="phys">
+    <h3><span class="num">4.4</span> How 4 tiny canards fix 267 m of error</h3>
+<pre>Canard lift:            L = ½ ρ v² · (C<sub>L</sub>·S)
+  our canard lift-area: C<sub>L</sub>·S ≈ 0.005 m²  (from sim)
+  at q ≈ 287 kPa near muzzle → L ≈ 1.4 kN available → we cap at 3 g
+
+Lateral correction:     Δx = ½ a t²
+  with a = 3 g = 29.4 m/s² held for just 20 s of guided flight:
+  Δx = ½ × 29.4 × 20² ≈ <b>5.9 km of correction authority</b></pre>
+    <div class="why"><b>We have ~6 km of steering authority against a 267 m problem — 20× margin.</b> That is the mathematical reason a PGK works with just 4 fixed canards and one brake.</div>
+  </div>
+
+  <div class="phys">
+    <h3><span class="num">4.5</span> How steering with FIXED canards works (the clever bit)</h3>
+    <ul style="margin:8px 0 8px 22px;color:#c4d0e5;font-size:14.5px">
+      <li><b>Our active demo has one common carrier</b>: all four illustrative canards are fixed to the same inner part and move together.</li>
+      <li>The front/rear display bearings let the carrier rotate relative to the printed outer shell, making the de-spin relationship visible without independent fin hinges.</li>
+      <li>A shell-side rotor and carrier-side stator feed a rectifier/supercapacitor/LED display; a single low-voltage torque emulator represents carrier-level control.</li>
+      <li>This is a guarded, low-speed, inert demonstration of relative rotation only—not a flight-control or launch-survivability test.</li>
+    </ul>
+  </div>
+
+  <div class="phys">
+    <h3><span class="num">4.6</span> CEP math (what we report to judges)</h3>
+<pre>Fire N = 1000 sims with randomized errors (Monte Carlo).
+rᵢ = distance of impact i from target.
+Sort rᵢ, take the median → CEP = r₅₀₀  (radius containing 50%).
+
+Target: CEP ≤ 30 m.   Stretch: 10 m  <span class="cm">(real PGK achieved 10 m median in 2015 tests).</span></pre>
+  </div>
+
+  <!-- interactive calculator -->
+  <div class="widget">
+    <h3 style="margin-top:0">Try it yourself — ballistic calculator</h3>
+    <p class="small">Drag the sliders. Watch how drag-free range, apogee and flight time change — and remember the real shell loses ~half the range to drag.</p>
+    <label>Muzzle velocity v₀ = <b id="v0v">684</b> m/s</label>
+    <input type="range" id="v0" min="600" max="830" value="684">
+    <label>Elevation θ = <b id="thv">45</b>°</label>
+    <input type="range" id="th" min="25" max="65" value="45">
+    <div class="calc-out">
+      <div class="stat"><div class="v" id="oR">47.7 km</div><div class="k">Vacuum range</div></div>
+      <div class="stat"><div class="v" id="oH">11.9 km</div><div class="k">Apogee</div></div>
+      <div class="stat"><div class="v" id="oT">99 s</div><div class="k">Time of flight (vac)</div></div>
+      <div class="stat"><div class="v" id="oKE">10.1 MJ</div><div class="k">Muzzle energy</div></div>
+      <div class="stat"><div class="v" id="oG">3,950 g</div><div class="k">Avg launch accel</div></div>
+    </div>
+  </div>
+
+  <!-- CEP visual -->
+  <div class="widget">
+    <h3 style="margin-top:0">See the difference — 300 shells, same gun, same target</h3>
+    <p class="small">Each dot is one simulated shell impact. Left as-is (CEP 267 m), then with our kit on the nose (CEP 30 m). Same scale.</p>
+    <canvas id="cep" width="560" height="560"></canvas>
+    <div class="cep-btns">
+      <button class="tab-btn" id="btnDumb">☄ Dumb shells — CEP 267 m</button>
+      <button class="tab-btn" id="btnPgK">🎯 With our PGK — CEP 30 m</button>
+    </div>
+    <p class="small" style="text-align:center" id="cepNote">The circle = CEP radius (50% of impacts inside). Rings at 1×, 2×, 3× CEP.</p>
+  </div>
+</section>
+
+<!-- ================= 5. SOLUTION & ROLES ================= -->
+<section id="solution">
+  <div class="sec-tag">Section 5</div>
+  <h2>Our solution, subsystem by subsystem — and who owns what</h2>
+  <p class="sec-sub">Active physical baseline = <b>inert common-carrier PGK demonstrator</b>: one carrier, four fixed canards, front/rear display bearings, shell/carrier alternator concept, and one low-voltage torque emulator. It is not an exact production teardown or launch article.</p>
+
+  <div class="shell-box" style="padding:22px">
+<pre style="margin:0;border:none;background:transparent;padding:0">┌──────────────────── ACTIVE INERT PGK DEMONSTRATOR ──────────────────────────┐
+│ <span style="color:#fbbf24">Printed radome + antenna placeholder</span> → <span style="color:#4ade80">Display controller + angle sensor</span> │
+│ <span style="color:#818cf8">Rotor = shell side / stator = carrier side</span> → <span style="color:#60a5fa">supercap + LEDs</span> │
+│ <span style="color:#f472b6">Common carrier</span> → <span style="color:#60a5fa">four fixed canards that move together</span> │
+│ <span style="color:#fb923c">Front + rear display bearings</span> · <span style="color:#fb923c">one low-voltage torque emulator</span> │
+│ <span style="color:#94a3b8">Inert status slider; no initiator, booster, firing path, or live interface</span> │
+└───────────────────────────────────────────────────────────────────────────────┘
+                     │ nonfunctional slip-fit display adapter
+              ┌──────▼───────┐
+              │ PRINTED 155mm│  ← lightweight, solid, guarded bench mock-up
+              │ SHELL MODEL  │
+              └──────────────┘</pre>
+  </div>
+
+  <h3>The 6 roles — what you research → build → submit</h3>
+  <div class="grid3">
+    <div class="role" style="--rc:#fbbf24">
+      <h3>1 · The Planner</h3><div class="who">jagathsrujan — A_system + H_mfg</div>
+      <ul>
+        <li data-k="R"><b>Research:</b> existing kits (M1156, Excalibur, Silver Bullet), cost methods, STANAG envelope limits</li>
+        <li data-k="W"><b>Work:</b> freeze the inert common-carrier baseline, own interfaces between display subsystems, and maintain the master CAD</li>
+        <li data-k="S"><b>Submit:</b> system architecture doc + cost sheet + final pitch PPT + 74% logistics proof</li>
+      </ul>
+    </div>
+    <div class="role" style="--rc:#4ade80">
+      <h3>3 · The Brain</h3><div class="who">Anvita Pranjal — D_sensors + C_gnc</div>
+      <ul>
+        <li data-k="R"><b>Research:</b> NavIC/GPS receiver options, gun-rated IMU/baro/mag, Kalman filtering, GPS-denied fallback</li>
+        <li data-k="W"><b>Work:</b> display controller PCB, relative-angle sensing, and LED/status logic for the inert model</li>
+        <li data-k="S"><b>Submit:</b> live angle/power display + electronics block diagram; keep flight GNC as reference/simulation only</li>
+      </ul>
+    </div>
+    <div class="role" style="--rc:#f472b6">
+      <h3>4 · The Fuze</h3><div class="who">Krupa Nalige — E_fuze + J_integration</div>
+      <ul>
+        <li data-k="R"><b>Research:</b> public fuze concepts and how to communicate the inert exhibition boundary</li>
+        <li data-k="W"><b>Work:</b> clearly labelled mock state machine and optional phone UI; no radar, initiator, arming, or fuze hardware</li>
+        <li data-k="S"><b>Submit:</b> display block diagram + mock-programming screen demo</li>
+      </ul>
+    </div>
+    <div class="role" style="--rc:#818cf8">
+      <h3>5 · The Body</h3><div class="who">Naman — G_structure + F_power</div>
+      <ul>
+        <li data-k="R"><b>Research:</b> forging materials, polymer potting, bearing shielding, super-caps, spin alternators</li>
+        <li data-k="W"><b>Work:</b> lightweight printed housing, display bearing pair, shell/carrier rotor-stator, and guarded low-speed bench setup</li>
+        <li data-k="S"><b>Submit:</b> printed nose model + safe relative-angle/power LED demonstration</li>
+      </ul>
+    </div>
+    <div class="role" style="--rc:#fb923c">
+      <h3>6 · The Tester</h3><div class="who">Member 5 — I_test</div>
+      <ul>
+        <li data-k="R"><b>Research:</b> safe bench methods, relative-angle sensing, LED/power measurement, and simulation reporting boundaries</li>
+        <li data-k="W"><b>Work:</b> define the guarded low-speed test sequence, record observations, and keep simulation results separate from the printed model</li>
+        <li data-k="S"><b>Submit:</b> exhibition test plan + relative-angle/power observations + final demo video</li>
+      </ul>
+    </div>
+    <div class="role open-role" style="--rc:#60a5fa">
+      <h3>2 · The Steering <span class="open-pill">OPEN — 6th teammate</span></h3><div class="who">B_aero — aerodynamics + canard actuation</div>
+      <ul>
+        <li data-k="R"><b>Research:</b> canard aerodynamics, de-spin physics, CFD (Fluent/ICEM or open-source), real PGK canard patents</li>
+        <li data-k="W"><b>Work:</b> canard geometry CAD, CFD lift/moment database vs Mach &amp; AoA, steering-authority analysis</li>
+        <li data-k="S"><b>Submit:</b> canard CAD + CFD results + “miss distance vs guidance start time” graph</li>
+      </ul>
+      <p class="small" style="margin-top:10px">Best fit: aero/mech with CFD interest, or controls. This is the seat we're hiring for — <b>if that's you, tell jagathsrujan.</b></p>
+    </div>
+  </div>
+
+  <div class="callout blue" style="margin-top:18px"><b>Dependencies — talk to each other:</b> Body (5) must give power before Brain (3) works · Steering (2) tells Brain (3) which way is up · Brain (3) tells Fuze (4) when/where to burst · Tester (6) checks everyone's numbers → Planner (1) puts it all in the deck.</div>
+</section>
+
+<!-- ================= 6. REAL PGKS ================= -->
+<section id="pgks">
+  <div class="sec-tag">Section 6</div>
+  <h2>Already-built PGKs — proof it works, and what we beat on cost</h2>
+  <p class="sec-sub">Study these as public references. The active artifact is a safe, inert architecture demonstrator; it is not an exact production teardown and does not claim the reference system’s performance.</p>
+
+  <div class="tbl-wrap"><table>
+    <tr><th>Kit</th><th>Country</th><th>How it steers</th><th>CEP</th><th>Cost</th><th>Lesson for us</th></tr>
+    <tr><td><b>M1156 PGK</b></td><td>USA (ATK → Northrop)</td><td>Public reference for fixed canards + controlled relative rotation</td><td>Public benchmark only</td><td>Public reference only</td><td>Study the architecture; do not claim an exact teardown</td></tr>
+    <tr><td><b>M982 Excalibur</b></td><td>USA / Sweden</td><td>Full new shell, glide + fins, GPS/INS</td><td>&lt;4–6 m</td><td>~$100k (₹85 L+)</td><td>The gold standard we undercut ~8× on price</td></tr>
+    <tr><td><b>Elbit Silver Bullet</b></td><td>Israel</td><td>Fuze-replacement kit, GPS</td><td>&lt;20 m class</td><td>~$20k class</td><td>Direct competitor concept</td></tr>
+    <tr><td><b>KNDS/Junghans FOX, DM84</b></td><td>Germany</td><td>Course-correcting fuze</td><td>~10–20 m</td><td>—</td><td>FMCW proximity heritage (our fuze side)</td></tr>
+    <tr><td><b>Aselsan ASAF / MOFA</b></td><td>Türkiye</td><td>Multi-mode fuze</td><td>—</td><td>—</td><td>Multi-mode fuze reference</td></tr>
+    <tr><td><b>ECIL M85P13 / BEL M180</b></td><td><b>India</b></td><td>Proximity fuze (no guidance)</td><td>—</td><td>fielded 2.2 M+</td><td>Indian electronics path (BEL/ECIL supply chain)</td></tr>
+    <tr><td><b>IIT Madras + MIL kit</b></td><td><b>India</b></td><td>Research guidance kit</td><td>10 m CEP claimed</td><td>research</td><td>Proof India can do GNC; DRDO guided-artillery program backs this</td></tr>
+    <tr><td><b>L Shang student rocket</b></td><td>China (student!)</td><td>4 servos + canards, ADRC + EKF</td><td>recovered vertically</td><td>&lt;$200 BOM</td><td>A student did CAD→CFD→PCB→GNC→7 flights in 30 days. 70% of his toolchain transfers to us</td></tr>
+  </table></div>
+
+  <h3 id="videos">Watch these BEFORE our first meeting (~45 min total)</h3>
+  <div class="vid-grid">
+    <div class="vid"><div class="thumb" data-yt="Ebzh12PR0-U"><img loading="lazy" src="https://i.ytimg.com/vi/Ebzh12PR0-U/hqdefault.jpg" alt="PGK Overview ATK"><div class="play"><span>▶</span></div></div><div class="cap"><b>1 · PGK Overview (ATK)</b>Public architecture reference — canards + controlled relative rotation. <b>Use it to understand the model; it is not an exact teardown.</b></div></div>
+    <div class="vid"><div class="thumb" data-yt="nppX02X_vVQ"><img loading="lazy" src="https://i.ytimg.com/vi/nppX02X_vVQ/hqdefault.jpg" alt="Precision Guidance Kit Northrop"><div class="play"><span>▶</span></div></div><div class="cap"><b>2 · Precision Guidance Kit (Northrop Grumman)</b>Official product overview.</div></div>
+    <div class="vid"><div class="thumb" data-yt="JNgslxFyOv0"><img loading="lazy" src="https://i.ytimg.com/vi/JNgslxFyOv0/hqdefault.jpg" alt="M1156 PGK"><div class="play"><span>▶</span></div></div><div class="cap"><b>3 · M1156 PGK</b>The kit in service context.</div></div>
+    <div class="vid"><div class="thumb" data-yt="tlDhdhbIN7g"><img loading="lazy" src="https://i.ytimg.com/vi/tlDhdhbIN7g/hqdefault.jpg" alt="PGK accuracy test"><div class="play"><span>▶</span></div></div><div class="cap"><b>4 · How accurate can a 155 mm shell get — PGK test</b>Live-fire accuracy demonstration.</div></div>
+    <div class="vid"><div class="thumb" data-yt="0VPrQNUC25A"><img loading="lazy" src="https://i.ytimg.com/vi/0VPrQNUC25A/hqdefault.jpg" alt="Excalibur 70km"><div class="play"><span>▶</span></div></div><div class="cap"><b>5 · M982 Excalibur — precision hit at 70 km</b>What a ₹85 L round can do.</div></div>
+    <div class="vid"><div class="thumb" data-yt="iJGknFaT-Hw"><img loading="lazy" src="https://i.ytimg.com/vi/iJGknFaT-Hw/hqdefault.jpg" alt="Excalibur combat Afghanistan"><div class="play"><span>▶</span></div></div><div class="cap"><b>6 · M982 Excalibur in combat (Afghanistan)</b>Why precision matters in the real world.</div></div>
+  </div>
+  <div class="callout" style="margin-top:16px"><b>7 · L Shang's canard rocket (23 min, student-built):</b> a single student did CAD → CFD → PCB → ADRC control → Kalman filter → 7 flight tests in 30 days with &lt;$200 of parts. We did a frame-by-frame teardown — see <span class="mono">SIH26098_LShang_Video_Teardown_Gap_Analysis.md</span> in the repo. If one student can do that, six of us can do this.</div>
+</section>
+
+<!-- ================= 7. PLAN ================= -->
+<section id="plan">
+  <div class="sec-tag">Section 7</div>
+  <h2>How we go from today → 20 September</h2>
+  <p class="sec-sub">~10 h/week per person for 3.5 weeks: daily 1–2 h research entries + one weekend build session per week.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>The daily loop (everyone, ~1–2 h)</h3>
+      <div class="chain">
+        <div class="chain-step"><div class="chain-num">1</div><div class="chain-body"><b>git pull</b> — see what teammates did; check <span class="mono">SIH26098_LIVEBOARD.md</span></div></div>
+        <div class="chain-step"><div class="chain-num">2</div><div class="chain-body"><b>Research your category</b> — real sources only: datasheets, patents, papers</div></div>
+        <div class="chain-step"><div class="chain-num">3</div><div class="chain-body"><b>Write entry</b> — <span class="mono">research/&lt;your_category&gt;/entry_YYYYMMDD_&lt;topic&gt;.md</span> from the template</div></div>
+        <div class="chain-step"><div class="chain-num">4</div><div class="chain-body"><b>Fill the 4 mandatory fields</b> — Source URL + TRL + Cost (₹) + Indian Path (YIL/BEL/ARDE/ISRO/MIL)</div></div>
+        <div class="chain-step"><div class="chain-num">5</div><div class="chain-body"><b>git add · commit · push</b> — GitHub Action auto-updates the LIVEBOARD</div></div>
+      </div>
+      <div class="callout red" style="margin-bottom:0"><b>Hard rules:</b> No URL = entry rejected · Never invent sources · Pull before you push · Conflicts → GitHub Issues or team chat.</div>
+    </div>
+    <div class="card">
+      <h3>3-week battle plan</h3>
+      <div class="tl">
+        <div class="tl-item"><div class="wk">W0 · Aug 26–31 — ONBOARD</div>Read the briefing + README, watch the 7 videos, clone the repo, accept the GitHub invite, push your welcome entry. <b>6th member (Steering) joins.</b></div>
+        <div class="tl-item"><div class="wk">W1 · Sep 1–7 — RESEARCH &amp; FREEZE</div>Each category has 3+ sourced entries. <b>Architecture freeze review (Sep 6):</b> inert common-carrier baseline confirmed, display electronics mapped, CAD v1, safe test plan.</div>
+        <div class="tl-item"><div class="wk">W2 · Sep 8–14 — BUILD</div>Simulation and electronics block diagram; inert 3D-printed nose + guarded low-speed de-spin rig; relative-angle/power LED demo; steering concept notes.</div>
+        <div class="tl-item"><div class="wk">W3 · Sep 15–19 — INTEGRATE &amp; PITCH</div>Assembly cutaway, guarded rotation/power demo, clearly labelled simulation/reference slides, and 5-min pitch deck rehearsed twice. Buffer day Sep 19.</div>
+        <div class="tl-item"><div class="wk">SUBMIT · Sep 20 🎯</div>Upload. Celebrate.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 8. FAQ ================= -->
+<section id="faq">
+  <div class="sec-tag">Section 8</div>
+  <h2>New-member FAQ</h2>
+  <details open><summary>I know nothing about defence. Can I still contribute?</summary><div class="ans">Yes. This is an engineering project: wings, sensors, code, structures. Everything military you need is in Sections 2–4 of this page. Watch the 7 videos and you'll know enough.</div></details>
+  <details><summary>Are we building an actual weapon?</summary><div class="ans">No. We build <b>inert</b> demonstrators: CAD, simulation, 3D prints, bench electronics. No energetics, no explosives, ever. The PS is published by the Government of India for exactly this kind of student engineering.</div></details>
+  <details><summary>What's the single hardest exhibition risk?</summary><div class="ans">Clear mechanical separation and safe low-speed operation: the carrier must rotate visibly inside the guarded shell without loose parts, sharp edges, or a launch-compatible interface.</div></details>
+  <details><summary>What if NavIC/GPS is jammed?</summary><div class="ans">Stretch goal: an LSTM model that predicts the impact point from IMU data alone (&lt;5 m error in published research). Great “innovation” slide.</div></details>
+  <details><summary>How much time do I need to give?</summary><div class="ans">~10 h/week for 3.5 weeks. Daily 1–2 h research entries + one weekend build session per week.</div></details>
+  <details><summary>Where is everything in the repo?</summary><div class="ans">
+    <span class="mono">SIH26098_TEAM_BRIEFING.md</span> — written version of this page (start here)<br>
+    <span class="mono">README.md</span> — team map &amp; roles · <span class="mono">SIH26098_Exhaustive_Ideas_Catalog.md</span> — 108 researched ideas<br>
+    <span class="mono">ONBOARDING_PROMPT.md</span> — paste into any AI to get auto-onboarded · <span class="mono">cad_models/</span> — CAD + trajectory sim<br>
+    <span class="mono">research/&lt;category&gt;/</span> — your entries · <span class="mono">SIH26098_LIVEBOARD.md</span> — live research board
+  </div></details>
+
+  <div class="callout green" style="margin-top:24px"><b>Your first 3 tasks:</b> ① Read this page end-to-end. ② Watch video #1 (PGK Overview) and #4 (PGK test). ③ Find your role card in Section 5 and message jagathsrujan your GitHub username — you'll get the repo invite and your onboarding prompt.</div>
+</section>
+
+</div><!-- /wrap -->
+
+<footer>
+  SIH26098 · Low-Cost Precision Guidance &amp; Smart Electronic Fuze for 155 mm · Ministry of Defence / Yantra India Limited<br>
+  Team briefing generated 27 Aug 2026 · Deadline 20 Sep 2026 · Keep it honest — this is what new teammates read first.
+</footer>
+
+<a class="toplink" href="#top" id="toplink">↑</a>
+
+<script>
+/* countdown */
+(function(){
+  var end=new Date('2026-09-20T23:59:59+05:30').getTime();
+  function tick(){
+    var d=end-Date.now(); var el=document.getElementById('countdown');
+    if(d<0){el.textContent='DEADLINE PASSED';return;}
+    el.textContent='⏳ '+Math.floor(d/864e5)+'d '+Math.floor(d%864e5/36e5)+'h '+Math.floor(d%36e5/6e4)+'m left';
+  }
+  tick(); setInterval(tick,30000);
+})();
+
+/* scrollspy */
+(function(){
+  var links=[].slice.call(document.querySelectorAll('nav a.nl'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+  function spy(){
+    var y=window.scrollY+120,cur=-1;
+    secs.forEach(function(s,i){if(s&&s.offsetTop<=y)cur=i;});
+    links.forEach(function(a,i){a.classList.toggle('active',i===cur);});
+    document.getElementById('toplink').classList.toggle('show',window.scrollY>600);
+  }
+  window.addEventListener('scroll',spy,{passive:true}); spy();
+})();
+
+/* glossary tabs */
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+    b.classList.add('active'); document.getElementById(b.dataset.tab).classList.add('active');
+  });
+});
+
+/* shell anatomy hover */
+(function(){
+  var info=document.getElementById('shell-info');
+  document.querySelectorAll('.shell-part').forEach(function(g){
+    function show(){info.innerHTML='<b>'+g.dataset.n+':</b> '+g.dataset.d;}
+    g.addEventListener('mouseenter',show); g.addEventListener('click',show);
+  });
+})();
+
+/* ballistic calculator */
+(function(){
+  var v0=document.getElementById('v0'),th=document.getElementById('th');
+  function f(x,d){return x.toLocaleString('en-IN',{maximumFractionDigits:d});}
+  function calc(){
+    var v=+v0.value,t=+th.value*Math.PI/180,g=9.81,m=43.2,L=6.045;
+    document.getElementById('v0v').textContent=v;
+    document.getElementById('thv').textContent=th.value;
+    document.getElementById('oR').textContent=f(v*v*Math.sin(2*t)/g/1000,1)+' km';
+    document.getElementById('oH').textContent=f(v*v*Math.sin(t)*Math.sin(t)/(2*g)/1000,1)+' km';
+    document.getElementById('oT').textContent=f(2*v*Math.sin(t)/g,0)+' s';
+    document.getElementById('oKE').textContent=f(0.5*m*v*v/1e6,1)+' MJ';
+    document.getElementById('oG').textContent=f(v*v/(2*L)/g,0)+' g';
+  }
+  v0.addEventListener('input',calc); th.addEventListener('input',calc); calc();
+})();
+
+/* CEP scatter */
+(function(){
+  var cv=document.getElementById('cep'),ctx=cv.getContext('2d'),S=cv.width,C=S/2;
+  var pts=[],cepM=267,anim=null,mode='';
+  function gauss(){var u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+  function draw(points){
+    ctx.clearRect(0,0,S,S);
+    ctx.strokeStyle='#22304d';ctx.lineWidth=1;
+    var scale=C/(3.2*cepM);
+    [1,2,3].forEach(function(r){
+      ctx.beginPath();ctx.arc(C,C,r*cepM*scale,0,7);ctx.stroke();
+      ctx.fillStyle='#44557a';ctx.font='11px monospace';
+      ctx.fillText(r+'×',C+r*cepM*scale+4,C-4);
+    });
+    ctx.strokeStyle=mode==='pgk'?'#fbbf24':'#f87171';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(C,C,cepM*scale,0,7);ctx.stroke();
+    /* crosshair */
+    ctx.strokeStyle='#4ade80';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(C-14,C);ctx.lineTo(C+14,C);ctx.moveTo(C,C-14);ctx.lineTo(C,C+14);ctx.stroke();
+    /* points */
+    points.forEach(function(p){
+      ctx.fillStyle=p.in?'rgba(74,222,128,.85)':'rgba(148,163,184,.55)';
+      ctx.beginPath();ctx.arc(C+p.x*scale,C+p.y*scale,2.2,0,7);ctx.fill();
+    });
+    ctx.fillStyle='#e8eef9';ctx.font='bold 15px monospace';
+    ctx.fillText('CEP = '+cepM+' m   ·   impacts shown: '+points.length+'/300',16,26);
+  }
+  function run(m){
+    mode=m; cepM=m==='pgk'?30:267; pts=[];
+    var sigma=cepM/1.1774,all=[];
+    for(var i=0;i<300;i++){var x=gauss()*sigma,y=gauss()*sigma;all.push({x:x,y:y,in:Math.hypot(x,y)<=cepM});}
+    if(anim)clearInterval(anim);
+    var i2=0;
+    anim=setInterval(function(){
+      pts.push(all[i2]);i2++;
+      draw(pts);
+      if(i2>=all.length)clearInterval(anim);
+    },18);
+    document.getElementById('cepNote').innerHTML = m==='pgk'
+      ? '<b style="color:#fbbf24">With our kit:</b> half the shells land inside 30 m — “danger close” missions become possible.'
+      : '<b style="color:#f87171">Stock shell:</b> half the shells land inside 267 m — you cannot fire near friendly troops.';
+  }
+  document.getElementById('btnDumb').addEventListener('click',function(){run('dumb');});
+  document.getElementById('btnPgK').addEventListener('click',function(){run('pgk');});
+  run('dumb');
+})();
+
+/* youtube lite embed */
+document.querySelectorAll('.vid .thumb').forEach(function(t){
+  t.addEventListener('click',function(){
+    var f=document.createElement('iframe');
+    f.src='https://www.youtube-nocookie.com/embed/'+t.dataset.yt+'?autoplay=1&rel=0';
+    f.allow='accelerometer; autoplay; encrypted-media; picture-in-picture';f.allowFullscreen=true;
+    t.replaceWith(f);
+  });
+});
+</script>
+</body>
+</html>

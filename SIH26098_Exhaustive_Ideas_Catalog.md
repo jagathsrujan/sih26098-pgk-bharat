@@ -33,7 +33,7 @@ All websearches executed 2026-08-24 via `exa.ai/mcp` deep mode (see chat history
 
 | # | Idea | Description | Pros | Cons | TRL | Cost (per kit) | Indian Path |
 |---|---|---|---|---|---|---|---|
-| A1 | **PGK-Clone Screw-In Fuze (Baseline Winner)** | De-spun nose, 4 fixed canted canards (2 spin +2 steering), alternator brake steering. No servo, 1 moving part (bearing). Screws into standard fuze well. | Proven 30m→10m, 20yr no-battery, $13.5k, 97% reliability | Limited authority, cannot extend range | 9 | ₹8-11L | YIL Ambajhari forging + ECIL proximity module |
+| A1 | **PGK Public-Architecture Demonstrator (Active Baseline)** | One common bearing-isolated carrier holds 4 fixed illustrative canards; shell-side rotor/carrier-side stator shows the alternator path; one low-voltage torque emulator demonstrates carrier-level control. The exhibition adapter is nonfunctional and slip-fit. | Clear mechanical story, simple cutaway, preserves the public PGK architecture reference | Bench model does not prove flight accuracy, launch survivability, or production compatibility | Reference architecture | Display build | Printed shell + benign low-voltage electronics |
 | A2 | **4x Proportional Servo Kit** | 4 independent servos ±15°, full 3D skid-to-turn | CEP <15m, ±30% range modulation | Servo must survive 20kG, needs slip ring, cost | 7 | ₹14-18L | Maxon EC gimbal motor inside bearing 630 |
 | A3 | **Single-Axis 2-Canard (Diehl)** | 2 canards one axis, differential/phased with roll quarter-revolution bang-bang. 1 motor + gear | Cheapest servo solution, low wiring | Slightly lower accuracy | 8 | ₹7-9L | Diehl 7267298 clone with DC micro gearmotor |
 | A4 | **Airbrake Range-Correction Only (1D TCF)** | Deployable drag plates shorten range, roll steers deflection. No lift canards. | Zero moving aero surfaces, simple | Only corrects long rounds, not short | 8 | ₹6L | Diehl/Junghans TCF 2003 |
@@ -52,7 +52,7 @@ All websearches executed 2026-08-24 via `exa.ai/mcp` deep mode (see chat history
 
 | # | Idea | Detail |
 |---|---|---|
-| B1 | **Fixed Canted Canards + Despun Nose Brake** — Spin pair -4° counterspin, steering pair +4° lift. Alternator variable load despun to desired roll. No actuator. |
+| B1 | **Fixed Canards + Common Carrier** — Four fixed illustrative canards attach to one carrier. A bearing pair permits relative rotation; an alternator/torque element represents carrier-level phase control. No individual fin actuators in the exhibition model. |
 | B2 | **Flat Pancake Motor Inside Bearing Shield** — Motor 605 inside bearing 630 isolates 10-25kG (Pat 10295320). Geared plate 615 → shaft 625 → canards. Best proportional. |
 | B3 | **Hollow Piezoelectric Motor + Retractile Fins** — Hollow stator/rotor, 450V 40.2kHz, 0.30 N·m wind load, 25rpm, self-locking, no EMI, fins retract until engine burn-out (Liu 2020 IOP 1507/102008). |
 | B4 | **Piezoelectric Beam Tip Fin** — Flexible beam at fin tip bends to change AoA, adaptive state/output feedback (J. Sound Vib 2005). Zero gearbox. |
@@ -136,7 +136,7 @@ All websearches executed 2026-08-24 via `exa.ai/mcp` deep mode (see chat history
 
 | # | Power | Detail |
 |---|---|---|
-| F1 | **Super-Capacitor Pre-Charge + Alternator Sustain** — Inductive setter charges super-cap before ramming, alternator (stator 16 + rotor 20) generates from de-spun vs spinning differential, powers GPS + canards, no battery → 20yr life |
+| F1 | **Super-Capacitor + Shell/Carrier Alternator Demonstration** — A shell-side rotor and carrier-side stator generate display power from relative rotation, feeding a rectifier, supercapacitor, LEDs, and controller. Production power and fuze claims remain outside the inert exhibition scope. |
 | F2 | **Reserve Lithium Ampoule Battery** — Crushed at setback, proven DM84/ECIL 15yr, -46 to +63°C, provides 1-2Wh for 60s flight |
 | F3 | **Thermal Molten-Salt Battery** — Activated by pyrotechnic, high power density, for high-G |
 | F4 | **PZT Setback Generator** — Lead Zirconate Titanate crystal stack compressed by launch shock (DRDO power task), generates 100mJ impulse to boot MCU |
@@ -209,11 +209,12 @@ All websearches executed 2026-08-24 via `exa.ai/mcp` deep mode (see chat history
 
 ## 11. Recommended Winning Combo for SIH Judges (Evaluator Lens: Innovation Scope vs Invention Effort)
 
-**Strong Pick — “YIL-PGK Bharat + LSTM Jam-Resilience” (Safest 36-hour build)**
-- Fuze-replacement kit A1 + de-spun brake B1 + NavIC+GPS dual C3 + super-cap/alternator F1 + FMCW proximity E1 + inductive EPIAFS J1
+**Strong Pick — “PGK public-architecture inert demonstrator” (active exhibition baseline)**
+- Fuze-shaped display module A1 + common carrier B1 + shell/carrier alternator concept F1 + relative-angle LEDs/controller
+- Keep any guidance, fuze, setter, and performance work as separate simulations or clearly labelled future work; do not implement a firing path in the physical model.
 - Add as stretch: LSTM GNSS-denied C7 (shows AI innovation, no extra hardware)
-- Deliverables: CAD 220mm total/124.7mm intrusion, 770g, electronics block, 6DOF sim median 10m CEP, PID + MPC algorithm, 3D printed nose demo, drop-test 9m HOB
-- Why wins: TRL9, cost ₹8L (<$15k), 74% ammo saving, Atmanirbhar NavIC sovereign, YIL can actually forge it tomorrow, matches ARDE DRDO tasks ( miniaturization + ECCM + PZT power) — checks all 5 rubric: Innovation, Invention, Technical Feasibility, Impact & Benefits, Architecture
+- Deliverables: active inert CAD, assembly cutaway, guarded low-speed relative-rotation demo, LED power-harvesting display, and separately labelled simulation/reference material
+- Why wins: clear mechanical explanation, low-risk exhibition build, and a disciplined separation between public architecture study, bench evidence, and any future engineering claims — checks the SIH rubric without presenting a launch-capable article
 
 **Alternative — “Smart Bharat Servo” (Higher Innovation)**
 - A3 single-axis + B3 piezo retractile + tightly-coupled IMU C2 + reserve battery F2 + MEMS S&A E8

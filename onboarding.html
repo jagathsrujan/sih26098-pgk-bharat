@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIH26098 — PGK Bharat | Team Onboarding</title>
+<meta name="description" content="SIH26098 Low-Cost Precision Guidance Kit + Smart Electronic Fuze for 155mm — Team Onboarding Guide">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','system-ui','sans-serif'],display:['Space Grotesk','Inter','sans-serif'],mono:['JetBrains Mono','monospace']},colors:{ink:'#0f172a',muted:'#475569',line:'#e2e8f0',accent:'#f59e0b',accent2:'#0ea5e9',success:'#10b981'}}}}
+</script>
+<style>
+html{scroll-behavior:smooth}
+.glass{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:99px}
+.card-hover{transition:all .2s ease}
+.card-hover:hover{transform:translateY(-2px);box-shadow:0 10px 30px -10px rgba(0,0,0,.15)}
+.prose a{color:#0ea5e9;text-decoration:underline;text-underline-offset:3px}
+.katex{font-size:1.05em}
+@media print {.no-print{display:none!important} header{position:static!important}}
+</style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 antialiased">
+<!-- Top Bar -->
+<header class="sticky top-0 z-50 bg-white/80 glass border-b border-slate-200">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-[64px] flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-slate-900 text-white grid place-items-center font-display font-bold text-[13px]">SIH<span class="text-amber-400">98</span></div>
+      <div>
+        <div class="font-display font-bold leading-none text-[15px]">PGK BHARAT</div>
+        <div class="text-[11px] tracking-widest font-semibold text-slate-500">SIH26098 • MoD / YIL AMBAJHARI</div>
+      </div>
+      <span class="hidden md:inline-flex ml-3 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold tracking-wide border border-amber-200">DEADLINE 20 SEP 2026</span>
+      <span class="hidden md:inline-flex px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200">CEP ≤30m → 10m stretch</span>
+      <span class="hidden xl:inline-flex px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 text-[11px] font-bold border border-sky-200">ACTIVE: INERT COMMON-CARRIER DEMO</span>
+    </div>
+    <nav class="hidden lg:flex items-center gap-1 text-[13px] font-medium">
+      <a href="#ps" class="px-3 py-1.5 rounded-lg hover:bg-slate-100">PS Breakdown</a>
+      <a href="#gun" class="px-3 py-1.5 rounded-lg hover:bg-slate-100">Gun 101</a>
+      <a href="#shell" class="px-3 py-1.5 rounded-lg hover:bg-slate-100">Shell</a>
+      <a href="#physics" class="px-3 py-1.5 rounded-lg hover:bg-slate-100">Physics</a>
+      <a href="#system" class="px-3 py-1.5 rounded-lg hover:bg-slate-100">System</a>
+      <a href="#videos" class="px-3 py-1.5 rounded-lg hover:bg-slate-100">PGKs & Videos</a>
+      <a href="#plan" class="px-3 py-1.5 rounded-lg hover:bg-slate-100">Plan</a>
+      <a href="#roles" class="px-3 py-1.5 rounded-lg hover:bg-slate-100">Roles</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href="#physics" class="hidden sm:inline-flex px-3.5 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-black">Start Learning →</a>
+      <button onclick="window.print()" class="no-print w-9 h-9 grid place-items-center rounded-xl border border-slate-200 bg-white hover:bg-slate-50" title="Print / Save PDF">⎙</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800"></div>
+  <div class="absolute inset-0 opacity-[0.06]" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 28px 28px;"></div>
+  <div class="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+    <div class="grid lg:grid-cols-[1.35fr_.9fr] gap-8 items-start">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-white/90 text-xs font-semibold tracking-wide">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> HARDWARE • MISCELLANEOUS • S.No 98 • 0/500 SUBMISSIONS — WIDE OPEN
+        </div>
+        <h1 class="mt-4 font-display font-bold text-white leading-[0.95] text-[32px] sm:text-[42px] lg:text-[48px]">
+          Low-Cost Precision<br>
+          <span class="text-amber-400">Guidance & Smart Fuze</span><br>
+          for a 155mm Shell
+        </h1>
+        <p class="mt-4 text-[15px] lg:text-[17px] leading-relaxed text-slate-300 max-w-[720px]">
+          The army's normal 155mm shells miss by <b class="text-white">~267m</b> at 30km. We design a <b class="text-white">screw-on smart nose</b> that makes the same old shell land within <b class="text-amber-300">30m</b> — at <b class="text-white">₹8–11 lakh</b> per kit instead of ₹60L+ for imports. Yantra India Ltd (YIL, Ambajhari) — the factory that makes India's 155mm shells — wants this.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2.5">
+          <a href="#ps" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 text-slate-900 font-bold text-sm hover:bg-amber-300">Read PS Breakdown ↓</a>
+          <a href="https://www.youtube.com/watch?v=Ebzh12PR0-U" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-slate-900 font-semibold text-sm hover:bg-slate-100">▶ Watch: This IS our project (2 min)</a>
+          <a href="#roles" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 text-white font-semibold text-sm border border-white/20 hover:bg-white/15">Find your role</a>
+        </div>
+        <div class="mt-6 flex flex-wrap gap-3 text-xs">
+          <span class="px-3 py-2 rounded-xl bg-white/10 border border-white/10 text-white/80"><b class="text-white">Fits:</b> ATAGS • Dhanush • K9 Vajra • M777 (STANAG 2916, 39/45/52 cal)</span>
+          <span class="px-3 py-2 rounded-xl bg-white/10 border border-white/10 text-white/80"><b class="text-white">Repo:</b> sih26098-pgk-bharat (private)</span>
+          <span class="px-3 py-2 rounded-xl bg-white/10 border border-white/10 text-white/80"><b class="text-white">Briefing:</b> SIH26098_TEAM_BRIEFING.md</span>
+        </div>
+      </div>
+      <!-- Stats -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="rounded-2xl bg-white p-5 border border-slate-200">
+          <div class="text-[11px] font-bold tracking-widest text-slate-500">TODAY'S CEP (DUMB)</div>
+          <div class="mt-1 font-display font-bold text-3xl text-slate-900">267<span class="text-lg text-slate-500">m</span></div>
+          <div class="text-xs text-slate-500 leading-tight">at 30 km, 50% of shells outside this circle</div>
+          <div class="mt-3 h-2 rounded-full bg-slate-100 overflow-hidden"><div class="h-full bg-red-500" style="width:92%"></div></div>
+        </div>
+        <div class="rounded-2xl bg-amber-400 p-5 border border-amber-500">
+          <div class="text-[11px] font-bold tracking-widest text-amber-900">OUR TARGET CEP</div>
+          <div class="mt-1 font-display font-bold text-3xl text-slate-900">≤30<span class="text-lg">m</span> <span class="text-sm font-semibold text-amber-900">→ 10m stretch</span></div>
+          <div class="text-xs text-amber-900 leading-tight">Real M1156 PGK achieved 10m median in 2015</div>
+          <div class="mt-3 h-2 rounded-full bg-amber-900/15 overflow-hidden"><div class="h-full bg-slate-900" style="width:28%"></div></div>
+        </div>
+        <div class="rounded-2xl bg-white p-5 border border-slate-200">
+          <div class="text-[11px] font-bold tracking-widest text-slate-500">LOGISTICS SAVING</div>
+          <div class="mt-1 font-display font-bold text-3xl text-slate-900">74<span class="text-xl">%</span></div>
+          <div class="text-xs text-slate-500 leading-tight">301 → 77 shells per target<br>18.2t → 4.5t (959 → 208 charges)</div>
+        </div>
+        <div class="rounded-2xl bg-slate-900 text-white p-5 border border-slate-800">
+          <div class="text-[11px] font-bold tracking-widest text-slate-400">COST PER KIT</div>
+          <div class="mt-1 font-display font-bold text-3xl">₹8–11<span class="text-lg text-slate-400">L</span></div>
+          <div class="text-xs text-slate-400 leading-tight">vs ₹60L–2Cr imported<br>Excalibur ~$100k (₹85L)</div>
+        </div>
+        <div class="col-span-2 rounded-2xl bg-white p-4 border border-slate-200 flex items-center justify-between">
+          <div>
+            <div class="text-[11px] font-bold tracking-widest text-slate-500">COMPATIBILITY</div>
+            <div class="text-sm font-semibold">STANAG 2916 • 2-12UN-1A fuze thread — screw in, no shell mod</div>
+          </div>
+          <span class="hidden sm:inline-flex px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">TRL9 PROVEN ARCHITECTURE</span>
+        </div>
+      </div>
+    </div>
+    <!-- Quick Jump -->
+    <div class="mt-8 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
+      <a href="#ps" class="rounded-xl bg-white/10 border border-white/10 p-3 hover:bg-white/15"><div class="text-[11px] font-bold tracking-widest text-amber-300">01</div><div class="text-sm font-semibold text-white leading-tight">PS Decoded</div></a>
+      <a href="#gun" class="rounded-xl bg-white/10 border border-white/10 p-3 hover:bg-white/15"><div class="text-[11px] font-bold tracking-widest text-sky-300">02</div><div class="text-sm font-semibold text-white leading-tight">Artillery Gun</div></a>
+      <a href="#shell" class="rounded-xl bg-white/10 border border-white/10 p-3 hover:bg-white/15"><div class="text-[11px] font-bold tracking-widest text-emerald-300">03</div><div class="text-sm font-semibold text-white leading-tight">Shell Anatomy</div></a>
+      <a href="#physics" class="rounded-xl bg-white/10 border border-white/10 p-3 hover:bg-white/15"><div class="text-[11px] font-bold tracking-widest text-amber-300">04</div><div class="text-sm font-semibold text-white leading-tight">Physics</div></a>
+      <a href="#system" class="rounded-xl bg-white/10 border border-white/10 p-3 hover:bg-white/15"><div class="text-[11px] font-bold tracking-widest text-purple-300">05</div><div class="text-sm font-semibold text-white leading-tight">Our System</div></a>
+      <a href="#videos" class="rounded-xl bg-white/10 border border-white/10 p-3 hover:bg-white/15"><div class="text-[11px] font-bold tracking-widest text-red-300">06</div><div class="text-sm font-semibold text-white leading-tight">PGKs & Videos</div></a>
+      <a href="#plan" class="rounded-xl bg-white/10 border border-white/10 p-3 hover:bg-white/15"><div class="text-[11px] font-bold tracking-widest text-sky-300">07</div><div class="text-sm font-semibold text-white leading-tight">Planning</div></a>
+      <a href="#roles" class="rounded-xl bg-white/10 border border-white/10 p-3 hover:bg-white/15"><div class="text-[11px] font-bold tracking-widest text-amber-300">08</div><div class="text-sm font-semibold text-white leading-tight">Your Role</div></a>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 1 — PS BREAKDOWN -->
+<section id="ps" class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div class="flex flex-wrap items-baseline gap-3">
+    <span class="px-2.5 py-1 rounded-full bg-slate-900 text-white text-xs font-bold tracking-widest">01 — PROBLEM STATEMENT</span>
+    <span class="text-xs font-mono text-slate-500">SIH26098 • Hardware • Miscellaneous • Ministry of Defence / YIL Ambajhari, Nagpur • Source: sih.gov.in/sih2026PS</span>
+  </div>
+  <h2 class="mt-3 font-display font-bold text-[28px] leading-tight">PS Decoded — What they literally ask us to build</h2>
+  <p class="mt-2 text-slate-600 max-w-3xl">Every bullet below = one thing we must demonstrate. Left = official PS wording, middle = plain English, right = our chosen answer from 108 ideas in <code class="px-1.5 py-0.5 rounded bg-slate-100 border text-xs">SIH26098_Exhaustive_Ideas_Catalog.md</code>. Baseline freezes on <b>6 Sep</b>.</p>
+
+  <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold tracking-widest text-slate-500">
+          <tr><th class="text-left px-4 py-3 w-[30%]">PS SAYS (OFFICIAL)</th><th class="text-left px-4 py-3 w-[32%]">WHAT IT MEANS</th><th class="text-left px-4 py-3">OUR ACTIVE EXHIBIT</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr><td class="px-4 py-3 font-semibold">Canard Actuation Assembly (CAA) for in-flight trajectory correction</td><td class="px-4 py-3 text-slate-600">Small wings near nose that steer shell mid-flight</td><td class="px-4 py-3"><span class="inline-flex px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-xs font-bold">A1/B1</span> One common carrier holds 4 fixed illustrative canards; bearings and one torque element demonstrate relative rotation</td></tr>
+          <tr><td class="px-4 py-3 font-semibold">GNC system improving terminal accuracy</td><td class="px-4 py-3 text-slate-600">A future flight article would need a brain; the exhibit only shows the electronics story</td><td class="px-4 py-3">Low-voltage display controller + relative-angle sensor + LEDs; flight GNC remains simulation/reference work</td></tr>
+          <tr><td class="px-4 py-3 font-semibold">Multi-mode Electronic Fuze: Proximity / Time / Impact</td><td class="px-4 py-3 text-slate-600">A project requirement to explain, not hardware to reproduce</td><td class="px-4 py-3">Clearly labelled mock state machine/UI only; no radar, initiator, arming, fuze, or firing hardware</td></tr>
+          <tr><td class="px-4 py-3 font-semibold">Embedded electronics & software for real-time flight control</td><td class="px-4 py-3 text-slate-600">A future flight-article requirement</td><td class="px-4 py-3">Display controller/status electronics only; no launch-survivability claim</td></tr>
+          <tr><td class="px-4 py-3 font-semibold">Power management for high-g launch</td><td class="px-4 py-3 text-slate-600">How the exhibit demonstrates spin-derived power</td><td class="px-4 py-3">Shell-side rotor + carrier-side stator → rectifier → supercapacitor → low-voltage LEDs/controller</td></tr>
+          <tr><td class="px-4 py-3 font-semibold">Communication & programming interface before firing</td><td class="px-4 py-3 text-slate-600">A project requirement to explain, not hardware to reproduce</td><td class="px-4 py-3">Optional mock phone UI only; no live fuze, setter, initiator, or firing interface</td></tr>
+          <tr><td class="px-4 py-3 font-semibold">CEP 30m or better</td><td class="px-4 py-3 text-slate-600">A future flight-performance target</td><td class="px-4 py-3">Simulation/public reference only; not a result from the printed bench model</td></tr>
+          <tr><td class="px-4 py-3 font-semibold">Compatibility with existing 155mm shell</td><td class="px-4 py-3 text-slate-600">A future interface requirement</td><td class="px-4 py-3">Nonfunctional slip-fit display adapter; no live-compatible thread or launch interface</td></tr>
+          <tr><td class="px-4 py-3 font-semibold">Survive extreme conditions</td><td class="px-4 py-3 text-slate-600">A future flight-article requirement</td><td class="px-4 py-3">Lightweight printed housing, guarded low-speed operation, and no launch-survivability claim</td></tr>
+          <tr><td class="px-4 py-3 font-semibold">Low SWaP-C, high reliability, modular</td><td class="px-4 py-3 text-slate-600">Small, light, cheap, upgradeable</td><td class="px-4 py-3">~770g nose, 220mm long, ₹8–11L, bay for future seekers</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-6 grid md:grid-cols-3 gap-4">
+    <div class="rounded-2xl border border-slate-200 bg-white p-5">
+      <div class="text-xs font-bold tracking-widest text-slate-500">WHAT WE MUST SUBMIT (7 FILES)</div>
+      <ol class="mt-2 space-y-1.5 text-sm list-decimal list-inside text-slate-700">
+        <li>System architecture document (A–J)</li>
+        <li>CAD of canard actuation assembly</li>
+        <li>Electronics block diagram</li>
+        <li>Guidance & control algorithm</li>
+        <li>Simulation showing trajectory correction</li>
+        <li>Prototype / PoC — 3D print + bench rigs</li>
+        <li>Performance report — CEP ≤30m proof</li>
+      </ol>
+    </div>
+    <div class="rounded-2xl bg-slate-900 text-white p-5">
+      <div class="text-xs font-bold tracking-widest text-amber-300">WHY JUDGES CARE — PITCH SPINE</div>
+      <ul class="mt-2 space-y-2 text-sm leading-relaxed text-slate-300">
+        <li><b class="text-white">Pain:</b> 267m CEP at 30km → danger-close impossible, huge ammo waste.</li>
+        <li><b class="text-white">Logistics win:</b> 301 dumb shells (18.2t, 959 charges) → <b class="text-emerald-300">77 with kit (4.5t)</b> — 74% fewer.</li>
+        <li><b class="text-white">Atmanirbhar:</b> NavIC primary + YIL forging + BEL/ECIL electronics.</li>
+        <li><b class="text-white">Price:</b> ₹8–11L vs ₹60L–2Cr imports.</li>
+      </ul>
+    </div>
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+      <div class="text-xs font-bold tracking-widest text-amber-800">YIL CONTEXT — WHY THIS PS EXISTS</div>
+      <p class="mt-2 text-sm leading-relaxed text-amber-900">Yantra India Ltd, Ambajhari (flagship OFA, Miniratna-I, FY24-25 ₹3,311Cr, +80% 155mm output) inaugurated a <b>10,000-ton extrusion press</b> on 19 June 2026 by Raksha Mantri. They already forge the steel shell — they need the smart nose to go with it. <span class="font-semibold">307 ATAGS ordered (₹6,900Cr)</span> — ready guns waiting for this kit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 — ARTILLERY GUN 101 -->
+<section id="gun" class="bg-white border-y border-slate-200">
+<div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <span class="px-2.5 py-1 rounded-full bg-sky-100 text-sky-800 text-xs font-bold tracking-widest border border-sky-200">02 — ARTILLERY GUN 101</span>
+  <h2 class="mt-3 font-display font-bold text-[28px] leading-tight">What is an artillery gun and how does it work?</h2>
+  <p class="mt-2 text-slate-600 max-w-3xl">A <b>howitzer</b> is a big cannon that fires <b>indirectly</b> — the shell flies in a high arc (like a basketball shot) over hills and lands tens of km away. The gun crew never sees the target. Unlike a tank gun (flat, direct fire), a howitzer lobs shells at 45°+ elevation.</p>
+
+  <div class="mt-6 grid lg:grid-cols-[1.2fr_.8fr] gap-6">
+    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+      <div class="text-xs font-bold tracking-widest text-slate-500">KILL CHAIN — HOW A FIRING MISSION WORKS</div>
+      <div class="mt-4 flex flex-col gap-2 text-sm">
+        <div class="flex gap-3 items-start"><span class="w-7 h-7 rounded-full bg-slate-900 text-white grid place-items-center text-xs font-bold shrink-0">1</span><div><b>Forward Observer</b> <span class="text-slate-500">— sees target through binoculars/drone, radios:</span> <code class="px-1.5 py-0.5 rounded bg-white border text-xs">grid AZ123456 + “fire for effect”</code></div></div>
+        <div class="ml-3.5 w-px h-3 bg-slate-300"></div>
+        <div class="flex gap-3 items-start"><span class="w-7 h-7 rounded-full bg-amber-500 text-slate-900 grid place-items-center text-xs font-bold shrink-0">2</span><div><b>Fire Direction Centre</b> <span class="text-slate-500">— ballistic computer calculates range, wind, charge, barrel angle</span><br><code class="px-1.5 py-0.5 rounded bg-white border text-xs">elevation 42.3° • charge M3A1 • fuze: proximity 12m</code></div></div>
+        <div class="ml-3.5 w-px h-3 bg-slate-300"></div>
+        <div class="flex gap-3 items-start"><span class="w-7 h-7 rounded-full bg-emerald-600 text-white grid place-items-center text-xs font-bold shrink-0">3</span><div><b>Gun crew</b> sets fuze → loads <b>SHELL</b> → loads <b>PROPELLANT CHARGE</b> → closes breech → <b class="text-red-600">FIRE</b></div></div>
+        <div class="ml-3.5 w-px h-3 bg-slate-300"></div>
+        <div class="flex gap-3 items-start"><span class="w-7 h-7 rounded-full bg-red-600 text-white grid place-items-center text-xs font-bold shrink-0">4</span><div>Shell arcs <b>20–30km</b> for <b>60–90 seconds</b> → fuze triggers → detonation at/above target 💥</div></div>
+      </div>
+      <div class="mt-5 rounded-xl bg-white border border-slate-200 p-4">
+        <div class="text-xs font-bold tracking-widest text-slate-500">INSIDE THE GUN — 0 TO 800 m/s IN 17 ms</div>
+        <ol class="mt-2 space-y-1.5 text-[13px] leading-relaxed text-slate-700 list-decimal list-inside">
+          <li><b>Propellant ignition:</b> Primer ignites charge (nitrocellulose bags). Pressure spikes to <b>300–400 MPa</b> (~3,000–4,000 atm).</li>
+          <li><b>Shot start:</b> Soft copper <b>rotating band</b> is engraved by barrel's <b>rifling</b> (spiral grooves).</li>
+          <li><b>Spin-up:</b> Rifling (≈1 turn in 20 calibers) spins shell to <b>~250 rev/s</b> — gyroscopic spin keeps nose forward (like an American football).</li>
+          <li><b>Muzzle exit:</b> A real flight article sees extreme launch acceleration. The printed exhibition model is not tested for it and must stay outside any launch path.</li>
+          <li><b>Recoil:</b> Gun jumps back ~1m; hydro-pneumatic cylinders absorb & return barrel.</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+        <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold tracking-widest text-slate-500">THE 4 GUNS OUR KIT MUST FIT (SAME FUZE THREAD)</div>
+        <div class="divide-y divide-slate-100 text-sm">
+          <div class="px-4 py-3 flex justify-between gap-3"><div><b>ATAGS</b> <span class="text-slate-500">52 cal (~8.06m)</span> <div class="text-xs text-slate-500">DRDO + Bharat Forge/Tata • newest • 307 ordered</div></div><span class="text-xs font-bold px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 h-fit">48 km</span></div>
+          <div class="px-4 py-3 flex justify-between gap-3"><div><b>Dhanush</b> <span class="text-slate-500">45 cal</span> <div class="text-xs text-slate-500">YIL/AWEIL • “Desi Bofors”</div></div><span class="text-xs font-bold px-2 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200 h-fit">38 km</span></div>
+          <div class="px-4 py-3 flex justify-between gap-3"><div><b>K9 Vajra-T</b> <span class="text-slate-500">52 cal self-propelled</span> <div class="text-xs text-slate-500">L&amp;T + Hanwha (Korea) • tracked</div></div><span class="text-xs font-bold px-2 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200 h-fit">40+ km</span></div>
+          <div class="px-4 py-3 flex justify-between gap-3"><div><b>M777</b> <span class="text-slate-500">39 cal (~6.05m) ultra-light 4.2t</span> <div class="text-xs text-slate-500">BAE (USA) • Chinook-liftable</div></div><span class="text-xs font-bold px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 h-fit">30 km</span></div>
+        </div>
+        <div class="px-4 py-2 bg-amber-50 text-[11px] text-amber-800 border-t border-amber-200"><b>Caliber length</b> = barrel length in bore diameters. 52 cal × 155mm ≈ 8.06m. STANAG 2916 thread is identical on all four — one kit fits all.</div>
+      </div>
+      <div class="mt-4 rounded-2xl bg-slate-900 text-white p-5">
+        <div class="text-xs font-bold tracking-widest text-amber-300">FOR YOUR PRESENTATION — ONE LINE</div>
+        <p class="mt-2 text-sm leading-relaxed text-slate-300">“Our kit <b class="text-white">replaces only the fuze</b>. The shell, propellant, and gun stay 100% stock. Screw our nose on, program it wirelessly, fire — correction happens automatically in flight.”</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 3 — SHELL ANATOMY -->
+<section id="shell" class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold tracking-widest border border-emerald-200">03 — ARTILLERY SHELL 101</span>
+  <h2 class="mt-3 font-display font-bold text-[28px] leading-tight">Anatomy of a 155mm High-Explosive Shell</h2>
+  <p class="mt-2 text-slate-600">Example: M107/M795, ~43–47kg, ~800mm long, filled with ~10kg TNT/Comp-B. <b>Our PGK replaces only the fuze</b> — everything else stays exactly as YIL already makes it.</p>
+
+  <div class="mt-6 grid lg:grid-cols-[1.15fr_.85fr] gap-6">
+    <!-- SVG Diagram -->
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+      <div class="text-xs font-bold tracking-widest text-slate-500">CUTAWAY DIAGRAM — HOVER FOR NAMES</div>
+      <svg viewBox="0 0 760 220" class="w-full h-auto mt-3" role="img" aria-label="155mm shell anatomy">
+        <defs>
+          <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e2e8f0"/><stop offset="100%" stop-color="#94a3b8"/></linearGradient>
+          <linearGradient id="he" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient>
+        </defs>
+        <!-- Shell body outline -->
+        <!-- Fuze/PGK zone -->
+        <rect x="30" y="55" width="110" height="110" rx="6" fill="#0f172a" stroke="#f59e0b" stroke-width="2.2"/>
+        <text x="85" y="78" text-anchor="middle" fill="#fde68a" font-size="11" font-weight="800">DISPLAY</text>
+        <text x="85" y="92" text-anchor="middle" fill="#fde68a" font-size="8" font-weight="600">(COMMON-CARRIER</text>
+        <text x="85" y="102" text-anchor="middle" fill="#fde68a" font-size="8" font-weight="600">MODULE)</text>
+        <text x="85" y="120" text-anchor="middle" fill="white" font-size="7">NONFUNCTIONAL</text>
+        <text x="85" y="130" text-anchor="middle" fill="white" font-size="7">SLIP-FIT ADAPTER</text>
+        <text x="85" y="148" text-anchor="middle" fill="#f59e0b" font-size="8" font-weight="700">← bench-only zone</text>
+        <!-- Ogive -->
+        <path d="M140 65 Q 170 65, 190 85 L190 135 Q170 155,140 155 Z" fill="url(#steel)" stroke="#475569" stroke-width="1.6"/>
+        <text x="168" y="48" text-anchor="middle" font-size="9" font-weight="700" fill="#334155">OGIVE</text>
+        <text x="168" y="175" text-anchor="middle" font-size="7" fill="#64748b">aero nose cone</text>
+        <!-- Bourrelet -->
+        <rect x="190" y="70" width="55" height="80" fill="url(#steel)" stroke="#475569" stroke-width="1.5"/>
+        <text x="217" y="48" text-anchor="middle" font-size="9" font-weight="700" fill="#334155">BOURRELET</text>
+        <text x="217" y="175" text-anchor="middle" font-size="7" fill="#64748b">rides the barrel</text>
+        <!-- Body / HE -->
+        <rect x="245" y="62" width="280" height="96" fill="url(#steel)" stroke="#475569" stroke-width="1.6"/>
+        <rect x="252" y="72" width="266" height="76" rx="3" fill="url(#he)" stroke="#92400e" stroke-width="1"/>
+        <text x="385" y="48" text-anchor="middle" font-size="9" font-weight="700" fill="#334155">BODY — SOLID INERT PRINT</text>
+        <text x="385" y="175" text-anchor="middle" font-size="7" fill="#64748b">lightweight shell mock-up • no energetic fill</text>
+        <!-- Rotating band -->
+        <rect x="525" y="58" width="28" height="104" rx="3" fill="#b45309" stroke="#7c2d12" stroke-width="1.4"/>
+        <text x="539" y="35" text-anchor="middle" font-size="7" font-weight="800" fill="#7c2d12">ROTATING</text>
+        <text x="539" y="44" text-anchor="middle" font-size="7" font-weight="800" fill="#7c2d12">BAND</text>
+        <text x="539" y="188" text-anchor="middle" font-size="7" fill="#7c2d12">copper • seals gas</text>
+        <text x="539" y="196" text-anchor="middle" font-size="7" fill="#7c2d12">+ engages rifling = spin</text>
+        <!-- Boat tail -->
+        <path d="M553 62 L620 72 L620 148 L553 158 Z" fill="url(#steel)" stroke="#475569" stroke-width="1.5"/>
+        <text x="590" y="48" text-anchor="middle" font-size="9" font-weight="700" fill="#334155">BOAT TAIL</text>
+        <text x="590" y="175" text-anchor="middle" font-size="7" fill="#64748b">tapered — cuts base drag</text>
+        <!-- Base -->
+        <rect x="620" y="85" width="18" height="50" rx="2" fill="#475569"/>
+        <text x="629" y="175" text-anchor="middle" font-size="7" fill="#334155">BASE</text>
+        <!-- Dimensions -->
+        <line x1="30" y1="200" x2="638" y2="200" stroke="#94a3b8" stroke-width="1" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+        <text x="334" y="212" text-anchor="middle" font-size="8" fill="#475569" font-weight="600">~800mm overall • Ø155mm • ~43.2kg</text>
+      </svg>
+      <div class="mt-2 grid grid-cols-3 gap-2 text-[11px]">
+        <span class="px-2.5 py-1.5 rounded-full bg-slate-900 text-white text-center font-semibold">① Nose = our product</span>
+        <span class="px-2.5 py-1.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 text-center font-semibold">② Bourrelet = bearing</span>
+        <span class="px-2.5 py-1.5 rounded-full bg-sky-50 text-sky-800 border border-sky-200 text-center font-semibold">③ Boat tail = drag saver</span>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-slate-200 bg-white p-5">
+      <div class="flex items-center justify-between">
+        <div class="text-xs font-bold tracking-widest text-slate-500">GLOSSARY — SEARCH OR TAP</div>
+        <input id="glossarySearch" placeholder="Filter: e.g. CEP, fuze, S&A…" class="w-[200px] px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50 text-xs focus:outline-none focus:ring-2 focus:ring-amber-300">
+      </div>
+      <div id="glossary" class="mt-3 space-y-2 max-h-[430px] overflow-auto pr-1 text-[13px] leading-relaxed">
+        <!-- JS will populate -->
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 grid md:grid-cols-3 gap-4 text-sm">
+    <div class="rounded-2xl border border-slate-200 bg-white p-4">
+      <div class="text-xs font-bold tracking-widest text-slate-500">BALLISTICS — MUST KNOW</div>
+      <dl class="mt-2 space-y-1.5">
+        <dt class="font-bold">CEP</dt><dd class="text-slate-600 mb-2">Radius containing 50% of impacts. Smaller = better. 267m → ≤30m is our job.</dd>
+        <dt class="font-bold">Muzzle velocity (v₀)</dt><dd class="text-slate-600 mb-2">684 m/s (M3A1) to 827 m/s (max charge).</dd>
+        <dt class="font-bold">Apogee / QE</dt><dd class="text-slate-600 mb-2">Highest point (~10–12km). QE = barrel angle, 45° for max range.</dd>
+        <dt class="font-bold">Spin stabilization</dt><dd class="text-slate-600">~250 rev/s gyroscopic stiffness keeps nose forward.</dd>
+      </dl>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4">
+      <div class="text-xs font-bold tracking-widest text-slate-500">FUZE — THE NOSE COMPUTER</div>
+      <dl class="mt-2 space-y-1.5">
+        <dt class="font-bold">Fuze (not “fuse”)</dt><dd class="text-slate-600 mb-2">Device that decides WHEN to detonate.</dd>
+        <dt class="font-bold">PD / Proximity / Time</dt><dd class="text-slate-600 mb-2">Contact (&lt;250µs superquick or 0–60ms delay) • Radar airburst 6/12/18m HOB • Timer 3–199.9s.</dd>
+        <dt class="font-bold">S&A — Safe & Arm</dt><dd class="text-slate-600 mb-2">Mechanical lock: SAFE in storage, ARMS only after setback ≥850g + spin ≥2900rpm + ≥100m (STANAG 4187).</dd>
+        <dt class="font-bold">EPIAFS setter</dt><dd class="text-slate-600">Wireless coil programs fuze — no pins to break.</dd>
+      </dl>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4">
+      <div class="text-xs font-bold tracking-widest text-slate-500">OUR PROJECT WORDS</div>
+      <dl class="mt-2 space-y-1.5">
+        <dt class="font-bold">PGK</dt><dd class="text-slate-600 mb-2">Fuze-shaped GPS + canard module that steers stock shell.</dd>
+        <dt class="font-bold">Canards / Common carrier</dt><dd class="text-slate-600 mb-2">Four fixed wings attach to one inner carrier; a bearing pair permits relative rotation while a torque element controls carrier phase.</dd>
+        <dt class="font-bold">GNC / IMU / GNSS</dt><dd class="text-slate-600 mb-2">Guidance/Navigation/Control • Inertial Measurement Unit • Satellite nav (NavIC = India’s GPS).</dd>
+        <dt class="font-bold">6DOF / Monte Carlo / SWaP-C</dt><dd class="text-slate-600">6-degrees sim • 1000 randomized runs → CEP • Size-Weight-Power-Cost (keep LOW).</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4 — PHYSICS -->
+<section id="physics" class="bg-slate-900 text-white">
+<div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <span class="px-2.5 py-1 rounded-full bg-amber-400 text-slate-900 text-xs font-bold tracking-widest">04 — THE PHYSICS (WITH FORMULAS)</span>
+  <h2 class="mt-3 font-display font-bold text-[28px] leading-tight">How a shell flies — and why we can fix it with 4 tiny wings</h2>
+  <p class="mt-2 text-slate-400 max-w-3xl text-sm">You don’t need to derive these — you need to <b class="text-white">quote them in reviews</b>. All numbers use our sim params: M107, <b class="text-white">m=43.2kg, d=0.155m, v₀=684m/s, QE=45°</b> (<code class="px-1 py-0.5 rounded bg-white/10 text-amber-300 text-xs">simulate_trajectory_155.py:21-31</code>).</p>
+
+  <div class="mt-6 grid lg:grid-cols-2 gap-4">
+    <div class="rounded-2xl bg-white text-slate-800 p-5 border border-slate-200">
+      <div class="text-xs font-bold tracking-widest text-slate-500">4.1 INSIDE THE BARREL — HOW HARD IS THE LAUNCH?</div>
+      <div class="mt-3 space-y-3 text-sm leading-relaxed">
+        <div class="rounded-xl bg-slate-50 border border-slate-200 p-3 font-mono text-xs">
+          a = v² / (2L) &nbsp; <span class="text-slate-500">(from v² = u² + 2as)</span><br>
+          a = 684² / (2×6.045) = 467,856 / 12.09 ≈ <b>38,700 m/s² ≈ 3,950 g</b> (average)<br>
+          <span class="text-red-600 font-bold">Peak (pressure spike 2.5–4×) → 10,000–15,000 g ← future flight-article reference</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-xs">
+          <div class="rounded-xl bg-amber-50 border border-amber-200 p-2.5"><div class="font-bold">Time in barrel</div><div class="font-mono">t = 2L/v = 12.09/684 ≈ 17.7 ms</div></div>
+          <div class="rounded-xl bg-sky-50 border border-sky-200 p-2.5"><div class="font-bold">Spin from rifling</div><div class="font-mono">n = v/(twist·d) ≈ 220 rev/s ≈ 13,000 rpm</div></div>
+          <div class="rounded-xl bg-emerald-50 border border-emerald-200 p-2.5"><div class="font-bold">Kinetic energy</div><div class="font-mono">½mv² ≈ 10.1 MJ</div><div class="text-[10px] text-slate-500">≈ car 1.5t at 420 km/h — in a fire extinguisher</div></div>
+        </div>
+        <div class="rounded-xl bg-red-50 border border-red-200 p-3 text-xs text-red-800"><b>For the active exhibit:</b> do not claim 15,000g survivability. The physical risk is safe low-speed operation: guarded bearings, retained parts, soft edges, and no launch-compatible interface.</div>
+      </div>
+    </div>
+    <div class="rounded-2xl bg-white text-slate-800 p-5 border border-slate-200">
+      <div class="text-xs font-bold tracking-widest text-slate-500">4.2 IN FLIGHT — HOW FAR DOES IT GO?</div>
+      <div class="mt-3 space-y-3 text-sm leading-relaxed">
+        <div class="rounded-xl bg-slate-50 border border-slate-200 p-3 font-mono text-xs">
+          Vacuum range: R = v₀²·sin2θ / g = 684²·sin90°/9.81 ≈ <b>47.7 km</b> <span class="text-slate-500">← textbook</span><br>
+          Real range with drag: <b class="text-red-600">≈ 24 km (drag eats half!)</b><br>
+          Drag: F = ½ρv²CdA → at muzzle ≈ 810 N → ~1.9g decel<br>
+          <span class="text-slate-500">Cd spikes to ~0.31 near Mach 1 (transonic is worst)</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="rounded-xl bg-slate-50 border border-slate-200 p-2.5"><div class="font-bold">Apogee</div><div class="font-mono">h = v₀²sin²θ/2g ≈ 11.9 km</div></div>
+          <div class="rounded-xl bg-slate-50 border border-slate-200 p-2.5"><div class="font-bold">Time of flight</div><div class="font-mono">99s vacuum / 70–80s real</div><div class="text-[10px] text-slate-500">long time ⇒ small errors grow big</div></div>
+        </div>
+        <div class="rounded-xl bg-slate-900 text-white p-3 text-xs">
+          <b class="text-amber-300">4.3 WHY DUMB SHELLS MISS — OUR REASON TO EXIST</b><br>
+          Muzzle velocity varies ±1–2 m/s (propellant temp) • Unknown wind at 12km • Coriolis + Magnus (50–150m) • Manufacturing asymmetry<br>
+          Each error grows over ~80s → <b class="text-red-300">CEP ≈ 267m at 30km</b> → kill one target = <b>301 shells = 18.2t + 959 charges</b>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4 grid lg:grid-cols-[1.1fr_.9fr] gap-4">
+    <div class="rounded-2xl bg-white text-slate-800 p-5 border border-slate-200">
+      <div class="text-xs font-bold tracking-widest text-emerald-700">4.4 HOW 4 TINY CANARDS FIX 267m OF ERROR — 20× MARGIN</div>
+      <div class="mt-3 rounded-xl bg-emerald-50 border border-emerald-200 p-3 font-mono text-xs">
+        Canard lift: L = ½ρv²·(CL·S) &nbsp; with CL·S ≈ 0.005 m² → at q≈287kPa → L≈1.4kN → we cap at <b>3g</b><br>
+        Lateral correction: Δx = ½ a t² = ½×29.4×20² ≈ <b class="text-emerald-700">5.9 km</b> with 20s guided flight<br>
+        <b>We have ~6km authority against 267m problem → 20× margin. That’s why it works.</b>
+      </div>
+          <div class="mt-3 rounded-xl bg-slate-50 border border-slate-200 p-3">
+        <div class="text-xs font-bold tracking-widest text-slate-500">4.5 COMMON CANARD CARRIER — ACTIVE DEMO BASELINE</div>
+        <ol class="mt-2 space-y-1 text-xs leading-relaxed list-decimal list-inside text-slate-700">
+          <li>All four illustrative canards are fixed to <b>one common inner carrier</b>; there are no individual fin hinges or fin motors.</li>
+          <li>The printed shell and outer housing form the spin-side frame; the carrier is free to rotate relative to it on the coaxial bearing pair.</li>
+          <li>A shell-side rotor and carrier-side stator demonstrate the power path. One low-voltage torque emulator demonstrates carrier-level control.</li>
+          <li>The bench model shows relative phase only; it is inert, guarded, low-speed, and not validated for flight or launch loads.</li>
+        </ol>
+      </div>
+      <div class="mt-3 rounded-xl bg-slate-900 text-slate-300 p-3 text-xs">
+        <b class="text-white">4.6 CEP MATH — WHAT WE REPORT TO JUDGES</b><br>
+        Fire N=1000 sims with randomized errors (Monte Carlo). rᵢ = impact distance from target. Sort rᵢ, median → <b class="text-amber-300">CEP = r₅₀₀</b> (radius containing 50%). Target ≤30m. Stretch 10m.
+      </div>
+    </div>
+
+    <!-- Interactive calculator -->
+    <div class="rounded-2xl bg-gradient-to-br from-amber-400 to-orange-400 p-5 text-slate-900 border border-amber-500">
+      <div class="text-xs font-bold tracking-widest text-amber-900">INTERACTIVE — TRY PHYSICS YOURSELF</div>
+      <div class="mt-3 grid grid-cols-2 gap-3 text-xs">
+        <label class="bg-white rounded-xl p-3 border border-amber-200">Muzzle velocity v₀ (m/s)<input id="calcV" type="range" min="500" max="900" value="684" class="w-full mt-2"><div class="font-mono font-bold text-center"><span id="calcVV">684</span> m/s</div></label>
+        <label class="bg-white rounded-xl p-3 border border-amber-200">Elevation θ (°)<input id="calcT" type="range" min="15" max="65" value="45" class="w-full mt-2"><div class="font-mono font-bold text-center"><span id="calcTT">45</span>°</div></label>
+      </div>
+      <div class="mt-3 grid grid-cols-3 gap-2 text-xs">
+        <div class="bg-white rounded-xl p-3 text-center border border-amber-200"><div class="text-[10px] font-bold tracking-widest text-slate-500">VACUUM RANGE</div><div class="font-display font-bold text-lg"><span id="calcR">47.7</span> km</div><div class="text-[10px] text-slate-500">drag eats ~½</div></div>
+        <div class="bg-white rounded-xl p-3 text-center border border-amber-200"><div class="text-[10px] font-bold tracking-widest text-slate-500">APOGEE</div><div class="font-display font-bold text-lg"><span id="calcH">11.9</span> km</div></div>
+        <div class="bg-white rounded-xl p-3 text-center border border-amber-200"><div class="text-[10px] font-bold tracking-widest text-slate-500">TIME OF FLIGHT</div><div class="font-display font-bold text-lg"><span id="calcTof">99</span> s</div><div class="text-[10px] text-slate-500">vacuum</div></div>
+      </div>
+      <div class="mt-3 bg-white rounded-xl p-3 border border-amber-200">
+        <div class="text-[10px] font-bold tracking-widest text-slate-500">LIVE TRAJECTORY (SCALED)</div>
+        <svg viewBox="0 0 400 160" class="w-full h-[108px] mt-1">
+          <path id="calcPath" d="M10 140 Q200 10, 390 140" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+          <circle id="calcDot" cx="10" cy="140" r="4" fill="#f59e0b" stroke="#0f172a" stroke-width="1.5"/>
+          <text x="200" y="155" text-anchor="middle" font-size="8" fill="#475569">range →</text>
+        </svg>
+      </div>
+      <div class="mt-2 text-[11px] text-amber-900">Formulas: R=v₀²sin2θ/g • h=v₀²sin²θ/2g • t=2v₀sinθ/g • Try 827 m/s (max charge) to see range jump.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 5 — OUR SOLUTION -->
+<section id="system" class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <span class="px-2.5 py-1 rounded-full bg-slate-900 text-white text-xs font-bold tracking-widest">05 — OUR SOLUTION</span>
+  <h2 class="mt-3 font-display font-bold text-[28px] leading-tight">Active architecture — inert common-carrier PGK demonstrator</h2>
+  <p class="mt-2 text-slate-600">A lightweight, guarded bench model with one common carrier, four fixed canards, front/rear display bearings, a shell-to-carrier alternator concept, and one low-voltage torque emulator. It is not an exact production teardown or launch article.</p>
+
+  <div class="mt-6 rounded-2xl border border-slate-200 bg-white overflow-hidden">
+    <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+      <span class="text-xs font-bold tracking-widest text-slate-500">PGK NOSE MODULE — WHAT’S INSIDE (TOP = NOSE TIP)</span>
+      <span class="text-[11px] px-2 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200 font-bold">Dummy slip-fit adapter — bench-only shell mock-up</span>
+    </div>
+    <div class="p-4 sm:p-6 grid lg:grid-cols-[1.15fr_.85fr] gap-6 items-start">
+      <!-- ASCII-ish diagram but visual cards -->
+      <div class="rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-4">
+        <div class="text-center text-[11px] font-bold tracking-widest text-slate-500">↑ NOSE TIP • Printed radome and antenna placeholder</div>
+        <div class="mt-3 grid gap-2">
+          <div class="rounded-xl bg-white border-2 border-sky-200 p-3 flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-sky-100 grid place-items-center text-lg">📡</span><div class="flex-1"><div class="text-xs font-bold tracking-widest text-sky-700">ANTENNA PLACEHOLDER</div><div class="text-xs text-slate-500">Printed radome and patch placeholder for the cutaway • display only</div></div></div>
+          <div class="rounded-xl bg-white border-2 border-emerald-200 p-3 flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-emerald-100 grid place-items-center text-lg">🧠</span><div class="flex-1"><div class="text-xs font-bold tracking-widest text-emerald-700">DISPLAY CONTROLLER + ANGLE SENSOR</div><div class="text-xs text-slate-500">Low-voltage MCU, Hall/optical index, relative phase LEDs</div></div></div>
+          <div class="rounded-xl bg-white border-2 border-amber-200 p-3 flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-amber-100 grid place-items-center">⚡</span><div class="flex-1"><div class="text-xs font-bold tracking-widest text-amber-700">ALTERNATOR CONCEPT</div><div class="text-xs text-slate-500">Rotor on shell side • stator on carrier side • rectifier → supercap</div></div><span class="px-2 py-1 rounded-full bg-amber-400 text-[10px] font-bold">DEMO</span></div>
+          <div class="rounded-xl bg-white border-2 border-slate-300 p-3 flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-slate-100 grid place-items-center">🪶</span><div class="flex-1"><div class="text-xs font-bold tracking-widest text-slate-700">COMMON CARRIER + 4 FIXED CANARDS</div><div class="text-xs text-slate-500">All four fins attach to one inner carrier and move together</div></div></div>
+          <div class="rounded-xl bg-white border-2 border-pink-200 p-3 flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-pink-100 grid place-items-center">↻</span><div class="flex-1"><div class="text-xs font-bold tracking-widest text-pink-700">FRONT + REAR DISPLAY BEARINGS</div><div class="text-xs text-slate-500">Outer housing spins while the carrier can rotate independently</div></div></div>
+          <div class="rounded-xl bg-white border-2 border-violet-200 p-3 flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-violet-100 grid place-items-center">🔋</span><div class="flex-1"><div class="text-xs font-bold tracking-widest text-violet-700">SUPERCAP + POWER CONDITIONING</div><div class="text-xs text-slate-500">Stores the small amount of harvested display power</div></div></div>
+          <div class="rounded-xl bg-white border-2 border-slate-300 p-3 flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-slate-100 grid place-items-center">🛡️</span><div class="flex-1"><div class="text-xs font-bold tracking-widest text-slate-700">LIGHTWEIGHT OUTER HOUSING</div><div class="text-xs text-slate-500">Inspection window makes the bearing/carrier story visible</div></div></div>
+          <div class="rounded-xl bg-slate-900 text-white p-3 flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-white/10 grid place-items-center">⚙</span><div class="flex-1"><div class="text-xs font-bold tracking-widest text-amber-300">ONE LOW-VOLTAGE TORQUE EMULATOR</div><div class="text-xs text-slate-400">Applies carrier-level torque for the bench demo; no fin servos</div></div></div>
+        </div>
+        <div class="mt-3 text-center text-xs font-mono text-slate-500">↓ nonfunctional slip-fit adapter ↓</div>
+        <div class="mt-2 rounded-xl bg-amber-100 border border-amber-200 p-2.5 text-center text-xs font-bold text-amber-900">LIGHTWEIGHT PRINTED SHELL MOCK-UP — SOLID INERT INTERIOR — LOW-SPEED BENCH ONLY</div>
+      </div>
+      <div>
+        <div class="text-xs font-bold tracking-widest text-slate-500">DEPENDENCIES — TALK TO EACH OTHER</div>
+        <div class="mt-3 space-y-2 text-sm">
+          <div class="rounded-xl bg-amber-50 border border-amber-200 p-3">Body(5) <b>→ gives power to →</b> Brain(3)</div>
+          <div class="rounded-xl bg-sky-50 border border-sky-200 p-3">Steering(2) <b>→ tells which way is up to →</b> Brain(3)</div>
+          <div class="rounded-xl bg-emerald-50 border border-emerald-200 p-3">Brain(3) <b>→ tells when to burst to →</b> Fuze(4)</div>
+          <div class="rounded-xl bg-violet-50 border border-violet-200 p-3">Tester(6) <b>→ checks everyone’s numbers →</b> Planner(1) puts in deck</div>
+        </div>
+        <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <div class="text-xs font-bold tracking-widest text-slate-500">KEY SPECS (CAD: generate_pgk_155.py)</div>
+          <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
+            <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">Total length</div><div class="font-bold">~220mm (124.7mm intrusion)</div></div>
+            <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">Diameter</div><div class="font-bold">Ø56mm body • Ø50 shank</div></div>
+            <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">Weight</div><div class="font-bold">~770g</div></div>
+            <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">Span</div><div class="font-bold">~151mm (≈ shell Ø)</div></div>
+            <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">Canard</div><div class="font-bold">4 fixed • one common carrier</div></div>
+            <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">De-spin</div><div class="font-bold">front + rear display bearings</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUBSYSTEMS -->
+<section class="bg-white border-y border-slate-200">
+<div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <span class="px-2.5 py-1 rounded-full bg-violet-100 text-violet-800 text-xs font-bold tracking-widest border border-violet-200">05b — SUBSYSTEMS OWNERSHIP</span>
+  <h2 class="mt-3 font-display font-bold text-[28px] leading-tight">Who owns what — Learn → Decide → Show</h2>
+  <p class="mt-2 text-slate-600">Top box = shared goal. Each colored box = one teammate. Read top → bottom: <b>Step 1 Learn</b>, <b>Step 2 Decide</b>, <b>Step 3 Show</b>. Dotted lines = help between teammates.</p>
+  <div class="mt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="rounded-2xl border-t-4 border-amber-400 bg-slate-50 p-5 card-hover border border-slate-200">
+      <div class="flex items-start justify-between"><span class="px-2.5 py-1 rounded-full bg-amber-400 text-slate-900 text-[11px] font-bold">1 — THE PLANNER</span><span class="text-xs font-mono text-slate-500">research/A_system</span></div>
+      <div class="mt-2 font-bold">jagathsrujan</div><div class="text-xs text-slate-500">System Architecture + Cost (H)</div>
+      <div class="mt-3 space-y-2 text-xs">
+        <div class="rounded-xl bg-white border p-2.5"><b>Learn:</b> Old kits, size limits, who builds what (YIL/BEL/ARDE)</div>
+        <div class="rounded-xl bg-white border p-2.5"><b>Decide:</b> Pick simplest design (A1) + make weight & cost sheet</div>
+        <div class="rounded-xl bg-slate-900 text-white p-2.5"><b>Show:</b> Master CAD + cost model ₹8–11L + final PPT (prove 74% saving)</div>
+      </div>
+      <div class="mt-3 text-[11px] text-slate-500">Ideas: A1–A12 • Files: 108 catalog baseline</div>
+    </div>
+    <div class="rounded-2xl border-t-4 border-sky-500 bg-slate-50 p-5 card-hover border border-slate-200">
+      <div class="flex items-start justify-between"><span class="px-2.5 py-1 rounded-full bg-sky-500 text-white text-[11px] font-bold">2 — THE STEERING PERSON</span><span class="text-xs font-mono text-slate-500">research/B_aero</span></div>
+      <div class="mt-2 font-bold">OPEN — hiring: aero/CFD or controls</div><div class="text-xs text-slate-500">Aerodynamics + Canards</div>
+      <div class="mt-3 space-y-2 text-xs">
+        <div class="rounded-xl bg-white border p-2.5"><b>Learn:</b> How small wings steer, why shell spins, use spin to turn</div>
+        <div class="rounded-xl bg-white border p-2.5"><b>Decide:</b> One common carrier with four fixed illustrative canards; use a single low-voltage torque emulator for the bench demo (B1)</div>
+        <div class="rounded-xl bg-slate-900 text-white p-2.5"><b>Show:</b> Canard CAD + CFD + steering-authority graph (miss vs time)</div>
+      </div>
+      <div class="mt-3 text-[11px] text-slate-500">Ideas: B1–B16 • Active exhibit: common carrier, bearings, torque emulator</div>
+    </div>
+    <div class="rounded-2xl border-t-4 border-emerald-500 bg-slate-50 p-5 card-hover border border-slate-200">
+      <div class="flex items-start justify-between"><span class="px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[11px] font-bold">3 — THE BRAIN</span><span class="text-xs font-mono text-slate-500">research/D_sensors</span></div>
+      <div class="mt-2 font-bold">Anvita Pranjal <span class="text-xs text-slate-500">ECE 2nd yr</span></div><div class="text-xs text-slate-500">Sensors + GNC (C_gnc + D)</div>
+      <div class="mt-3 space-y-2 text-xs">
+        <div class="rounded-xl bg-white border p-2.5"><b>Learn:</b> Relative-angle sensing, simple controller logic, and display-safe electronics</div>
+        <div class="rounded-xl bg-white border p-2.5"><b>Decide:</b> Low-voltage controller + angle sensor + LED/status outputs for the bench model</div>
+        <div class="rounded-xl bg-slate-900 text-white p-2.5"><b>Show:</b> Display controller PCB + live relative-angle/power LED demo</div>
+      </div>
+      <div class="mt-3 text-[11px] text-slate-500">Ideas: C1–C14, D1–D16 • NavIC L5 SPS, LSTM GNSS-denied</div>
+    </div>
+    <div class="rounded-2xl border-t-4 border-pink-500 bg-slate-50 p-5 card-hover border border-slate-200">
+      <div class="flex items-start justify-between"><span class="px-2.5 py-1 rounded-full bg-pink-500 text-white text-[11px] font-bold">4 — THE FUZE PERSON</span><span class="text-xs font-mono text-slate-500">research/E_fuze</span></div>
+      <div class="mt-2 font-bold">Krupa Nalige <span class="text-xs text-slate-500">EEE 2nd yr</span></div><div class="text-xs text-slate-500">Multi-mode Fuze + Integration (J)</div>
+      <div class="mt-3 space-y-2 text-xs">
+        <div class="rounded-xl bg-white border p-2.5"><b>Learn:</b> Public fuze concepts and how to explain the safety boundary</div>
+        <div class="rounded-xl bg-white border p-2.5"><b>Decide:</b> Mock display states only; no fuze, initiator, radar, or arming hardware</div>
+        <div class="rounded-xl bg-slate-900 text-white p-2.5"><b>Show:</b> Clearly labelled display state machine + phone-programs-demo screen (no live fuze)</div>
+      </div>
+      <div class="mt-3 text-[11px] text-slate-500">Ideas: E1–E10, J1–J6 • 6/12/18m HOB, M762 MEMS S&A</div>
+    </div>
+    <div class="rounded-2xl border-t-4 border-violet-500 bg-slate-50 p-5 card-hover border border-slate-200">
+      <div class="flex items-start justify-between"><span class="px-2.5 py-1 rounded-full bg-violet-500 text-white text-[11px] font-bold">5 — THE BODY BUILDER</span><span class="text-xs font-mono text-slate-500">research/F_power+G</span></div>
+      <div class="mt-2 font-bold">Naman <span class="text-xs text-slate-500">Mechanical</span></div><div class="text-xs text-slate-500">Structure + Power</div>
+      <div class="mt-3 space-y-2 text-xs">
+        <div class="rounded-xl bg-white border p-2.5"><b>Learn:</b> How to power a display without a battery and keep the printed body light</div>
+        <div class="rounded-xl bg-white border p-2.5"><b>Decide:</b> Shell/carrier rotor-stator + rectifier + supercap + LEDs/controller</div>
+        <div class="rounded-xl bg-slate-900 text-white p-2.5"><b>Show:</b> 3D-printed model + guarded low-speed power/angle demonstration</div>
+      </div>
+      <div class="mt-3 text-[11px] text-slate-500">Ideas: F1–F10, G1–G10 • display alternator, supercap, lightweight housing</div>
+    </div>
+    <div class="rounded-2xl border-t-4 border-orange-500 bg-slate-50 p-5 card-hover border border-slate-200">
+      <div class="flex items-start justify-between"><span class="px-2.5 py-1 rounded-full bg-orange-500 text-white text-[11px] font-bold">6 — THE TESTER</span><span class="text-xs font-mono text-slate-500">research/I_test</span></div>
+      <div class="mt-2 font-bold">Member 5 (TBD) — 6th hire here</div><div class="text-xs text-slate-500">Simulation + Validation</div>
+      <div class="mt-3 space-y-2 text-xs">
+        <div class="rounded-xl bg-white border p-2.5"><b>Learn:</b> How to test without firing, what army checks (MIL-STD-331)</div>
+        <div class="rounded-xl bg-white border p-2.5"><b>Decide:</b> Fake flight on computer (6DOF) + drop test for fuze</div>
+        <div class="rounded-xl bg-slate-900 text-white p-2.5"><b>Show:</b> CEP histogram + test plan + final demo video</div>
+      </div>
+      <div class="mt-3 text-[11px] text-slate-500">Ideas: I1–I6 • PRESIMEN, 1000-run Monte Carlo</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 6 — PGKs & VIDEOS -->
+<section id="videos" class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <span class="px-2.5 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold tracking-widest border border-red-200">06 — ALREADY-BUILT PGKs (PROOF IT WORKS)</span>
+  <h2 class="mt-3 font-display font-bold text-[28px] leading-tight">Study these — copy the winner, beat it on cost</h2>
+  <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold tracking-widest text-slate-500">
+          <tr><th class="text-left px-3 py-2">KIT</th><th class="text-left px-3 py-2">COUNTRY</th><th class="text-left px-3 py-2">HOW IT STEERS</th><th class="text-left px-3 py-2">CEP</th><th class="text-left px-3 py-2">COST</th><th class="text-left px-3 py-2">LESSON FOR US</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr class="bg-amber-50"><td class="px-3 py-2 font-bold">M1156 PGK — PUBLIC REFERENCE</td><td class="px-3 py-2">USA (Northrop)</td><td class="px-3 py-2">Public reference for fixed canards + controlled relative rotation</td><td class="px-3 py-2">Public benchmark only</td><td class="px-3 py-2">Public reference only</td><td class="px-3 py-2">Study the architecture; do not claim an exact teardown</td></tr>
+          <tr><td class="px-3 py-2 font-semibold">M982 Excalibur</td><td class="px-3 py-2">USA/Sweden</td><td class="px-3 py-2">Full new shell, glide + fins, GPS/INS</td><td class="px-3 py-2"><4–6m</td><td class="px-3 py-2">~$100k (₹85L+)</td><td class="px-3 py-2">Gold standard we undercut 8×; India already bought some</td></tr>
+          <tr><td class="px-3 py-2 font-semibold">Elbit Silver Bullet</td><td class="px-3 py-2">Israel</td><td class="px-3 py-2">Fuze-replacement kit, GPS</td><td class="px-3 py-2">&lt;20m class</td><td class="px-3 py-2">~$20k</td><td class="px-3 py-2">Direct competitor concept</td></tr>
+          <tr><td class="px-3 py-2 font-semibold">FOX / DM84 (Junghans/KNDS)</td><td class="px-3 py-2">Germany</td><td class="px-3 py-2">Course-correcting fuze</td><td class="px-3 py-2">~10–20m</td><td class="px-3 py-2">—</td><td class="px-3 py-2">FMCW proximity heritage (our E1)</td></tr>
+          <tr><td class="px-3 py-2 font-semibold">ECIL M85P13 / BEL M180</td><td class="px-3 py-2">🇮🇳 India</td><td class="px-3 py-2">Proximity fuze (no guidance) — 2.2M+ fielded</td><td class="px-3 py-2">—</td><td class="px-3 py-2">fielded</td><td class="px-3 py-2">Indian electronics path (BEL/ECIL supply)</td></tr>
+          <tr><td class="px-3 py-2 font-semibold">IIT Madras + MIL kit</td><td class="px-3 py-2">🇮🇳 India</td><td class="px-3 py-2">Research kit</td><td class="px-3 py-2">10m claimed</td><td class="px-3 py-2">research</td><td class="px-3 py-2">Proof India can do GNC</td></tr>
+          <tr class="bg-violet-50"><td class="px-3 py-2 font-bold">L Shang student rocket 🚀</td><td class="px-3 py-2">China (student!)</td><td class="px-3 py-2">4 servos + canards, ADRC + EKF, vertical recovery</td><td class="px-3 py-2">recovered</td><td class="px-3 py-2">&lt;$200 BOM</td><td class="px-3 py-2">Student did CAD→CFD→PCB→GNC→7 flights in 30 days. 70% transfers to us.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <div class="flex items-center justify-between"><h3 class="font-display font-bold text-xl">Watch these BEFORE first meeting — 45 min total</h3><span class="hidden sm:inline text-xs px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200 font-bold">Start with #1 — public architecture reference</span></div>
+    <div class="mt-4 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <a href="https://www.youtube.com/watch?v=Ebzh12PR0-U" target="_blank" class="group rounded-2xl overflow-hidden border border-slate-200 bg-white card-hover">
+        <div class="aspect-video bg-slate-900 grid place-items-center text-white relative overflow-hidden"><img src="https://img.youtube.com/vi/Ebzh12PR0-U/hqdefault.jpg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-90 transition"><span class="relative w-14 h-14 rounded-full bg-red-600 grid place-items-center text-xl shadow-lg">▶</span><span class="absolute bottom-2 left-2 px-2 py-1 rounded bg-black/70 text-[10px] font-bold tracking-widest">START HERE</span></div>
+        <div class="p-3"><div class="text-xs font-bold tracking-widest text-red-600">01 • M1156 PGK OVERVIEW (ATK)</div><div class="text-sm font-semibold leading-tight">Public reference for the architecture behind our inert common-carrier demonstrator.</div></div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=nppX02X_vVQ" target="_blank" class="group rounded-2xl overflow-hidden border border-slate-200 bg-white card-hover">
+        <div class="aspect-video bg-slate-900 grid place-items-center relative overflow-hidden"><img src="https://img.youtube.com/vi/nppX02X_vVQ/hqdefault.jpg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-90 transition"><span class="relative w-14 h-14 rounded-full bg-red-600 grid place-items-center text-xl">▶</span></div>
+        <div class="p-3"><div class="text-xs font-bold tracking-widest text-slate-500">02 • NORTHROP GRUMMAN</div><div class="text-sm font-semibold leading-tight">Precision Guidance Kit — official overview</div></div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=tlDhdhbIN7g" target="_blank" class="group rounded-2xl overflow-hidden border border-slate-200 bg-white card-hover">
+        <div class="aspect-video bg-slate-900 grid place-items-center relative overflow-hidden"><img src="https://img.youtube.com/vi/tlDhdhbIN7g/hqdefault.jpg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-80"><span class="relative w-14 h-14 rounded-full bg-red-600 grid place-items-center text-xl">▶</span></div>
+        <div class="p-3"><div class="text-xs font-bold tracking-widest text-slate-500">03 • HOW ACCURATE AT 30KM</div><div class="text-sm font-semibold leading-tight">PGK test — watch the CEP shrink</div></div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=0VPrQNUC25A" target="_blank" class="group rounded-2xl overflow-hidden border border-slate-200 bg-white card-hover">
+        <div class="aspect-video bg-slate-900 grid place-items-center relative overflow-hidden"><img src="https://img.youtube.com/vi/0VPrQNUC25A/hqdefault.jpg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-80"><span class="relative w-14 h-14 rounded-full bg-red-600 grid place-items-center text-xl">▶</span></div>
+        <div class="p-3"><div class="text-xs font-bold tracking-widest text-slate-500">04 • EXCALIBUR AT 70KM</div><div class="text-sm font-semibold leading-tight">Precision hit at extreme range</div></div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=nfESvQIpdz8" target="_blank" class="group rounded-2xl overflow-hidden border border-slate-200 bg-white card-hover">
+        <div class="aspect-video bg-slate-900 grid place-items-center relative overflow-hidden"><img src="https://img.youtube.com/vi/nfESvQIpdz8/hqdefault.jpg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-80"><span class="relative w-14 h-14 rounded-full bg-red-600 grid place-items-center text-xl">▶</span></div>
+        <div class="p-3"><div class="text-xs font-bold tracking-widest text-slate-500">05 • EXCALIBUR COMBAT (AFGHANISTAN)</div><div class="text-sm font-semibold leading-tight">First combat use — real mission</div></div>
+      </a>
+      <div class="rounded-2xl border-2 border-violet-200 bg-violet-50 p-4 flex flex-col">
+        <div class="text-xs font-bold tracking-widest text-violet-700">06 • L SHANG CANARD ROCKET (23 MIN) — KEY FOR US</div>
+        <p class="mt-2 text-sm leading-relaxed text-slate-700">A single Chinese student built CAD → CFD → PCB → GNC → <b>7 flights in 30 days</b> for &lt;$200. Full frame-by-frame teardown in repo: <code class="px-1 py-0.5 rounded bg-white border text-xs">SIH26098_LShang_Video_Teardown_Gap_Analysis.md</code>. 70% of his toolchain transfers directly to our shell.</p>
+        <div class="mt-3 flex flex-wrap gap-2 text-xs">
+          <span class="px-2.5 py-1 rounded-full bg-white border font-semibold">ADRC + EKF</span>
+          <span class="px-2.5 py-1 rounded-full bg-white border font-semibold">ICEM/Fluent</span>
+          <span class="px-2.5 py-1 rounded-full bg-white border font-semibold">7 flight iterations</span>
+        </div>
+        <a href="https://www.youtube.com/results?search_query=L+Shang+canard+rocket" target="_blank" class="mt-3 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-violet-600 text-white text-sm font-bold hover:bg-violet-700">Search video →</a>
+        <div class="mt-2 text-[11px] text-violet-700">If he can do it with a rocket, we can do it with a shell kit. This is your morale booster.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 7 — PLANNING PROCESS -->
+<section id="plan" class="bg-white border-y border-slate-200">
+<div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <span class="px-2.5 py-1 rounded-full bg-slate-900 text-white text-xs font-bold tracking-widest">07 — PLANNING PROCESS</span>
+  <h2 class="mt-3 font-display font-bold text-[28px] leading-tight">How we go from today → 20 September</h2>
+  <div class="mt-6 grid lg:grid-cols-[.95fr_1.05fr] gap-6">
+    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+      <div class="text-xs font-bold tracking-widest text-slate-500">THE DAILY LOOP — EVERYONE, EVERY DAY, ~1–2h</div>
+      <div class="mt-4 space-y-3 text-sm">
+        <div class="flex gap-3"><span class="w-7 h-7 rounded-full bg-slate-900 text-white grid place-items-center text-xs font-bold">1</span><div><code class="px-1.5 py-0.5 rounded bg-white border text-xs">git pull</code> — see what teammates did (check <code class="text-xs">SIH26098_LIVEBOARD.md</code>)</div></div>
+        <div class="flex gap-3"><span class="w-7 h-7 rounded-full bg-amber-400 text-slate-900 grid place-items-center text-xs font-bold">2</span><div><b>Research your category</b> — real sources only (datasheets, patents, papers). No URL = rejected.</div></div>
+        <div class="flex gap-3"><span class="w-7 h-7 rounded-full bg-sky-500 text-white grid place-items-center text-xs font-bold">3</span><div>Write entry: <code class="px-1.5 py-0.5 rounded bg-white border text-xs">research/&lt;your_category&gt;/entry_YYYYMMDD_topic.md</code><br><span class="text-xs text-slate-500">Use <code>research/templates/entry_template.md</code></span></div></div>
+        <div class="flex gap-3"><span class="w-7 h-7 rounded-full bg-emerald-500 text-white grid place-items-center text-xs font-bold">4</span><div>Fill 4 mandatory fields: <b>Source URL + TRL + Cost (₹) + Indian Path</b> (YIL/BEL/ARDE/ISRO/MIL)</div></div>
+        <div class="flex gap-3"><span class="w-7 h-7 rounded-full bg-violet-600 text-white grid place-items-center text-xs font-bold">5</span><div><code class="px-1.5 py-0.5 rounded bg-white border text-xs">git add . && commit && push</code> → GitHub Action auto-updates LIVEBOARD + Notion</div></div>
+      </div>
+      <div class="mt-4 rounded-xl bg-white border p-3 text-xs">
+        <b>Hard rules:</b> No URL = entry rejected. Never invent sources. Pull before push. Conflicts → GitHub Issues or team chat.<br>
+        <span class="text-slate-500">Template needs: id, category, author, date, source_type, trl, summary, source, evidence, Indian Path, pros/cons, cost, recommendation</span>
+      </div>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+      <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold tracking-widest text-slate-500">3-WEEK BATTLE PLAN</div>
+      <div class="divide-y divide-slate-100 text-sm">
+        <div class="px-4 py-3 flex gap-3"><span class="px-2.5 py-1 rounded-full bg-slate-900 text-white text-xs font-bold h-fit">W0</span><div><b>Onboard — Aug 26–31 • Learn</b><div class="text-slate-600">Everyone: read this doc + README, watch 7 videos, clone repo, first welcome entry pushed. <b>6th member hired</b> (target: aero/CFD or controls).</div></div></div>
+        <div class="px-4 py-3 flex gap-3"><span class="px-2.5 py-1 rounded-full bg-amber-400 text-slate-900 text-xs font-bold h-fit">W1</span><div><b>Research & Freeze — Sep 1–7 • Decide</b><div class="text-slate-600">Each category 3+ entries with real sources. <b>Architecture freeze review Sep 6:</b> inert common-carrier baseline confirmed, display electronics mapped, CAD v1, safe test plan.</div></div></div>
+        <div class="px-4 py-3 flex gap-3"><span class="px-2.5 py-1 rounded-full bg-sky-500 text-white text-xs font-bold h-fit">W2</span><div><b>Build — Sep 8–14 • Show</b><div class="text-slate-600">Simulation and electronics block; inert 3D-printed nose + guarded low-speed de-spin rig; relative-angle/power LED demo; steering concept notes.</div></div></div>
+        <div class="px-4 py-3 flex gap-3"><span class="px-2.5 py-1 rounded-full bg-emerald-500 text-white text-xs font-bold h-fit">W3</span><div><b>Integrate & Pitch — Sep 15–19 • Prove</b><div class="text-slate-600">Assembly cutaway, guarded rotation/power demo, clearly labelled simulation/reference slides, and 5-min pitch deck rehearsed twice. Buffer Sep 19.</div></div></div>
+        <div class="px-4 py-3 flex gap-3 bg-amber-50"><span class="px-2.5 py-1 rounded-full bg-red-600 text-white text-xs font-bold h-fit">●</span><div><b>SUBMIT — Sep 20 🎯</b> Upload. Celebrate.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-6 rounded-2xl bg-slate-900 text-white p-5 grid md:grid-cols-3 gap-4 text-sm">
+    <div><div class="text-xs font-bold tracking-widest text-amber-300">FOR JAGATH — LEAD CHECKLIST</div><ul class="mt-2 space-y-1 text-slate-300 list-disc list-inside"><li>GitHub invites sent to 5 + pending 6th</li><li>LIVEBOARD auto-merge via research/merge.py + Action</li><li>Excalidraw board: 6 panels (problem→fix→mission→physics→anatomy→team)</li></ul></div>
+    <div><div class="text-xs font-bold tracking-widest text-sky-300">CAD & SIM QUICK START</div><div class="mt-2 font-mono text-xs bg-white/10 rounded-xl p-2.5">cd cad_models<br>freecadcmd generate_shell_155.py  # inert mockup<br>freecadcmd generate_pgk_155.py    # common-carrier PGK demo<br>read PGK_DEMO_ASSEMBLY.md          # assembly map<br>python simulate_trajectory_155.py  # separate simulation</div></div>
+    <div><div class="text-xs font-bold tracking-widest text-emerald-300">WHAT MAKES US WIN</div><p class="mt-2 text-slate-300">A clear public-architecture explanation + safe inert model + visible relative-rotation/power demo + separate simulation/reference track → checks the SIH story without presenting a launch-capable article.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 8 — ROLES DETAIL + FOLDERS -->
+<section id="roles" class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold tracking-widest border border-amber-200">08 — YOUR ROLE & WHAT TO RESEARCH</span>
+  <h2 class="mt-3 font-display font-bold text-[28px] leading-tight">Pick your folder — research, decide, show</h2>
+  <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold tracking-widest text-slate-500">
+          <tr><th class="text-left px-3 py-2">#</th><th class="text-left px-3 py-2">ROLE</th><th class="text-left px-3 py-2">FOLDER</th><th class="text-left px-3 py-2">RESEARCH (W1)</th><th class="text-left px-3 py-2">DECIDE (W1 FREEZE)</th><th class="text-left px-3 py-2">SHOW (W2–W3)</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr><td class="px-3 py-2 font-bold">1</td><td class="px-3 py-2"><b>The Planner</b><div class="text-xs text-slate-500">jagathsrujan</div></td><td class="px-3 py-2 font-mono text-xs">A_system</td><td class="px-3 py-2">Public PGK references, display size limits, YIL forge vs LPBF, cost methods (H1)</td><td class="px-3 py-2">Freeze the inert common-carrier demonstrator and keep flight claims separate</td><td class="px-3 py-2">Architecture doc, master CAD, cost sheet, pitch deck</td></tr>
+          <tr><td class="px-3 py-2 font-bold">2</td><td class="px-3 py-2"><b>The Steering Person</b><div class="text-xs text-red-600 font-bold">OPEN — YOUR CHANCE</div></td><td class="px-3 py-2 font-mono text-xs">B_aero</td><td class="px-3 py-2">Common-carrier geometry, relative rotation, safe low-speed test method</td><td class="px-3 py-2">Four fixed illustrative canards on one carrier; no fin servos in the exhibit</td><td class="px-3 py-2">Canard CAD + safe rotation diagram + simulation notes</td></tr>
+          <tr><td class="px-3 py-2 font-bold">3</td><td class="px-3 py-2"><b>The Brain</b><div class="text-xs text-slate-500">Anvita Pranjal</div></td><td class="px-3 py-2 font-mono text-xs">D_sensors + C_gnc</td><td class="px-3 py-2">Relative-angle sensing, low-voltage controller, LED/status logic</td><td class="px-3 py-2">Display controller + angle sensor; no flight computer claim</td><td class="px-3 py-2">Display PCB + live relative-angle/power demo</td></tr>
+          <tr><td class="px-3 py-2 font-bold">4</td><td class="px-3 py-2"><b>The Display Electronics Person</b><div class="text-xs text-slate-500">Krupa Nalige</div></td><td class="px-3 py-2 font-mono text-xs">E_fuze + J</td><td class="px-3 py-2">Public fuze concepts and exhibition safety boundaries</td><td class="px-3 py-2">Mock state machine and optional phone UI only; no live fuze hardware</td><td class="px-3 py-2">Clearly labelled display block diagram + mock-programming demo</td></tr>
+          <tr><td class="px-3 py-2 font-bold">5</td><td class="px-3 py-2"><b>The Body Builder</b><div class="text-xs text-slate-500">Naman</div></td><td class="px-3 py-2 font-mono text-xs">G_structure + F_power</td><td class="px-3 py-2">Printed housing, display bearing pair, low-voltage alternator demo, supercap</td><td class="px-3 py-2">Lightweight guarded shell + shell/carrier rotor-stator + display LEDs</td><td class="px-3 py-2">3D print + safe power/angle demonstration</td></tr>
+          <tr><td class="px-3 py-2 font-bold">6</td><td class="px-3 py-2"><b>The Tester</b><div class="text-xs text-slate-500">Member 5 TBD</div></td><td class="px-3 py-2 font-mono text-xs">I_test</td><td class="px-3 py-2">Safe bench methods, relative-angle sensing, LED/power measurement</td><td class="px-3 py-2">Guarded low-speed stand and non-launch test checklist</td><td class="px-3 py-2">Demonstration report + test plan + final demo video</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="mt-4 grid md:grid-cols-2 gap-4">
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm">
+      <div class="text-xs font-bold tracking-widest text-amber-800">6TH MEMBER — WHO WE HIRE NEXT</div>
+      <p class="mt-2 text-amber-900">Priority: <b>aero/CFD or Controls</b> to own B_aero (steering). Backup: Embedded/PCB if Anvita needs support. Must have laptop with Python/FreeCAD. 10h/week till 20 Sep.</p>
+      <div class="mt-2 text-xs text-amber-700">Pitch: “You get solo ownership of the wings that steer a Mach 2 shell — one bearing, no motor, real physics.”</div>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white p-4 text-sm">
+      <div class="text-xs font-bold tracking-widest text-slate-500">RESEARCH TEMPLATE — 4 MANDATORY FIELDS</div>
+      <p class="mt-2 text-slate-600">Every entry in <code class="px-1 py-0.5 rounded bg-slate-100 border text-xs">research/templates/entry_template.md</code> must have: <b>Source URL + TRL (1–9, justified) + Cost (₹ lakhs) + Indian Path</b> (YIL/BEL/ECIL/ARDE/ISRO/MIL). No URL = rejected. Run <code class="px-1 py-0.5 rounded bg-slate-100 border text-xs">python3 research/merge.py</code> to update LIVEBOARD.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DELIVERABLES CHECKLIST -->
+<section class="bg-slate-50 border-y border-slate-200">
+<div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <h2 class="font-display font-bold text-xl">Deliverables checklist — PS requirement → our file</h2>
+  <div class="mt-4 grid md:grid-cols-2 gap-3 text-sm">
+    <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>System architecture doc</b> — A–J full trade, 108 ideas → <code class="text-xs">SIH26098_Exhaustive_Ideas_Catalog.md</code> + freeze doc</span></label>
+    <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>CAD of CAA</b> — common carrier + bearing pair + shell/carrier alternator concept → <code class="text-xs">cad_models/generate_pgk_155.py</code> (STEP/STL)</span></label>
+    <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>Electronics block</b> — RF→MCU→power→actuator (D+E+F+J) → block diagram PDF</span></label>
+    <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>GNC algorithm</b> — PID/MPC/LSTM, 20-line Python → <code class="text-xs">C10/C11</code> documented</span></label>
+    <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>Simulation</b> — 6DOF + Monte Carlo 1000 runs → CEP histogram (≤30m)</span></label>
+    <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>Prototype / PoC</b> — 3D-printed nose + despin bench rig + drop test (MIL-STD-331)</span></label>
+    <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>Performance estimation</b> — PGK 10m median proven, cost teardown vs should-cost</span></label>
+    <label class="flex gap-3 items-start rounded-2xl bg-amber-50 border border-amber-200 p-3"><input type="checkbox" class="mt-1"><span><b>5-min pitch</b> — pain → kit → Atmanirbhar → demo (sim+print+setter) → cost → roadmap (fuze→kit→ramjet)</span></label>
+  </div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <h2 class="font-display font-bold text-xl">New-member FAQ</h2>
+  <div class="mt-4 grid md:grid-cols-2 gap-4 text-sm">
+    <details class="rounded-2xl bg-white border p-4 open:bg-slate-50"><summary class="font-semibold cursor-pointer">I know nothing about defence. Can I still contribute?</summary><p class="mt-2 text-slate-600">Yes. This is wings + sensors + code + structures. Everything military you need is in Sections 02–04 + 7 videos.</p></details>
+    <details class="rounded-2xl bg-white border p-4 open:bg-slate-50"><summary class="font-semibold cursor-pointer">Are we building an actual weapon?</summary><p class="mt-2 text-slate-600">No. Inert demonstrators only: CAD, sim, 3D prints, bench electronics. No energetics, no explosives, ever. PS is published for student engineering.</p></details>
+    <details class="rounded-2xl bg-white border p-4 open:bg-slate-50"><summary class="font-semibold cursor-pointer">Hardest exhibition risk?</summary><p class="mt-2 text-slate-600">Safe low-speed operation: retained parts, guarded bearings, soft edges, and a nonfunctional adapter. Do not claim 15,000g survivability or fuze function.</p></details>
+    <details class="rounded-2xl bg-white border p-4 open:bg-slate-50"><summary class="font-semibold cursor-pointer">What if NavIC/GPS is jammed?</summary><p class="mt-2 text-slate-600">Stretch goal: LSTM predicts impact from IMU+mag alone (&lt;5m error in papers, C7). Great “innovation” slide.</p></details>
+    <details class="rounded-2xl bg-white border p-4 open:bg-slate-50"><summary class="font-semibold cursor-pointer">Time needed?</summary><p class="mt-2 text-slate-600">~10h/week for 3.5 weeks. Daily 1–2h entries + one weekend build session/week.</p></details>
+    <details class="rounded-2xl bg-white border p-4 open:bg-slate-50"><summary class="font-semibold cursor-pointer">Where is everything?</summary><p class="mt-2 text-slate-600"><code class="text-xs">SIH26098_TEAM_BRIEFING.md</code> (start) • <code class="text-xs">README.md</code> (team map) • <code class="text-xs">SIH26098_Exhaustive_Ideas_Catalog.md</code> (108 ideas) • <code class="text-xs">ONBOARDING_PROMPT.md</code> (AI prompt) • <code class="text-xs">cad_models/</code> • <code class="text-xs">research/&lt;cat&gt;/</code> • <code class="text-xs">SIH26098_LIVEBOARD.md</code></p></details>
+  </div>
+  <div class="mt-8 rounded-2xl bg-slate-900 text-white p-6 flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <div class="font-display font-bold text-lg">Ready to start?</div>
+      <div class="text-sm text-slate-400">Clone, pick your folder, push your first entry. Planner merges → LIVEBOARD updates.</div>
+      <div class="mt-2 font-mono text-xs bg-white/10 rounded-xl px-3 py-2 inline-block">git clone https://github.com/jagathsrujan/sih26098-pgk-bharat.git &nbsp;•&nbsp; git pull &nbsp;•&nbsp; cp research/templates/entry_template.md research/A_system/entry_20260828_my_first.md</div>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <a href="#ps" class="px-5 py-2.5 rounded-xl bg-amber-400 text-slate-900 font-bold text-sm">↑ Back to top</a>
+      <button onclick="navigator.clipboard.writeText(location.href); alert('Link copied! Share this file: onboarding.html')" class="px-5 py-2.5 rounded-xl bg-white text-slate-900 font-semibold text-sm">Copy link</button>
+    </div>
+  </div>
+  <div class="mt-4 text-center text-[11px] text-slate-400">Generated 27 Aug 2026 • Keep this honest — it is what new teammates read first. • Share as single file <code>onboarding.html</code> (works offline, videos need internet) • Print → Save as PDF for handout.</div>
+</section>
+
+<footer class="border-t border-slate-200 bg-white">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap gap-2 text-xs text-slate-500 items-center justify-between">
+    <span>SIH26098 • Ministry of Defence / YIL Ambajhari • STANAG 2916 • CEP ≤30m • ₹8–11L • Sources in SIH26098_Exhaustive_Ideas_Catalog.md §13 (30+ websearches, patents, ION/DRDO/ARDE)</span>
+    <span class="font-mono">v1.0 • 27 Aug 2026</span>
+  </div>
+</footer>
+
+<script>
+// Glossary data + filter
+const glossaryItems=[
+  ["CEP","Radius containing 50% of impacts. Smaller = better. 267m→≤30m is our job."],
+  ["Muzzle velocity (v₀)","684 m/s (M3A1) to 827 m/s (max)."],
+  ["Ballistic trajectory","Unpowered arc under gravity+drag. Dumb shell cannot change it."],
+  ["Apogee","Highest point ~10–12km at max range."],
+  ["QE (Quadrant Elevation)","Barrel angle, 45° for max range."],
+  ["Drag","F=½ρv²CdA. Eats half the vacuum range."],
+  ["Spin stabilization","Rifling spins shell ~250 rev/s; gyro keeps nose forward."],
+  ["Magnus / Coriolis","Spin×airflow & Earth rotation push shell 50–150m at long range."],
+  ["Fuze","Nose computer deciding WHEN to burst. Not “fuse”."],
+  ["PD","Point Detonating — on contact. Superquick <250µs or delay 0–60ms."],
+  ["Proximity (VT)","Radar measures height, bursts 6/12/18m above ground (HOB)."],
+  ["Time mode","Bursts at set time 3.0–199.9s (cargo/smoke)."],
+  ["S&A","Safe & Arm — locked in storage, arms only after 850g + 2900rpm + 100m (STANAG 4187)."],
+  ["Setback","Backward accel at firing — fuze’s proof it was really fired."],
+  ["EPIAFS / inductive setter","Wireless coil programs fuze, no pins. Phone/NFC for our demo."],
+  ["PGK","Fuze-shaped GPS+canard module replacing standard fuze — our product."],
+  ["Canards","Small wings near nose. Ours fixed at tilt; rolling nose aims lift."],
+  ["Common carrier / de-spin","One inner carrier holds all four fixed canards; a bearing pair permits relative rotation against the outer shell."],
+  ["GNC","Guidance (where go), Navigation (where am), Control (move canards)."],
+  ["IMU","Inertial Measurement Unit — accel + gyro."],
+  ["GNSS / NavIC / GPS","Satellite nav. NavIC = India’s own (L5), sovereign."],
+  ["FMCW radar","Frequency-Modulated radar measuring distance (proximity fuze)."],
+  ["SWaP-C","Size Weight Power Cost — keep LOW."],
+  ["STANAG 2916","NATO fuze thread — our kit screws into every 155mm shell/gun."],
+  ["6DOF","Six Degrees Of Freedom sim (3 pos + 3 rot)."],
+  ["Monte Carlo","1000 randomized sims → CEP histogram."],
+];
+const glossaryEl=document.getElementById('glossary');
+function renderGlossary(filter=""){
+  const f=filter.toLowerCase();
+  glossaryEl.innerHTML=glossaryItems.filter(([k,v])=>!f||k.toLowerCase().includes(f)||v.toLowerCase().includes(f)).map(([k,v])=>`<div class="rounded-xl bg-slate-50 border border-slate-200 p-2.5"><span class="font-bold text-slate-900">${k}</span> <span class="text-slate-600">— ${v}</span></div>`).join("")||`<div class="text-slate-500 text-center py-6">No matches for “${filter}”</div>`;
+}
+renderGlossary();
+document.getElementById('glossarySearch').addEventListener('input',e=>renderGlossary(e.target.value));
+
+// Physics calculator
+const vEl=document.getElementById('calcV'), tEl=document.getElementById('calcT');
+const vv=document.getElementById('calcVV'), tt=document.getElementById('calcTT');
+const rEl=document.getElementById('calcR'), hEl=document.getElementById('calcH'), tofEl=document.getElementById('calcTof');
+const path=document.getElementById('calcPath'), dot=document.getElementById('calcDot');
+function updateCalc(){
+  const v=parseFloat(vEl.value), th=parseFloat(tEl.value);
+  vv.textContent=v; tt.textContent=th;
+  const rad=th*Math.PI/180, g=9.81;
+  const R=v*v*Math.sin(2*rad)/g/1000;
+  const H=v*v*Math.sin(rad)*Math.sin(rad)/(2*g)/1000;
+  const T=2*v*Math.sin(rad)/g;
+  rEl.textContent=R.toFixed(1); hEl.textContent=H.toFixed(1); tofEl.textContent=Math.round(T);
+  // trajectory arc scaled
+  const maxR= 85, maxH=20; // km for viewBox scaling
+  const rx=Math.min(R, maxR), hx=Math.min(H, 12);
+  const x2= 10 + (rx/maxR)*380, apexY=140 - (hx/12)*120, xM=10 + (rx/maxR)*190;
+  path.setAttribute('d',`M10 140 Q${xM} ${apexY}, ${x2} 140`);
+  dot.setAttribute('cx', x2); dot.setAttribute('cy', 140);
+}
+vEl.addEventListener('input',updateCalc); tEl.addEventListener('input',updateCalc);
+updateCalc();
+</script>
+</body>
+</html>

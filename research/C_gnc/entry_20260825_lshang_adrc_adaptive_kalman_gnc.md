@@ -38,7 +38,7 @@ ARDE GNC + IIT Madras 10m CEP (Hindu) + MeitY NavIC chip (10L) + DRDO ECCM. Port
 Dev: STM32H7 ₹0.08L + ZED-F9P ₹0.15L + Data10 ₹0.3L + MS5611 ₹0.02L. Flight hardened: Atlantic IMU ₹2L. Algorithm NRE ₹2L (Simulink autocode). Total GNC ₹4-5L prototype, ₹0.8L production.
 
 ## Recommendation
-**Use but adapt.** Copy his Simulink ADRC skeleton + adaptive EKF 15-state structure for `cad_models/simulate_trajectory_155.py` upgrade (currently ZEM point-mass). Add: 1) spin dynamics + despin phase, 2) C7 LSTM branch for GNSS outage, 3) NavIC L5 raw, 4) Remove baro from flight EKF (keep for HITL demo). Stage tests as he did: 1) rail altitude -> 2) HITL -> 3) bench despin -> 4) subscale rocket.
+**Use as simulation/reference material only.** If the team later studies the flight problem, the Simulink ADRC/EKF discussion can inform `cad_models/simulate_trajectory_155.py`. For the current exhibit, stop at a guarded low-speed relative-angle/LED bench test; do not stage rail, rocket, launch, or fuze tests.
 
 ## Links to Code/CAD
 - simulate_trajectory_155.py:90 ZEM + CLS_CAN 0.005m2 (replace with ADRC coeff from thumb_0285)
