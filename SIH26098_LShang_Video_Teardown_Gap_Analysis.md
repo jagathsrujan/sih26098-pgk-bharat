@@ -1,6 +1,6 @@
 # L Shang Canard Control Vertical Recovery Rocket — Frame-by-Frame Teardown vs SIH26098 Deliverables
 
-> **Status:** historical reference only. The earlier servo/face-gear comparison remains useful for trade-study context, but it is not the active PGK exhibition architecture. The active model is the common-carrier demonstrator in `cad_models/generate_pgk_155.py`; the superseded two-motor CAD is archived in `legacy/old_two_motor_design/`.
+> **Status:** historical reference only. The earlier servo/face-gear comparison remains useful for trade-study context, but it is not the active PGK exhibition architecture. The active bench demonstrator is the common-carrier model in `cad_models/generate_pgk_155.py`; the superseded two-motor CAD is archived in `legacy/old_two_motor_design/`. **New clean-sheet design of record:** `cleansheet/PGK_CleanSheet.FCStd` — threaded-race bearing-in-well, pancake outrunner, roll-decoupled canard shell — see `cleansheet/03_DESIGN_REPORT.md` (Rev 1.1) and `cleansheet/HANDOFF.md`.
 
 **Video:** `Canard control vertical recovery guidance technology experimental rocket development - L Shang (720p, h264).mp4` | **Duration:** 23:16 | **Probe:** 1280x720 29.97fps 1071kb/s h264/aac | **Frames extracted:** 1397 JPG @1fps `thumb_%04d.jpg` (`/tmp/canard_frames/`) via `ffmpeg fps=1` | **Analysis date:** 2026-08-25
 

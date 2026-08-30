@@ -4,7 +4,9 @@
 
 > Development of a Low-Cost Precision Guidance and Smart Electronic Fuze System for a 155mm Artillery Shell (STANAG 2916, 39/45/52 cal - ATAGS/Dhanush/K9/M777)
 
-**Current demonstrator baseline:** inert, low-speed exhibition model with one common four-canard carrier, coaxial bearing isolation, and a shell-to-carrier alternator/torque concept. Performance and cost figures elsewhere are project targets or public reference points, not results from this bench model.
+> **⚠️ CURRENT DESIGN OF RECORD (2026-08-30):** the **clean-sheet track** — `cleansheet/PGK_CleanSheet.FCStd` (threaded-race bearing-in-well, pancake outrunner, roll-decoupled canard shell; native Assembly + kinematic Simulation included). Design docs: `cleansheet/03_DESIGN_REPORT.md` (Rev 1.1). Everything below describes the **frozen team baseline** and is kept for reference only.
+
+**Current design baseline (FROZEN — see note above):** detailed inert CAD envelope `PGK_155mm.FCStd` — shell-spin rotor hub → **single 61811 thin-section de-spin bearing** → Ø106 dome-nosed de-spun stator carrying **4 fixed strakes**, a **12-pole ring motor** (roll-torque steering + regen power), detent pawl + solenoid launch lock, Ø87 GNC PCB (2× STM32F405, ICM-42688, MMC-5983, FOC driver, dual Hall index), 6× 14430 battery bay, NEO-M9N + Ø25 patch under the dome. Kit envelope Ø148 × 168 mm. Performance and cost figures elsewhere are project targets or public reference points, not results.
 
 ### Quick Start for Team
 
@@ -126,17 +128,24 @@ Technical version is in `SIH26098_Exhaustive_Ideas_Catalog.md` — same 6 boxes 
 
 ```bash
 cd cad_models
-freecadcmd generate_shell_155.py   # 155mm inert mockup
-freecadcmd generate_pgk_155.py     # active inert common-carrier PGK demonstrator
-python simulate_trajectory_155.py  # separate simulation/reference track
+/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd render_pgk_155.py  # exports + renders from common-carrier demo (cad_models/generate_pgk_155.py)
+# Clean-sheet design of record (separate track): cleansheet/PGK_CleanSheet.FCStd — see cleansheet/03_DESIGN_REPORT.md
+python simulate_trajectory_155.py                                                # trajectory sim (3DOF → 6DOF, Monte Carlo)
 ```
 
-The active model is a public-architecture demonstrator: the shell/outer housing is the spin-side frame, a single inner carrier holds all four fixed canards, two display bearings permit relative rotation, and a shell-side rotor/carrier-side stator show the power path. The earlier two-motor concept is preserved in `legacy/old_two_motor_design/` and is not part of the current baseline.
+The bench demonstrator (`cad_models/generate_pgk_155.py` + `cad_models/PGK_DEMO_ASSEMBLY.md`) is a detailed inert envelope: shell-spin rotor hub, ONE 61811
+thin-section de-spin bearing, dome-nosed de-spun stator with 4 fixed strakes,
+12-pole ring motor (torque + regen), detent launch lock, Ø87 GNC PCB (2×
+STM32F405, ICM-42688, MMC-5983, dual Hall), 6× 14430 bay, NEO-M9N + patch.
+Superseded concepts are preserved under `legacy/`.
+
+> **Clean-sheet design track:** `cleansheet/PGK_CleanSheet.FCStd` + `cleansheet/03_DESIGN_REPORT.md` (Rev 1.1) — threaded-race bearing-in-well, pancake outrunner, roll-decoupled canard shell. See `cleansheet/HANDOFF.md` for build provenance and how to play the 122-frame kinematic Simulation.
 
 ### Active model and legacy reference
 
-- **Active:** `cad_models/generate_pgk_155.py` and `cad_models/PGK_DEMO_ASSEMBLY.md`
-- **Legacy only:** `legacy/old_two_motor_design/` — two N20 motors, orthogonal shafts, face gears, and individually mounted canards
+- **Bench demonstrator (exhibition artifact):** `cad_models/generate_pgk_155.py` + `cad_models/PGK_DEMO_ASSEMBLY.md` + `cad_models/render_pgk_155.py` (exports in `cad_models/out_pgk/`)
+- **Clean-sheet design of record:** `cleansheet/PGK_CleanSheet.FCStd` + `cleansheet/03_DESIGN_REPORT.md` (Rev 1.1) + `cleansheet/02_BOM_MANUFACTURING_ASSEMBLY.md`
+- **Legacy only:** `legacy/old_two_motor_design/` (two N20 motors, face gears — superseded)
 
 ### Live Research Board
 

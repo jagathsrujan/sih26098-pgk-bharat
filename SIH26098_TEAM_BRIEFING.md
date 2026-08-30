@@ -6,6 +6,8 @@
 
 > **Active build boundary:** The physical artifact in this workspace is an inert, low-speed exhibition demonstrator. Its active mechanical baseline is a common four-canard carrier, coaxial bearing isolation, and a shell-to-carrier alternator/torque concept. It is not launch hardware and must not be presented as an exact production teardown.
 
+> **Clean-sheet design of record (Rev 1.1, 2026-08-30):** `cleansheet/PGK_CleanSheet.FCStd` — threaded-race bearing-in-well, pancake outrunner, roll-decoupled canard shell. Native Assembly + 122-frame kinematic Simulation. Docs: `cleansheet/03_DESIGN_REPORT.md` (Rev 1.1), `cleansheet/HANDOFF.md` (Rev B). The bench demonstrator above is the exhibition artifact; the clean-sheet track is the analysis/design of record.
+
 ---
 
 ## SECTION 1 — Problem Statement, Decoded
@@ -74,7 +76,7 @@ Shell arcs 20–30km for ~60–90 seconds → fuze triggers → detonation at/ab
 ### The 4 guns our kit must fit (PS requirement — STANAG 2916 fuze thread is common to all)
 
 | Gun | Caliber length | Range | Made by | Note |
-|---|---|---|---|---|
+|---|---|---|---|
 | **ATAGS** | 52 cal (~8.06m barrel) | ~40–48 km | DRDO + Bharat Forge / Tata | India's newest, 307 ordered (₹6,900 Cr) |
 | **Dhanush** | 45 cal | ~38 km | YIL/AWEIL | "Desi Bofors" |
 | **K9 Vajra-T** | 52 cal | ~40+ km | L&T + Hanwha (Korea) | Self-propelled tracked |
@@ -241,7 +243,7 @@ Active demonstrator architecture = **A1/B1 public-architecture analogue**: a fuz
 ```
 
 | # | Subsystem | Owner | What it does | Key design choice | What you SUBMIT |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | 1 | **A_system + H_mfg** (Planner) | jagathsrujan | Overall architecture, requirements, cost model, interfaces between all subsystems | Active inert common-carrier demonstrator; separate simulation/reference track for future performance work | Architecture doc, cost sheet, master CAD, final PPT |
 | 2 | **B_aero** (Steering) | **OPEN — hiring** | Canard geometry, relative-rotation physics, lift/moment database | Four fixed illustrative canards on one common carrier; guarded bench validation | Canard CAD + CFD/simulation notes + safe rotation diagram |
 | 3 | **D_sensors + C_gnc** (Brain) | Anvita Pranjal | Demonstrates relative-angle sensing and display control | Low-voltage controller + angle sensor + LEDs; flight GNC is simulation/reference only | Display PCB + live angle/power readout |
@@ -334,8 +336,9 @@ Stretch goal: LSTM AI that predicts impact point from IMU data alone (<5m error 
 - Team map & roles: `README.md`
 - 108 researched ideas: `SIH26098_Exhaustive_Ideas_Catalog.md`
 - Your onboarding prompt (paste into any AI): `ONBOARDING_PROMPT.md`
-- CAD + sim: `cad_models/` | Research entries: `research/<category>/`
+- **Design of record:** `cleansheet/03_DESIGN_REPORT.md` (Rev 1.1) + `cleansheet/HANDOFF.md` (Rev B) + `cleansheet/PGK_CleanSheet.FCStd`
+- Bench demonstrator CAD + sim: `cad_models/` | Research entries: `research/<category>/`
 - Live board: `SIH26098_LIVEBOARD.md`
 
 ---
-*Generated 2026-08-26. Edit names/roles as the 6th member joins. Keep this doc honest — it is what new teammates read first.*
+*Generated 2026-08-26. Edit names/roles as the 6th member joins. Keep this doc honest — it is what new teammates read first. | Updated 2026-08-30: added clean-sheet design-of-record pointers.*
