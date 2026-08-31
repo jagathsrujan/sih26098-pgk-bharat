@@ -1995,10 +1995,20 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
                         s_cd = float(np.clip(s_cd + 0.5*(s_new - s_cd), 0.90, 1.15))
                         ekf.x[9] = s_cd
                     if fit_kv > 0.05:
-                        resid_cross = ((st_f[4] - sm[4]) - fit_wob_v[1])
-                        wy_new = float(np.clip(resid_cross/fit_kv, -12., 12.))
-                        wy_hat = 0.7*wy_hat + 0.3*wy_new
-                        ekf.x[11] = wy_hat
+                        # E4 guard: the fit's model applies ff at the BELIEVED
+                        # azimuth; true force lands at pattern - eps. The eps
+                        # rotation leaks |a_mean|*sin(eps) into the cross
+                        # residual — only trust wy when the roll estimate is
+                        # demonstrably healthy (small P, small anchor innov).
+                        roll_ok = (roll_est.psi is not None
+                                   and roll_est.P[0, 0] < math.radians(2.0)**2
+                                   and (not math.isfinite(roll_est.nis)
+                                        or roll_est.nis < 1.5))
+                        if roll_ok:
+                            resid_cross = ((st_f[4] - sm[4]) - fit_wob_v[1])
+                            wy_new = float(np.clip(resid_cross/fit_kv, -12., 12.))
+                            wy_hat = 0.7*wy_hat + 0.3*wy_new
+                            ekf.x[11] = wy_hat
                     fit_t0 = None
 
         # ---------------- EKF predict (force at commanded azimuth) ----------------

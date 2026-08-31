@@ -22,32 +22,32 @@ Sensor: NavIC pos 5 m / vel 0.3 m/s 1 Hz, latency 100 ms time-tagged (F6);
 ## Deterministic (Rev E)
 | Case | Unguided | Rev E L0 | mode | psi err (deg) |
 |---|---|---|---|---|
-| nominal | — | 10.9 | guide | 6.86 |
-| mount bias 5deg | — | 58.4 | degraded | 50.57 |
-| crosswind 6 | — | 32.9 | guide | 15.86 |
-| headwind 6 | — | 57.8 | guide | 23.15 |
-| Cd +5% | — | 152.9 | guide | 0.52 |
-| BLIND (no roll ref) | — | 83.9 | degraded | nan |
+| nominal | — | 14.0 | guide | 7.56 |
+| mount bias 5deg | — | 49.8 | degraded | 55.30 |
+| crosswind 6 | — | 30.7 | guide | 23.32 |
+| headwind 6 | — | 59.7 | guide | 26.53 |
+| Cd +5% | — | 152.3 | guide | 0.60 |
+| BLIND (no roll ref) | — | 81.6 | degraded | nan |
 
 ## Monte Carlo (disp V0 s0.15% aim 0.6 mrad wind s3 m/axis Cd s0.8% mass s0.6%)
 
 | Config | CEP50 | mean | p90 | max | dutyPk med | psiErr med (deg) |
 |---|---|---|---|---|---|---|
-| Unguided | 148.5 | 170.1 | 167.5 | 427.0 | 0.00 | nan |
-| Legacy windowed (lock45, idealized actuator) | 7.4 | 7.5 | 8.0 | 16.0 | 1.00 | nan |
-| Rev E EKF+dragref L0 | 21.1 | 45.4 | 36.0 | 220.6 | 0.71 | 7.45 |
-| Rev E ZEM 6dp/tgo2 | 20.3 | 20.6 | 21.5 | 29.9 | 0.86 | 18.94 |
-| Rev E APN clean N=3 | 153.5 | 170.3 | 153.5 | 240.3 | 0.41 | 12.77 |
-| Rev E L0 outage 60-70s | 32.1 | 37.4 | 39.5 | 75.0 | 0.78 | 9.42 |
-| Rev E BLIND (no roll ref) | 125.9 | 120.5 | 133.8 | 166.3 | 0.90 | nan |
-| Rev E L0 wind_fit=False | 11.5 | 10.6 | 11.8 | 16.6 | 0.64 | 12.18 |
-| Rev E never-lock (fail-safe) | 148.3 | 170.2 | 177.8 | 415.6 | 0.00 | nan |
+| Unguided | 183.4 | 220.6 | 408.8 | 427.0 | 0.00 | nan |
+| Legacy windowed (lock45, idealized actuator) | 7.9 | 8.6 | 14.6 | 16.0 | 1.00 | nan |
+| Rev E EKF+dragref L0 | 38.4 | 47.0 | 88.2 | 97.0 | 0.79 | 10.90 |
+| Rev E ZEM 6dp/tgo2 | 23.0 | 25.9 | 23.5 | 40.3 | 0.72 | 12.15 |
+| Rev E APN clean N=3 | 157.0 | 236.0 | 182.3 | 523.6 | 0.31 | 15.07 |
+| Rev E L0 outage 60-70s | 16.1 | 23.2 | 18.3 | 48.3 | 0.77 | 11.63 |
+| Rev E BLIND (no roll ref) | 101.3 | 103.5 | 132.0 | 156.7 | 0.86 | nan |
+| Rev E L0 wind_fit=False | 21.1 | 24.6 | 21.4 | 39.9 | 0.79 | 7.21 |
+| Rev E never-lock (fail-safe) | 184.2 | 216.6 | 397.5 | 415.6 | 0.00 | nan |
 
-**Improvement vs unguided: revE L0 7.0x (legacy idealized-actuator reference: 0.35x).**
+**Improvement vs unguided: revE L0 4.8x (legacy idealized-actuator reference: 0.21x).**
 - end-modes revE_l0: {'guide': 8}
 - end-modes revE_neverlock: {'ballistic': 8}
-- end-modes revE_outage: {'guide': 4}
-- ba-block max offdiag corr median: 0.026 (E5 conditioning check)
+- end-modes revE_outage: {'guide': 3, 'degraded': 1}
+- ba-block max offdiag corr median: 0.006 (E5 conditioning check)
 
 ## Findings
 - (filled after Rev E analysis — see final section)
