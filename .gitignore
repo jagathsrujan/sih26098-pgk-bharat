@@ -51,3 +51,4 @@ opencode.json
 # Keep out_sim results (do not ignore)
 !cleansheet/out_sim/
 !cleansheet/out_sim/**
+cad_models/out/
