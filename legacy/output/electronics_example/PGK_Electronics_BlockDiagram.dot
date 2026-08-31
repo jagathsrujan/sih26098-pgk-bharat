@@ -1,0 +1,124 @@
+
+digraph PGK_Electronics_BlockDiagram {
+    rankdir=LR;
+    bgcolor="white";
+    splines=true;
+    overlap=false;
+    nodesep=0.35;
+    ranksep=0.6;
+    compound=true;
+    fontname="Helvetica";
+    fontsize=11;
+    labelloc=t;
+    label=<<B><FONT POINT-SIZE="16">155mm PGK — Electronics Block Diagram (EXAMPLE — Rev 0.9)</FONT></B><BR/><FONT POINT-SIZE="9" COLOR="#555555">CEP ≤30m · STANAG 155mm Fuze-well Compatible · 15,000g Survivable · SWaP-C Optimized · Not for flight — example parameters only</FONT>>;
+    
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=9, penwidth=1.2];
+    edge [fontname="Helvetica", fontsize=8, color="#333333"];
+
+    // Power cluster
+    subgraph cluster_power {
+        label=<<B>1 — POWER (High-g Hardened)</B><BR/><FONT POINT-SIZE="7">Thermal Battery / Supercap + PMIC + Sequencer</FONT>>;
+        style="rounded,filled";
+        fillcolor="#FFF7ED";
+        color="#FB923C";
+        penwidth=1.5;
+        p_batt [label=<<B>Energy Source</B><BR/>Li-SOCl2 Thermal Battery<BR/>+ 5F Supercap<BR/><FONT POINT-SIZE="7">-40 to +71°C · 28V raw</FONT>>, fillcolor="#FFEDD5", color="#EA580C"];
+        p_pmic [label=<<B>PMIC &amp; Sequencer</B><BR/>BQ24610 + TPS54360<BR/>Buck-Boost 5V@2A / 3.3V@3A<BR/>1.8V LDO · Ideal Diode<BR/><FONT POINT-SIZE="7">Sequenced: 3.3→5→1.8→12</FONT>>, fillcolor="#FFEDD5", color="#EA580C"];
+        p_sa [label=<<B>S&amp;A Isolated Rail</B><BR/>Push-Pull DC-DC 12V<BR/>Galvanic Isolation 1.5kV<BR/>HW Inhibit ×2<FONT POINT-SIZE="7"><BR/>Independent of MCU</FONT>>, fillcolor="#FEE2E2", color="#DC2626"];
+        p_batt -> p_pmic [label=" 28V raw "];
+        p_pmic -> p_sa [style=dashed, label=" enable "];
+    }
+
+    // Sensor cluster
+    subgraph cluster_sensors {
+        label=<<B>2 — SENSOR SUITE</B><BR/><FONT POINT-SIZE="7">Roll-decoupled nose · SPI/I²C/UART</FONT>>;
+        style="rounded,filled";
+        fillcolor="#EFF6FF";
+        color="#3B82F6";
+        penwidth=1.5;
+        s_imu [label=<<B>High-g IMU</B><BR/>ADIS16470 / ADXRS645<BR/>±2000°/s, 2000g<BR/><FONT POINT-SIZE="7">SPI 8MHz · 1kHz loop</FONT>>, fillcolor="#DBEAFE", color="#1D4ED8"];
+        s_gnss [label=<<B>GNSS Receiver</B><BR/>u-blox ZED-F9P<BR/>Multi-band RTK ready<BR/><FONT POINT-SIZE="7">UART 921600 · PPS</FONT>>, fillcolor="#DBEAFE", color="#1D4ED8"];
+        s_baro [label=<<B>Altimetry</B><BR/>MS5611 Baro<BR/>+ Magnetometer LIS3MDL<BR/><FONT POINT-SIZE="7">I²C 400kHz</FONT>>, fillcolor="#DBEAFE", color="#1D4ED8"];
+        s_roll [label=<<B>Roll / Spin</B><BR/>Hall AS5048A<BR/>Resolver on de-spin bearing<BR/><FONT POINT-SIZE="7">250 rps · SPI</FONT>>, fillcolor="#DBEAFE", color="#1D4ED8"];
+        s_impact_sense [label=<<B>Impact Accel</B><BR/>ADXL1005 ±100g<BR/>Piezo shock<BR/><FONT POINT-SIZE="7">SPI · 20kHz BW</FONT>>, fillcolor="#FEE2E2", color="#DC2626"];
+        s_prox [label=<<B>Prox RF FMCW</B><BR/>24GHz K-LD7 / AWR1843<BR/>Analog IF → ADC<BR/><FONT POINT-SIZE="7">HOB 3-15m programmable</FONT>>, fillcolor="#FEE2E2", color="#DC2626"];
+    }
+
+    // Controller cluster
+    subgraph cluster_gnc {
+        label=<<B>3 — FLIGHT COMPUTER (GNC) — Hard Real-Time</B><BR/><FONT POINT-SIZE="7">STM32H743 + Watchdog + FRAM/QSPI · 480MHz · FreeRTOS</FONT>>;
+        style="rounded,filled";
+        fillcolor="#F0FDF4";
+        color="#16A34A";
+        penwidth=1.8;
+        mcu [label=<<B>MAIN MCU</B><BR/>STM32H743ZIT6<BR/>1MB Flash / 1MB RAM<BR/>FPU + DSP · ECC<BR/><FONT POINT-SIZE="7">1kHz Guidance · 200Hz Control</FONT>>, shape=box, style="rounded,filled", fillcolor="#DCFCE7", color="#15803D", penwidth=2];
+        mem [label=<<B>Memory</B><BR/>FM25V10 FRAM 1Mb<BR/>+ W25Q128 QSPI<BR/>Log &amp; Target Store<FONT POINT-SIZE="7"><BR/>SPI 40MHz</FONT>>, fillcolor="#DCFCE7", color="#15803D"];
+        wdog [label=<<B>Safety Supervisor</B><BR/>STM706 + Window WDT<BR/>HW Reset · Brown-out<BR/><FONT POINT-SIZE="7">Independent CLK</FONT>>, fillcolor="#FEE2E2", color="#DC2626"];
+        mcu -> mem [style=dashed, dir=both, label=" SPI/QSPI "];
+        mcu -> wdog [style=dashed, dir=both];
+    }
+
+    // Actuation cluster
+    subgraph cluster_caa {
+        label=<<B>4 — CANARD ACTUATION (CAA)</B><BR/><FONT POINT-SIZE="7">2-axis Differential · De-spun Rotor · 4 fins (2 movable + 2 fixed)</FONT>>;
+        style="rounded,filled";
+        fillcolor="#FEF3C7";
+        color="#D97706";
+        penwidth=1.5;
+        drv [label=<<B>Motor Drivers</B><BR/>2× DRV8313 (or DRV8301)<BR/>3-phase BLDC 12V 5A<BR/><FONT POINT-SIZE="7">PWM 20kHz · Field Oriented</FONT>>, fillcolor="#FFEDD5", color="#C2410C"];
+        mot [label=<<B>Actuators</B><BR/>2× Gimbal BLDC + Encoder<BR/>AS5048A Feedback<BR/><FONT POINT-SIZE="7">±12° stroke · &lt;15ms response</FONT>>, fillcolor="#FFEDD5", color="#C2410C"];
+        bearing [label=<<B>De-spin Bearing</B><BR/>Roll-decoupling Slip-ring<BR/>+ Hall Phasing<FONT POINT-SIZE="7"><BR/>250 rps → 0 rps nose</FONT>>, fillcolor="#FFFBEB", color="#92400E"];
+        drv -> mot;
+        mot -> bearing [style=dotted, arrowhead=none, label=" torque "];
+    }
+
+    // Fuze cluster
+    subgraph cluster_fuze {
+        label=<<B>5 — MULTI-MODE ELECTRONIC FUZE (Safety-Critical, Partitioned)</B><BR/><FONT POINT-SIZE="7">MIL-STD-1316 logic · Dual independent inhibits · CPLD voting · EED Driver</FONT>>;
+        style="rounded,filled";
+        fillcolor="#FDF2F8";
+        color="#BE185D";
+        penwidth=1.8;
+        f_logic [label=<<B>Fuze Logic CPLD</B><BR/>Lattice iCE40 / MAX10<BR/>Hard Voting 2oo2<BR/>Arm delay · Trajectory gate<FONT POINT-SIZE="7"><BR/>Independent of GNC MCU</FONT>>, fillcolor="#FFE4E6", color="#9F1239", penwidth=2];
+        f_modes [label=<<B>Mode Select</B><BR/>Proximity | Time | Impact<BR/>+ Delay / Point Det.<BR/><FONT POINT-SIZE="7">Setter-programmable</FONT>>, fillcolor="#FFE4E6", color="#9F1239"];
+        f_eed [label=<<B>EED / Detonator Driver</B><BR/>1A/1W NO FIRE — 2.5A ALL FIRE<BR/>Slapper / EBW interface<BR/><FONT POINT-SIZE="7">2.2Ω · HV Cap 400V</FONT>>, shape=box, style="rounded,filled", fillcolor="#FEE2E2", color="#DC2626", penwidth=2];
+        f_logic -> f_modes -> f_eed;
+    }
+
+    // Comms cluster
+    subgraph cluster_comms {
+        label=<<B>6 — COMMS &amp; PROGRAMMING</B><BR/><FONT POINT-SIZE="7">Pre-fire setter · In-flight telemetry (optional)</FONT>>;
+        style="rounded,filled";
+        fillcolor="#F5F3FF";
+        color="#7C3AED";
+        penwidth=1.5;
+        com_setter [label=<<B>Fuze Setter I/F</B><BR/>Inductive NFC ST25R3911<BR/>+ Pogo-pin RS422<BR/><FONT POINT-SIZE="7">AES-128 · Pre-launch only</FONT>>, fillcolor="#EDE9FE", color="#6D28D9"];
+        com_bus [label=<<B>Internal Bus</B><BR/>CAN-FD 2Mbps<BR/>+ RS422 Debug<BR/><FONT POINT-SIZE="7">Backbone</FONT>>, fillcolor="#EDE9FE", color="#6D28D9"];
+        com_jtag [label=<<B>Test / JTAG</B><BR/>SWD + Boundary Scan<BR/>ICT Pads<FONT POINT-SIZE="7"><BR/>Factory only, sealed</FONT>>, fillcolor="#EDE9FE", color="#6D28D9"];
+    }
+
+    // Power distribution edges
+    p_pmic -> mcu [label=" 3.3V ", color="#EA580C", penwidth=1.5];
+    p_pmic -> drv [label=" 12V bus ", color="#EA580C"];
+    p_pmic -> s_imu [label=" 3.3V ", color="#EA580C"];
+    p_pmic -> s_gnss [label=" 3.3V ", color="#EA580C"];
+    p_pmic -> s_prox [label=" 5V ", color="#EA580C"];
+    p_sa -> f_eed [label=" 12V_iso (armed) ", color="#DC2626", penwidth=1.5, style=dashed];
+    p_sa -> f_logic [label=" iso ", color="#DC2626", style=dashed];
+
+    // Data edges
+    s_imu -> mcu [label=" SPI3/1kHz ", color="#1D4ED8"];
+    s_gnss -> mcu [label=" UART4+PPS ", color="#1D4ED8"];
+    s_baro -> mcu [label=" I²C1 ", color="#1D4ED8"];
+    s_roll -> mcu [label=" SPI2 ", color="#1D4ED8"];
+    s_prox -> f_logic [label=" IF→ADC ", color="#DC2626"];
+    s_impact_sense -> f_logic [label=" shock ", color="#DC2626"];
+    s_prox -> mcu [style=dotted, label=" HOB (backup) ", color="#DC2626"];
+    mcu -> drv [label=" PWM+DIR ", color="#15803D", penwidth=1.3];
+    mcu -> f_logic [label=" Arm/Time cmd ", color="#15803D", style=dashed];
+    com_setter -> mcu [label=" setter ", color="#6D28D9", penwidth=1.3];
+    com_setter -> f_logic [label=" fuze prog ", color="#BE185D", penwidth=1.3];
+    com_bus -> mcu [dir=both, label=" CAN-FD ", color="#6D28D9"];
+    f_logic -> f_eed [label=" FIRE (2oo2) ", color="#DC2626", penwidth=1.8];
+
+}

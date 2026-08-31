@@ -268,7 +268,7 @@ Active demonstrator architecture = **A1/B1 public-architecture analogue**: a fuz
 | **Aselsan ASAF / MOFA** | Turkey | Multi-mode fuze | — | — | Multi-mode fuze reference (E-cat) |
 | **ECIL M85P13 / BEL M180** | **India** | Proximity fuze (no guidance) | — | fielded 2.2M+ | Indian electronics path (BEL/ECIL supply chain) |
 | **IIT Madras + MIL kit** | **India** | Research kit | 10m CEP claimed | research | Proof India can do GNC; DRDO guided-artillery program backs this |
-| **L Shang student rocket** | China (student!) | 4 servos + canards, ADRC + EKF | recovered vertically | <$200 BOM | A student did CAD→CFD→PCB→GNC→7 flights in 30 days. 70% of his toolchain transfers to us. Full teardown in `SIH26098_LShang_Video_Teardown_Gap_Analysis.md` |
+| **L Shang student rocket** | China (student!) | 4 servos + canards, ADRC + EKF | recovered vertically | <$200 BOM | A student did CAD→CFD→PCB→GNC→7 flights in 30 days. 70% of his toolchain transfers to us. Full teardown in `legacy/SIH26098_LShang_Video_Teardown_Gap_Analysis.md` |
 
 ### Watch these BEFORE our first meeting (45 min total)
 1. **PGK Overview (ATK)** — public reference for canards + controlled relative rotation: https://www.youtube.com/watch?v=Ebzh12PR0-U *(use it to understand the architecture; our physical model is inert and not an exact teardown)*

@@ -1,7 +1,7 @@
 # SIH26098 Clean-Sheet Design Track — R1 Requirements (derived from PS)
 
 > **Purpose:** Independent re-derivation of the design problem, before any architecture is chosen.
-> Every requirement is tagged: `[PS]` = from the official problem statement (`attachments/SIH2026_Hardware_PS.md:647`),
+> Every requirement is tagged: `[PS]` = from the official problem statement (`SIH2026_Hardware_PS.md:647`),
 > `[D]` = derived by us from physics/public sources, `[A]` = assumption to verify.
 > Rule: no requirement may smuggle in a solution. Steering mechanisms, bearing choices, etc. are Phase 2.
 
