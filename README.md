@@ -16,6 +16,10 @@
 
 **Read first:** `SIH26098_TEAM_BRIEFING.md` (PS + artillery 101 + roles) → `cleansheet/03_DESIGN_REPORT.md` (design) → `cleansheet/PGK_CleanSheet.FCStd` (CAD).
 
+**Team = 6 (3 Mech + 1 EEE + 2 ECE → 2 teams):** `research/01_mech-CAA/` … `03_mech-system/` (MECH) and `research/04_electronics-GNC/` … `06_electronics-embedded-power/` (ELECTRONICS). Branch name tells the AI your PS task.
+
+**Universal prompt to share:** `research/templates/UNIVERSAL_ONBOARDING_PROMPT.md:1` — paste as first message to any AI, tell it your `git branch --show-current`, it assigns your PS deliverable and co-works.
+
 ---
 
 ## Repo Map
@@ -30,10 +34,13 @@
 │   ├── HANDOFF.md               # Build provenance + how to play simulation
 │   ├── out_sim/                 # Sim results + plots (RESULTS.md, RESULTS_GNC.md)
 │   └── scripts/                 # FreecadCmd + trajectory sims (gated, headless)
-├── research/                    # Team research entries (A–J categories)
-│   ├── A_system/ ... I_test/    # One folder per role, 7 entries now
+├── research/                    # 2 teams × 3 roles = 6 PS-driven folders
+│   ├── 01_mech-CAA/ ... 03_mech-system/      # TEAM MECH (3 mech)
+│   ├── 04_electronics-GNC/ ... 06_electronics-embedded-power/  # TEAM ELECTRONICS (1 EEE + 2 ECE)
+│   ├── A_system/ ... I_test/    # Legacy A-J (kept for history, use 01-06 for new work)
 │   ├── templates/entry_template.md
 │   ├── templates/agent_prompt.md
+│   ├── templates/UNIVERSAL_ONBOARDING_PROMPT.md  # ← Share this with teammates
 │   └── merge.py                 # → SIH26098_LIVEBOARD.md (run on push)
 ├── cad_models/                  # Bench demonstrator (not design of record)
 │   ├── generate_pgk_155.py
@@ -65,40 +72,48 @@ python3 cleansheet/scripts/sim_guidance_check.py   # 250-run MC → out_sim/RESU
 python3 cleansheet/scripts/sim_gnc_check.py        # estimator-in-loop → out_sim/RESULTS_GNC.md
 ```
 
-**Pick a role → add research:**
+**Your team → Your PS deliverables (branch tells the agent your role):**
 
-| # | Role | Folder | Focus |
-|---|------|--------|-------|
-| 1 | System / Cost | `research/A_system` | Architecture, SAMM, DCPP |
-| 2 | Aero / Canard | `research/B_aero` | Fin trim, bearing joint |
-| 3 | GNC | `research/C_gnc` | PID/MPC, 6DOF |
-| 4 | Sensors | `research/D_sensors` | NavIC/IMU/baro |
-| 5 | Fuze | `research/E_fuze` | FMCW, S&A |
-| 6 | Power | `research/F_power` | Battery, harvest |
-| 7 | Structure | `research/G_structure` | High-G, forging |
-| 8 | Test | `research/I_test` | 6DOF, Monte Carlo |
+**TEAM MECH — 3 members (Mechanical)**
+| # | Role | Folder | PS Deliverable | Focus |
+|---|------|--------|----------------|-------|
+| 1 | MECH-CAA | `research/01_mech-CAA/` | Canard Actuation Assembly + CAD of CAA | 4-fin mechanism, deployment, aero, bearing joint |
+| 2 | MECH-Structure | `research/02_mech-structure/` | Environmental + SWaP-C + Manufacturability | 15,000g, STANAG fit, mass ≤1.5kg, YIL forging, cost |
+| 3 | MECH-System | `research/03_mech-system/` | System Architecture + Prototype + Validation | Assembly (24 links), 6DOF/Monte Carlo, CEP ≤30m |
+
+**TEAM ELECTRONICS — 3 members (1 EEE + 2 ECE)**
+| # | Role | Folder | PS Deliverable | Focus |
+|---|------|--------|----------------|-------|
+| 4 | ELECTRONICS-GNC | `research/04_electronics-GNC/` | GNC + Sensors + Sim | Guidance methodology, IMU/GNSS/baro, flight control, trajectory sim |
+| 5 | ELECTRONICS-Fuze | `research/05_electronics-fuze/` | Multi-mode Fuze | Proximity/Time/Impact, FMCW, S&A, safety |
+| 6 | ELECTRONICS-Embedded | `research/06_electronics-embedded-power/` | Embedded + Power + Comms | Real-time HW/SW, power high-g, programming interface, block diagram |
 
 ```bash
-cp research/templates/entry_template.md research/<category>/entry_20260831_<topic>.md
-# fill URL (mandatory), TRL, Cost, Indian Path (YIL/BEL/ARDE)
+# Your branch decides your role — create it:
+git checkout -b research/01_mech-CAA-<github-username>   # or mech/CAA-<username> / electronics/GNC-<username>
+cp research/templates/entry_template.md research/01_mech-CAA/entry_20260831_<topic>.md
+# fill URL (mandatory), TRL, Cost, Indian Path (YIL/BEL/ARDE/ISRO)
 python3 research/merge.py   # preview
-git add . && git commit -m "feat(B): fin flutter CFD" && git push  # → LIVEBOARD auto
+git add . && git commit -m "feat(01-CAA): fin hinge trade" && git push  # → LIVEBOARD auto
 ```
 
-## Quick Start — AI Agents
+## Quick Start — AI Agents (2-Team, Branch-Based)
+
+**Share this ONE prompt with teammates — branch tells the agent the PS task:**
 
 **Copy-paste this as your first message:**
 
 ```
-You are my SIH26098 agent. Repo: https://github.com/jagathsrujan/sih26098-pgk-bharat
-Read in order: README.md → SIH26098_TEAM_BRIEFING.md → cleansheet/03_DESIGN_REPORT.md (Rev 1.3) → cleansheet/HANDOFF.md
-Then: research/templates/entry_template.md + research/templates/agent_prompt.md + SIH26098_LIVEBOARD.md
-List research/ and count entries: ls -R research
-Ask me 7 onboarding questions (name/skills/interest/hours/ownership/prior/X-factor), then assign ONE category and create my welcome entry.
-Rules: URL mandatory, TRL justified, Indian Path required, quote paths with spaces, never invent URLs.
+You are my SIH26098 Onboarding Agent. Repo: https://github.com/jagathsrujan/sih26098-pgk-bharat
+Run: git branch --show-current → tell me your branch. If on main, tell me which of 6 roles you want (01_mech-CAA ... 06_electronics-embedded-power).
+Read: README.md → SIH26098_TEAM_BRIEFING.md → research/<your-role>/README.md (your PS tasks) → cleansheet/03_DESIGN_REPORT.md (Rev 1.3) → SIH26098_LIVEBOARD.md
+Ask 7 questions (name/github/branch/skills/interest/hours/ownership/prior), then assign ONE of 6 PS roles based on branch + skills, create branch if on main, and make welcome entry.
+Rules: URL mandatory, TRL justified, Indian Path (YIL/BEL/ARDE) required, never invent URLs.
 ```
 
-Full onboarding prompt: `research/templates/UNIVERSAL_ONBOARDING_PROMPT.md:1`
+**Universal prompt (full 4-phase, branch-based, PS-driven):** `research/templates/UNIVERSAL_ONBOARDING_PROMPT.md:1` — just paste the whole file.
+
+**How it works:** Teammate clones → `git checkout -b research/01_mech-CAA-john` (or tells agent "I'm on 04_GNC") → agent reads `research/<role>/README.md` with 3 PS questions → co-works on that deliverable (CAD/GNC/fuze/power etc.) → pushes to that folder.
 
 **Agent rules:**
 - Quote paths with spaces: `"/home/.../smart india hackathon"`
@@ -134,14 +149,22 @@ python3 cleansheet/scripts/sim_gnc_check.py        # 12-state EKF + phasor-duty,
 
 ---
 
-## Deliverables
+## Deliverables (from PS)
 
-- [x] Architecture — `03_DESIGN_REPORT.md` Rev 1.3
-- [x] CAD — `PGK_CleanSheet.FCStd` Assembly+Sim + bench in `cad_models/`
-- [x] GNC sim — `sim_gnc_check.py` Rev D (295k frames) + q-scaled validation
-- [ ] 6DOF + Monte Carlo ≥1000 → CEP ≤30 m (roadmap §10)
-- [x] PoC — inert bench (guarded) + CAD sim frames
-- [x] Cost — `02_BOM` Rev 1.2: ₹0.7–0.9 L @1k
+**PS Expected Outcome → Our files:**
+
+| PS Deliverable | Owner (Team) | File | Status |
+|---|---|---|---|
+| System architecture | MECH-System (03) | `cleansheet/03_DESIGN_REPORT.md:1` + `cleansheet/HANDOFF.md:1` | [x] Rev 1.3 |
+| CAD of CAA | MECH-CAA (01) | `cleansheet/PGK_CleanSheet.FCStd` + `cad_models/PGK_DEMO_ASSEMBLY.md:1` | [x] Assembly+Sim |
+| Electronics block diagram | ELECTRONICS-Embedded (06) | `cleansheet/02_BOM...md:A4-A10` + `04_electronics` docs | [ ] Next: integrate GNC+fuze+power |
+| GNC algorithm | ELECTRONICS-GNC (04) | `cleansheet/scripts/sim_gnc_check.py:1` | [x] Rev D (295k frames) |
+| Trajectory-correction sim | ELECTRONICS-GNC (04) + MECH-System (03) | `sim_guidance_check.py:1` → `out_sim/RESULTS.md:1` | [x] 250 MC, 6.9m CEP |
+| Prototype / PoC | MECH-CAA+Structure (01+02) | `cad_models/` + `cleansheet/` bench (guarded) | [x] Inert + sim frames |
+| Performance CEP ≤30m | ELECTRONICS-GNC (04) + MECH-System (03) | `out_sim/RESULTS*.md` + Monte Carlo ≥1000 | [ ] 6DOF next (roadmap §10) |
+| Fuze (Prox/Time/Impact) | ELECTRONICS-Fuze (05) | `cleansheet/03_DESIGN_REPORT.md:4.6` | [x] FMCW + S&A design |
+| Power + Comms + Embedded | ELECTRONICS-Embedded (06) | `03_DESIGN_REPORT.md:5` + `02_BOM:A` | [x] 16.7 Wh, inductive setter |
+| Manufacturability & Cost | MECH-Structure (02) | `02_BOM:1` §D–G | [x] ₹0.7–0.9L @1k, NRE ₹4.2Cr |
 
 ---
 
@@ -149,12 +172,15 @@ python3 cleansheet/scripts/sim_gnc_check.py        # 12-state EKF + phasor-duty,
 
 | Doc | Purpose |
 |-----|---------|
+| `TEAM_STRUCTURE.md:1` | 2 teams × 6 roles — branch → PS deliverable mapping |
+| `UNIVERSAL_PROMPT.md:1` | Shareable 1-prompt onboarding (also `research/templates/UNIVERSAL_...md:1`) |
 | `SIH26098_TEAM_BRIEFING.md:1` | PS breakdown, glossary, 3-week plan |
 | `SIH26098_Exhaustive_Ideas_Catalog.md:1` | 108 ideas, 30+ sources (A–J) |
 | `cleansheet/03_DESIGN_REPORT.md:1` | Master design (315 lines) |
 | `cleansheet/02_BOM...md:1` | BOM, fits, costing, §G deltas |
 | `research/templates/entry_template.md:1` | Research entry format |
 | `SIH26098_LIVEBOARD.md:1` | Auto-generated board |
+| `research/01_mech-CAA/README.md:1` … `06_electronics-.../README.md:1` | Per-role PS tasks + 3 starter questions |
 
 ---
 

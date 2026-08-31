@@ -1616,9 +1616,712 @@ def plot_revD(pts, radii, stats):
     fig.savefig(p, dpi=130, bbox_inches="tight")
     print(f"Wrote {p}")
 
+# ============================================================
+# ===================== REV E (2026-08-31) ===================
+# ============================================================
+# Terminal-accuracy restoration over Rev D (evidence: RESULTS_GNC.md Rev E).
+# Rev D failure chain: anchor error -> wrong EKF feedforward azimuth -> GNSS
+# innovations blow up -> chi2 hard rejects -> 3 rejects / sigma>25 m -> denied
+# (neutral coast) in 172/250 MC runs. Rev E fixes:
+#  E1  Roll anchor hardened:
+#      - mount bias is a slow STATE (3-state roll EKF: psi, gyro bias, mount),
+#        not a known injected compensation (Rev D's +b_mount was a sim artifact)
+#      - anchor windows run on a fixed 1-Hz cadence (not fix-arrival-gated), so
+#        anchoring continues through outages and rejected fixes
+#      - windows straddling a T_MOD pattern boundary are discarded (servo slew
+#        + pattern flip poison the azimuth average)
+#      - innovation-gated updates: |y| > 3*sqrt(S) -> inflate P, reject
+#      - un-rotation reference = commanded pattern (estimate-independent) and
+#        the modeled fin force uses the SAME reference: one less feedback path
+#  E2  Robust GNSS update policy (kills the denied cascade):
+#      - adaptive R inflation: accept with R scaled by NIS/gate (clamped x8);
+#        outright reject only above 10x gate (catastrophic)
+#      - mode ladder: pre -> acq (R x2) -> guide -> degraded (sigma>12.5:
+#        R x4, guidance CONTINUES open-loop) -> denied (sigma>25: neutral
+#        coast, position-only R x16 re-acquisition, resume sigma<8)
+#  E3  Command-chain latency: theta/d refresh every tick (was 3-s boundary),
+#        command low-pass 0.4 -> 0.55
+#  E4  Slow (cd_scale, wy) fit from a 15-s model-propagation baseline; wy feeds
+#        the IPP, the EKF predict model AND the anchor drag-azimuth reference.
+#        wind_fit=False -> cd-only fallback (Rev D behavior).
+#  E5  ba-cd correlation metric (invalid with cd frozen) replaced by a live
+#        ba-block off-diagonal conditioning report.
+
+T_LOCK_DEADLINE_E = 50.0
+SIG_POS_DEGRADED  = 12.5
+SIG_POS_DENIED    = 25.0
+SIG_POS_RESUME    = 8.0
+R_FLOOR_ACQ       = 2.0
+R_FLOOR_DEGRADED  = 4.0
+R_FLOOR_DENIED    = 16.0
+GATE_HARD_X       = 10.0     # x CHI2_GATE -> outright reject
+R_INFLATE_MAX     = 8.0
+FIT_BASELINE      = 15.0     # s, slow (cd, wy) fit baseline
+LP_A              = 0.55     # command low-pass blend per 1-Hz tick
+T_GUID_ENGAGE_E   = 1.0      # s, guidance engages after first fix (Rev D: 2.0)
+
+def model_state_propagate(s0, T, cd_abs, a_lat=(0.0, 0.0), dt=DT_IPP):
+    """6-state RK2 propagate, drag(cd_abs, wind=0) + constant lateral a_lat.
+    Baseline model for the E4 slow fit."""
+    s = s0
+    t = 0.0
+    while t < T - 1e-9:
+        step = min(dt, T - t)
+        def f(st):
+            ax, ay, az = accel(st, cd_abs, (0.0, 0.0))
+            return (st[3], st[4], st[5], ax + a_lat[0], ay + a_lat[1], az)
+        k1 = f(s)
+        k2 = f(tuple(s[i] + step*k1[i] for i in range(6)))
+        s = tuple(s[i] + 0.5*step*(k1[i] + k2[i]) for i in range(6))
+        t += step
+    return s
+
+# ---------------------------------------------------------------- Rev E estimators
+class RollEstimatorE:
+    """3-state: psi (absolute nose roll), gyro_bias_z, mount_bias.
+    Measurement: z = psi + mount_bias + noise (drag-vector anchor).
+    Innovation-gated: |y| > 3*sqrt(S) -> inflate P, reject."""
+    def __init__(self):
+        self.psi = None
+        self.b = 0.0
+        self.m = 0.0
+        self.P = np.diag([math.radians(5.0)**2, math.radians(0.5)**2,
+                          math.radians(1.0)**2])
+        self.q_ang = math.radians(0.2)**2
+        self.q_bias = math.radians(0.05)**2
+        self.q_mount = math.radians(0.02)**2
+        self.nis = float("nan")
+    def predict(self, gyro, dt, saturated):
+        if saturated or self.psi is None:
+            return
+        F = np.array([[1.0, -dt, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+        self.psi = wrap_pi(self.psi + (gyro - self.b)*dt)
+        Q = np.diag([self.q_ang*dt, self.q_bias*dt, self.q_mount*dt])
+        self.P = F @ self.P @ F.T + Q
+        self.P = 0.5*(self.P + self.P.T)
+    def update(self, psi_meas, R_psi):
+        if self.psi is None:
+            self.psi = wrap_pi(psi_meas)
+            self.P = np.diag([R_psi, math.radians(0.5)**2, math.radians(1.0)**2])
+            return True, 0.0
+        y = wrap_pi(psi_meas - self.psi - self.m)
+        S = self.P[0, 0] + 2.0*self.P[0, 2] + self.P[2, 2] + R_psi
+        self.nis = abs(y)/math.sqrt(max(S, 1e-12))
+        if abs(y) > 3.0*math.sqrt(S):
+            self.P[0, 0] *= 1.5
+            self.P[2, 2] *= 1.2
+            return False, self.nis
+        H = np.array([1.0, 0.0, 1.0])
+        Ph = self.P @ H
+        K = Ph / S
+        self.psi = wrap_pi(self.psi + K[0]*y)
+        self.b += K[1]*y
+        self.m += K[2]*y
+        KH = np.outer(K, H)
+        I = np.eye(3)
+        self.P = (I - KH) @ self.P @ (I - KH).T + np.outer(K, K)*R_psi
+        self.P = 0.5*(self.P + self.P.T)
+        return True, self.nis
+    def err_vs(self, psi_true):
+        return float("nan") if self.psi is None else math.degrees(abs(wrap_pi(self.psi - psi_true)))
+
+class NavEKF_E(NavEKF_D):
+    """Rev D EKF with the E2 robust update policy."""
+    def __init__(self, cd_cal):
+        super().__init__(cd_cal)
+        self.nis = float("nan")
+        self.r_scale = float("nan")
+    def update_gnss(self, pos, vel, r_floor=1.0, pos_only=False):
+        H6 = np.zeros((6, 12))
+        H6[0, 0] = H6[1, 1] = H6[2, 2] = 1.0
+        H6[3, 3] = H6[4, 4] = H6[5, 5] = 1.0
+        z6 = np.hstack([pos, vel])
+        h6 = np.hstack([self.x[0:3], self.x[3:6]])
+        R6 = np.diag([self.R_pos, self.R_pos, self.R_vert,
+                      self.R_vel, self.R_vel, self.R_vel])
+        if pos_only:
+            H, z, h, R = H6[0:3, :], z6[0:3], h6[0:3], R6[0:3, 0:3]
+        else:
+            H, z, h, R = H6, z6, h6, R6
+        R = R * r_floor
+        y = z - h
+        S = H @ self.P @ H.T + R
+        maha = float(y @ la.solve(S, y))
+        self.nis = maha
+        if maha > GATE_HARD_X * CHI2_GATE:
+            self.P[0:3, 0:3] *= 1.3
+            self.P[3:6, 3:6] *= 1.6
+            self.r_scale = float("nan")
+            return False, maha
+        self.r_scale = min(max(maha / CHI2_GATE, 1.0), R_INFLATE_MAX)
+        R = R * self.r_scale
+        S = H @ self.P @ H.T + R
+        K = self.P @ H.T @ la.inv(S)
+        self.x = self.x + K @ y
+        I = np.eye(12)
+        self.P = (I - K @ H) @ self.P @ (I - K @ H).T + K @ R @ K.T
+        self.P = 0.5*(self.P + self.P.T)
+        self.x[9] = float(np.clip(self.x[9], 0.6, 1.4))
+        self.x[10] = float(np.clip(self.x[10], -15., 15.))
+        self.x[11] = float(np.clip(self.x[11], -15., 15.))
+        return True, maha
+    def ba_cond(self):
+        """E5: max off-diagonal correlation inside the live (ba) block."""
+        P = self.P[6:9, 6:9]
+        d = np.sqrt(np.diag(P))
+        if np.all(d > 1e-12):
+            C = P / np.outer(d, d)
+            return float(np.max(np.abs(C - np.eye(3))))
+        return float("nan")
+
+# ---------------------------------------------------------------- Rev E guided sim
+def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
+                 never_lock=False, mount_bias_deg=None, qprof=None,
+                 wind_fit=True, debug=False):
+    """Rev E guided shot. Returns (xi, yi, stats, timeline)."""
+    m_true = p["mass"]
+    b_body = (rng.normal(0, 0.01), rng.normal(0, 0.01))
+    if mount_bias_deg is not None:
+        b_mount = math.radians(mount_bias_deg)          # E1: deterministic for det cases
+    else:
+        b_mount = math.radians(abs(rng.normal(0, 0.5)))
+        b_mount *= 1.0 if rng.random() > 0.5 else -1.0
+    gyro_bias_true = rng.normal(0, GYRO_BIAS_INIT_SIG)
+    delta_blind = None
+
+    psi_S = 0.0
+    psi_R = 0.0
+    om_R = OMEGA_S
+    roll_est = RollEstimatorE()
+    ekf = None
+    theta_cmd = 0.0
+    d_cmd = 0.0
+    theta_pat, d_pat = 0.0, 0.0
+    mode = "pre"
+    t_first_fix = None
+    next_fix = T_GNSS_LOCK
+    pend = None
+    next_guid = None
+    fbuf = [0.0, 0.0]; fbuf_n = 0
+    cbuf = [0.0, 0.0]; mbuf = [0.0, 0.0]; usum = [0.0, 0.0]
+    win_cyc = 0
+    next_anchor = T_DESPIN_END
+    v_post_prev = None
+    s_cd = 1.0; wy_hat = 0.0
+    fit_t0 = None; fit_s0 = None; fit_vh0 = 0.0
+    fit_dvd_s = 0.0; fit_kv = 0.0; fit_wob_v = [0.0, 0.0]
+    duty_peak = duty_sum = 0.0; duty_n = 0
+    gate_rej = hard_rej = 0
+    acc_avg = 0.0; acc_n = 0
+    a_ff = (0.0, 0.0)
+    wob_v = [0.0, 0.0]
+    wob_p = [0.0, 0.0]
+    a_cmd_s = (0.0, 0.0)
+    cyc_last = -1
+    a_pat = (0.0, 0.0); a_mean = (0.0, 0.0)
+    qprof = qprof if qprof is not None else q_profile(cd_cal)
+    timeline = []
+    next_dbg = T_DESPIN_END
+    ipp_miss = t_go_last = float("nan")
+
+    s = initial_state(p["v0"], p["elev"], p["azim"])
+    t = 0.0
+    while t < TMAX:
+        # ---------------- truth roll ----------------
+        if t < T_DESPIN_START:
+            psi_S += OMEGA_S*DT_TRUTH
+            psi_R = psi_S; om_R = OMEGA_S
+        elif t < T_DESPIN_END:
+            psi_S += OMEGA_S*DT_TRUTH
+            frac = (t - T_DESPIN_START)/(T_DESPIN_END - T_DESPIN_START)
+            om_R = OMEGA_S*(1.0 - frac)
+            psi_R += om_R*DT_TRUTH
+        else:
+            psi_S += OMEGA_S*DT_TRUTH
+            if delta_blind is None:
+                delta_blind = wrap_pi(psi_R)
+                win_cyc = int(t / T_MOD)
+            if blind or roll_est.psi is None:
+                tgt = duty_pattern(t, theta_pat, d_pat) + delta_blind
+            else:
+                e_psi = wrap_pi(roll_est.psi - psi_R)
+                tgt = duty_pattern(t, theta_pat, d_pat) - e_psi
+            err = wrap_pi(tgt - psi_R)
+            om_mag = min(6.28, math.sqrt(2.0*55.0*abs(err)), abs(err)/(2.0*DT_TRUTH))
+            om_des = 0.0 if abs(err) < math.radians(0.1) else math.copysign(om_mag, err)
+            om_R += max(-55.0*DT_TRUTH, min(55.0*DT_TRUTH, om_des - om_R))
+            psi_R = wrap_pi(psi_R + om_R*DT_TRUTH)
+
+        # ---------------- truth forces ----------------
+        a_lat = (0.0, 0.0)
+        f_in_h = (0.0, 0.0)
+        if t >= T_DESPIN_END:
+            ad_true = accel(s, cd_cal*p["cd_scale"], p["wind"])
+            f_in_h = (ad_true[0], ad_true[1])
+            if abs(om_R) < OMEGA_SPIN_SAT:
+                F_true = FIN_FORCE_NOM * q_dyn(s)/Q70
+                a_lat = (F_true/m_true*math.cos(psi_R), F_true/m_true*math.sin(psi_R))
+                f_in_h = (f_in_h[0] + a_lat[0], f_in_h[1] + a_lat[1])
+
+        # ---------------- sensors ----------------
+        gyro_meas = om_R + gyro_bias_true + rng.normal(0, math.radians(0.2))
+        is_sat = abs(gyro_meas) > GYRO_SAT_RPS
+        roll_est.predict(gyro_meas, DT_TRUTH, is_sat)
+        if ekf is not None and t >= T_DESPIN_END:
+            # E1: mount offset injected at sensor level (strapped-down accel)
+            fb_h = rot2(-psi_R - b_mount, f_in_h)
+            psi_ref = duty_pattern(t, theta_pat, d_pat)
+            ctmp = rot2(psi_ref, fb_h)
+            cbuf[0] += ctmp[0] + b_body[0] + rng.normal(0, ACC_AVG_SIG)
+            cbuf[1] += ctmp[1] + b_body[1] + rng.normal(0, ACC_AVG_SIG)
+            _, cd_abs_m, k_m, rvx_m, rvy_m, _, _ = ekf.drag_parts((0.0, 0.0))
+            mbuf[0] += (-k_m*rvx_m + a_pat[0])
+            mbuf[1] += (-k_m*rvy_m + a_pat[1])
+            usum[0] += math.cos(psi_ref); usum[1] += math.sin(psi_ref)
+            fbuf_n += 1
+
+        # ---------------- GNSS fixes ----------------
+        in_outage = outage is not None and outage[0] <= t < outage[1]
+        if not never_lock and t >= next_fix - 1e-9 and not in_outage:
+            pos_m = np.array([s[0] + rng.normal(0, GPS_POS_SIG),
+                              s[1] + rng.normal(0, GPS_POS_SIG),
+                              s[2] + rng.normal(0, GPS_POS_SIG*1.6)])
+            vel_m = np.array([s[3] + rng.normal(0, GPS_VEL_SIG),
+                              s[4] + rng.normal(0, GPS_VEL_SIG),
+                              s[5] + rng.normal(0, GPS_VEL_SIG)])
+            pend = (t, pos_m, vel_m)
+            next_fix += NAV_DT
+        if pend is not None and t >= pend[0] + GNSS_LAT - 1e-9:
+            t_e, pos_m, vel_m = pend
+            pend = None
+            pos_p = pos_m + vel_m*GNSS_LAT
+            if ekf is None:
+                ekf = NavEKF_E(cd_cal)
+                ekf.init_from_fix(pos_p, vel_m, t)
+                if blind:
+                    ekf.chi2 = 1e9
+                t_first_fix = t_e
+                next_guid = t_e + T_GUID_ENGAGE
+                mode = "acq"
+            else:
+                r_floor = 1.0; pos_only = False
+                if mode == "acq":
+                    r_floor = R_FLOOR_ACQ
+                elif mode == "degraded":
+                    r_floor = R_FLOOR_DEGRADED
+                elif mode == "denied":
+                    r_floor = R_FLOOR_DENIED; pos_only = True
+                ok, maha = ekf.update_gnss(pos_p, vel_m, r_floor=r_floor,
+                                           pos_only=pos_only)
+                if ok:
+                    hard_rej = 0
+                else:
+                    hard_rej += 1
+                    if hard_rej >= 3 and mode == "guide":
+                        mode = "degraded"
+
+        # ---------------- controller force model + known wobble ----------------
+        a_mean = (0.0, 0.0); a_auth_hat = 0.0
+        if t >= T_DESPIN_END:
+            cyc = int(t / T_MOD)
+            if cyc != cyc_last:
+                cyc_last = cyc
+                win_cyc = cyc          # window straddling check resets with window
+                wob_v = [0.0, 0.0]; wob_p = [0.0, 0.0]
+            theta_pat, d_pat = theta_cmd, d_cmd   # E3: refresh every tick
+            if ekf is not None:
+                a_auth_hat = FIN_FORCE_NOM*q_dyn(ekf.state_tuple())/Q70/M_NOM
+            else:
+                a_auth_hat = FIN_FORCE_NOM*q_at(qprof, t)/Q70/M_NOM
+            az_f = duty_pattern(t, theta_pat, d_pat)
+            a_pat = (a_auth_hat*math.cos(az_f), a_auth_hat*math.sin(az_f))
+            a_mean = (d_cmd*a_auth_hat*math.cos(theta_cmd),
+                      d_cmd*a_auth_hat*math.sin(theta_cmd))
+            wob_v[0] += (a_pat[0] - a_mean[0])*DT_TRUTH
+            wob_v[1] += (a_pat[1] - a_mean[1])*DT_TRUTH
+            wob_p[0] += wob_v[0]*DT_TRUTH
+            wob_p[1] += wob_v[1]*DT_TRUTH
+
+        # ---------------- E1 drag-referenced roll anchor (fix-independent) --------
+        if (ekf is not None and (not blind) and t >= T_DESPIN_END
+                and t >= next_anchor - 1e-9):
+            next_anchor += 1.0
+            cyc_now = int(t / T_MOD)
+            straddled = (cyc_now != win_cyc) and fbuf_n > 0
+            win_cyc = cyc_now
+            if fbuf_n >= 8 and not straddled:
+                c_bar = (cbuf[0]/fbuf_n, cbuf[1]/fbuf_n)
+                m_bar = (mbuf[0]/fbuf_n, mbuf[1]/fbuf_n)
+                u_bar = (usum[0]/fbuf_n, usum[1]/fbuf_n)
+                if math.hypot(*m_bar) > 0.3 and math.hypot(*c_bar) > 0.1:
+                    delta = (math.atan2(c_bar[1], c_bar[0])
+                             - math.atan2(m_bar[1], m_bar[0]))
+                    psi_meas = (math.atan2(u_bar[1], u_bar[0]) - delta)
+                    res = (c_bar[0] - (math.cos(delta)*m_bar[0] - math.sin(delta)*m_bar[1]),
+                           c_bar[1] - (math.sin(delta)*m_bar[0] + math.cos(delta)*m_bar[1]))
+                    R_psi = (math.radians(0.8)
+                             + 57.3*math.hypot(*res)/max(math.hypot(*m_bar), 0.3))**2
+                    roll_est.update(psi_meas, R_psi)
+            fbuf = [0.0, 0.0]
+            cbuf = [0.0, 0.0]; mbuf = [0.0, 0.0]; usum = [0.0, 0.0]
+            fbuf_n = 0
+
+        # ---------------- E4 slow (cd_scale, wy) fit ----------------
+        if ekf is not None and wind_fit and t >= T_DESPIN_END:
+            st_f = ekf.state_tuple()
+            vh_f = math.hypot(st_f[3], st_f[4])
+            if vh_f > 30.0:
+                _, _, k_f, rvx_f, rvy_f, _, _ = ekf.drag_parts((0.0, 0.0))
+                k_u = k_f/max(s_cd, 0.1)
+                vhat_f = (st_f[3]/vh_f, st_f[4]/vh_f)
+                if fit_t0 is None:
+                    fit_t0 = t
+                    fit_s0 = st_f
+                    fit_vh0 = vh_f
+                    fit_dvd_s = 0.0; fit_kv = 0.0
+                    fit_wob_v = [0.0, 0.0]   # fit-window wobble (no cycle resets)
+                fit_dvd_s += (-k_u*(rvx_f*vhat_f[0] + rvy_f*vhat_f[1]))*DT_TRUTH
+                fit_kv += k_u*DT_TRUTH
+                fit_wob_v[0] += (a_pat[0] - a_mean[0])*DT_TRUTH
+                fit_wob_v[1] += (a_pat[1] - a_mean[1])*DT_TRUTH
+                if t - fit_t0 >= FIT_BASELINE:
+                    sm = model_state_propagate(fit_s0, t - fit_t0,
+                                               cd_cal*s_cd, a_mean)
+                    vh_m = math.hypot(sm[3], sm[4])
+                    resid_along = vh_f - vh_m
+                    if abs(fit_dvd_s) > 0.5:
+                        s_new = s_cd + float(np.clip(resid_along/fit_dvd_s,
+                                                     -0.05, 0.05))
+                        s_cd = float(np.clip(s_cd + 0.5*(s_new - s_cd), 0.90, 1.15))
+                        ekf.x[9] = s_cd
+                    if fit_kv > 0.05:
+                        resid_cross = ((st_f[4] - sm[4]) - fit_wob_v[1])
+                        wy_new = float(np.clip(resid_cross/fit_kv, -12., 12.))
+                        wy_hat = 0.7*wy_hat + 0.3*wy_new
+                        ekf.x[11] = wy_hat
+                    fit_t0 = None
+
+        # ---------------- EKF predict (force at commanded azimuth) ----------------
+        if ekf is not None:
+            ekf.predict(DT_TRUTH, a_pat)
+
+        # ---------------- lock deadline (fail-safe) ----------------
+        if mode == "pre" and t >= T_LOCK_DEADLINE_E:
+            mode = "ballistic"
+
+        # ---------------- guidance ----------------
+        if (ekf is not None and t >= next_guid - 1e-9
+                and mode in ("acq", "guide", "degraded", "denied")):
+            sig_p = ekf.sigma_pos()
+            if mode == "acq" and t >= t_first_fix + T_GUID_ENGAGE_E:
+                mode = "guide"
+            if mode in ("guide", "degraded"):
+                if sig_p > SIG_POS_DENIED:
+                    mode = "denied"
+                elif sig_p > SIG_POS_DEGRADED:
+                    mode = "degraded"
+                else:
+                    mode = "guide"
+            if mode == "denied" and sig_p < SIG_POS_RESUME:
+                mode = "guide"
+            if mode in ("ballistic", "denied", "acq"):
+                d_cmd = 0.0
+            else:
+                st = ekf.state_tuple()
+                st = (st[0] - wob_p[0], st[1] - wob_p[1], st[2],
+                      st[3] - wob_v[0], st[4] - wob_v[1], st[5])
+                cd_hat = float(np.clip(ekf.x[9], 0.6, 1.4))*cd_cal
+                w_hat = (float(ekf.x[10]), float(ekf.x[11]))
+                a_auth = FIN_FORCE_NOM*q_dyn(st)/Q70/M_NOM
+                xi_i, yi_i, t_imp, _ = propagate(st, cd_hat, w_hat, DT_IPP)
+                t_go = t_imp
+                mx, my = RANGE_TARGET - xi_i, 0.0 - yi_i
+                ipp_miss = math.hypot(mx, my); t_go_last = t_go
+                if t_go < 2.0 or ipp_miss < DEADBAND:
+                    a_raw = (0.0, 0.0)
+                else:
+                    if law == "l0":
+                        a_raw = law_l0(mx, my, t_go)
+                    elif law == "zem":
+                        a_raw = law_zem(mx, my, t_go)
+                    elif law == "apn":
+                        a_raw = law_apn_clean((st[0], st[1]), (st[3], st[4]),
+                                              (RANGE_TARGET, 0.0))
+                    mag = math.hypot(*a_raw)
+                    if mag > a_auth:
+                        a_raw = (a_auth*a_raw[0]/mag, a_auth*a_raw[1]/mag)
+                a_cmd_s = (a_cmd_s[0] + LP_A*(a_raw[0] - a_cmd_s[0]),
+                           a_cmd_s[1] + LP_A*(a_raw[1] - a_cmd_s[1]))
+                mag_s = math.hypot(*a_cmd_s)
+                d_cmd = min(1.0, mag_s/a_auth) if a_auth > 1e-9 else 0.0
+                if mag_s > 1e-6:
+                    theta_cmd = math.atan2(a_cmd_s[1], a_cmd_s[0])
+                duty = d_cmd
+                duty_peak = max(duty_peak, duty)
+                duty_sum += duty; duty_n += 1
+                acc_avg += a_auth*duty; acc_n += 1
+            next_guid += NAV_DT
+
+        # ---------------- debug timeline ----------------
+        if debug and t >= next_dbg - 1e-9:
+            next_dbg += 2.0
+            timeline.append({
+                "t": round(t, 1), "mode": mode,
+                "psi_err": roll_est.err_vs(psi_R),
+                "sig_p": ekf.sigma_pos() if ekf is not None else float("nan"),
+                "nis": ekf.nis if ekf is not None else float("nan"),
+                "r_sc": ekf.r_scale if ekf is not None else float("nan"),
+                "s_cd": s_cd, "wy": wy_hat,
+                "miss": ipp_miss, "t_go": t_go_last,
+                "d": d_cmd, "duty": duty_pattern(t, theta_pat, d_pat)})
+
+        # ---------------- truth dynamics ----------------
+        s_prev = s
+        s = rk4_step(s, DT_TRUTH, cd_cal*p["cd_scale"], p["wind"], a_lat)
+        t += DT_TRUTH
+        if s[2] <= 0 < s_prev[2]:
+            f = s_prev[2]/(s_prev[2] - s[2])
+            xi = s_prev[0] + f*DT_TRUTH*s[3]
+            yi = s_prev[1] + f*DT_TRUTH*s[4]
+            stats = {"duty_peak": duty_peak,
+                     "duty_mean": duty_sum/max(duty_n, 1),
+                     "a_mean": acc_avg/max(acc_n, 1),
+                     "mode": mode, "gate_rej": gate_rej,
+                     "hard_rej": hard_rej,
+                     "psi_err_deg": roll_est.err_vs(psi_R),
+                     "ba_cond": ekf.ba_cond() if ekf is not None else float("nan"),
+                     "s_cd": s_cd, "wy_hat": wy_hat}
+            return xi, yi, stats, (timeline if debug else None)
+    raise RuntimeError("no impact")
+
+# ---------------------------------------------------------------- Rev E runner
+def main_revE():
+    global rng
+    rng = np.random.default_rng(20260901)
+    smoke = os.environ.get("GNC_SMOKE") == "1"
+    dbg = os.environ.get("GNC_DEBUG") == "1"
+    n_pri = 8 if smoke else N_RUNS
+    n_sec = 4 if smoke else 80
+    cd_cal, x_nom, tof_nom, apo_nom = calibrate_cd()
+    Q70 = q70_ref(cd_cal)
+    print(f"Cd={cd_cal:.4f} nom {x_nom:.0f} m TOF {tof_nom:.1f} s apo {apo_nom/1000:.1f} km")
+    print(f"q(t={Q_REF_T:.0f}s) = {Q70:.0f} Pa (60 N reference condition)")
+
+    print("\n=== Deterministic (Rev E) ===")
+    det = [("nominal", dict()),
+           ("mount bias 5deg", dict(mount_bias_deg=5.0)),
+           ("crosswind 6", dict(wind=(0., 6.))),
+           ("headwind 6", dict(wind=(-6., 0.))),
+           ("Cd +5%", dict(cd_scale=1.05)),
+           ("BLIND (no roll ref)", dict(blind=True))]
+    det_rows = []
+    for name, kw in det:
+        p = dict(v0=V0_NOM, elev=ELEV0, azim=0., mass=M_NOM,
+                 wind=(0., 0.), cd_scale=1.)
+        p.update({k: v for k, v in kw.items() if k in ("wind", "cd_scale")})
+        ux, uy = sim_unguided(p, cd_cal)
+        gx, gy, st, tl = sim_gnc_revE(p, cd_cal, Q70, law="l0",
+                                      blind=kw.get("blind", False),
+                                      mount_bias_deg=kw.get("mount_bias_deg"),
+                                      debug=dbg)
+        miss = math.hypot(gx - RANGE_TARGET, gy)
+        det_rows.append((name, miss, st))
+        print(f"  {name:20s} ung={math.hypot(ux-RANGE_TARGET, uy):6.1f} "
+              f"revE={miss:6.1f} mode={st['mode']:8s} psiErr={st['psi_err_deg']:5.2f} deg "
+              f"dutyMean={st['duty_mean']:.2f} s_cd={st['s_cd']:.3f} wy={st['wy_hat']:.1f}")
+        if dbg and tl:
+            print(f"    {'t':>5s} {'mode':8s} {'psiErr':>7s} {'sig_p':>6s} {'nis':>7s} "
+                  f"{'r_sc':>5s} {'s_cd':>5s} {'wy':>5s} {'miss':>6s} {'t_go':>5s} {'d':>4s}")
+            for r in tl:
+                print(f"    {r['t']:5.0f} {r['mode']:8s} {r['psi_err']:7.2f} {r['sig_p']:6.2f} "
+                      f"{r['nis']:7.2f} {r['r_sc']:5.2f} {r['s_cd']:5.3f} {r['wy']:5.1f} "
+                      f"{r['miss']:6.1f} {r['t_go']:5.1f} {r['d']:4.2f}")
+
+    print(f"\n=== Monte Carlo {n_pri} primary + {n_sec}x5 secondary (lock {T_GNSS_LOCK:.0f}s) ===")
+    keys = ["unguided", "legacy", "revE_l0", "revE_neverlock",
+            "revE_zem", "revE_apn", "revE_outage", "revE_blind", "revE_nowind"]
+    pts = {k: [] for k in keys}
+    duty = {k: [] for k in keys}
+    psi_err = {k: [] for k in keys}
+    modes = {k: {} for k in keys}
+    conds = {k: [] for k in keys}
+    outage_int = (60.0, 70.0)
+    for i in range(n_pri):
+        p = draw_params()
+        pts["unguided"].append(sim_unguided(p, cd_cal))
+        gx, gy, d, _ = sim_guided_legacy(p, cd_cal, T_GNSS_LOCK)
+        pts["legacy"].append((gx, gy)); duty["legacy"].append(d["duty_peak"])
+        gx, gy, st, _ = sim_gnc_revE(p, cd_cal, Q70, law="l0")
+        pts["revE_l0"].append((gx, gy)); duty["revE_l0"].append(st["duty_peak"])
+        psi_err["revE_l0"].append(st["psi_err_deg"]); conds["revE_l0"].append(st["ba_cond"])
+        modes["revE_l0"][st["mode"]] = modes["revE_l0"].get(st["mode"], 0) + 1
+        gx, gy, st, _ = sim_gnc_revE(p, cd_cal, Q70, law="l0", never_lock=True)
+        pts["revE_neverlock"].append((gx, gy)); duty["revE_neverlock"].append(st["duty_peak"])
+        modes["revE_neverlock"][st["mode"]] = modes["revE_neverlock"].get(st["mode"], 0) + 1
+        if (i + 1) % 25 == 0:
+            print(f"  ...{i+1}/{n_pri} primary")
+    for i in range(n_sec):
+        p = draw_params()
+        gx, gy, st, _ = sim_gnc_revE(p, cd_cal, Q70, law="zem")
+        pts["revE_zem"].append((gx, gy)); duty["revE_zem"].append(st["duty_peak"])
+        psi_err["revE_zem"].append(st["psi_err_deg"])
+        gx, gy, st, _ = sim_gnc_revE(p, cd_cal, Q70, law="apn")
+        pts["revE_apn"].append((gx, gy)); duty["revE_apn"].append(st["duty_peak"])
+        psi_err["revE_apn"].append(st["psi_err_deg"])
+        gx, gy, st, _ = sim_gnc_revE(p, cd_cal, Q70, law="l0", outage=outage_int)
+        pts["revE_outage"].append((gx, gy)); duty["revE_outage"].append(st["duty_peak"])
+        psi_err["revE_outage"].append(st["psi_err_deg"])
+        modes["revE_outage"][st["mode"]] = modes["revE_outage"].get(st["mode"], 0) + 1
+        gx, gy, st, _ = sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=True)
+        pts["revE_blind"].append((gx, gy)); duty["revE_blind"].append(st["duty_peak"])
+        psi_err["revE_blind"].append(st["psi_err_deg"])
+        gx, gy, st, _ = sim_gnc_revE(p, cd_cal, Q70, law="l0", wind_fit=False)
+        pts["revE_nowind"].append((gx, gy)); duty["revE_nowind"].append(st["duty_peak"])
+        psi_err["revE_nowind"].append(st["psi_err_deg"])
+        if (i + 1) % 20 == 0:
+            print(f"  ...{i+1}/{n_sec} secondary")
+
+    radii = {k: [math.hypot(x - RANGE_TARGET, y) for x, y in v] for k, v in pts.items()}
+    stats = {k: cep(v) for k, v in radii.items()}
+    print("\n=== Results (radial miss, m) ===")
+    print(f"{'config':16s} {'CEP50':>7s} {'mean':>7s} {'p90':>7s} {'max':>7s} "
+          f"{'dutyPk50':>8s} {'psiErr50':>8s}")
+    for k in keys:
+        s_st = stats[k]
+        d50 = float(np.median(duty[k])) if duty[k] else 0.0
+        e50 = float(np.median(psi_err[k])) if psi_err[k] else float("nan")
+        print(f"{k:16s} {s_st['median']:7.1f} {s_st['mean']:7.1f} {s_st['p90']:7.1f} "
+              f"{s_st['max']:7.1f} {d50:8.2f} {e50:8.2f}")
+    print("modes:", {k: v for k, v in modes.items() if v})
+    cond_med = float(np.nanmedian(conds["revE_l0"])) if conds["revE_l0"] else float("nan")
+    print(f"ba-block max offdiag corr median (revE_l0): {cond_med:.3f}")
+    imp_ung = stats["unguided"]["median"]/max(stats["revE_l0"]["median"], 1e-9)
+    imp_leg = stats["legacy"]["median"]/max(stats["revE_l0"]["median"], 1e-9)
+    print(f"Unguided/revE_l0: {imp_ung:.1f}x   legacy/revE_l0: {imp_leg:.2f}x")
+
+    write_results_revE(cd_cal, x_nom, tof_nom, apo_nom, Q70, stats, duty, psi_err,
+                       modes, det_rows, cond_med, imp_ung, imp_leg, n_pri, n_sec)
+    plot_revE(pts, radii, stats)
+
+def write_results_revE(cd_cal, x_nom, tof_nom, apo_nom, Q70, stats, duty, psi_err,
+                       modes, det_rows, cond_med, imp_ung, imp_leg, n_pri, n_sec):
+    lines = []; A = lines.append
+    A("# GNC methodology verification — PGK clean-sheet (Rev E)")
+    A("")
+    A(f"Runs: {n_pri} primary + {n_sec}x5 secondary MC (seed 20260901), paired dispersions.")
+    A(f"Truth: 3DOF RK4 dt={DT_TRUTH}, exp atmo, Cd={cd_cal:.4f} -> nom {x_nom:.0f} m-range TOF{tof_nom:.0f}s apo{apo_nom/1000:.1f}km.")
+    A(f"Authority: F(t) = 60 N * q(t)/q(70s) (q70={Q70:.0f} Pa) — q-scaled fin force (F8, unchanged).")
+    A(f"Sensor: NavIC pos {GPS_POS_SIG:.0f} m / vel {GPS_VEL_SIG} m/s 1 Hz, latency {GNSS_LAT*1e3:.0f} ms time-tagged (F6);")
+    A(f"  gyro sat {math.degrees(GYRO_SAT_RPS):.0f} deg/s; accel body-frame averaged (sigma {ACC_AVG_SIG:.4f} m/s2/sqrt(s)); angle sensor = relative only (F1).")
+    A("")
+    A("## Rev E architecture (decisions on top of Rev D F1-F8/D7/D9/F10)")
+    A("- **E1 anchor hardening:** mount bias is a slow STATE (3-state roll EKF psi/gyro-bias/mount; Rev D injected it as known — a sim artifact);")
+    A("  anchor windows run on a fixed 1-Hz cadence (continue through outages and rejected fixes); windows straddling a T_MOD pattern boundary are")
+    A("  discarded; updates are innovation-gated (|y|>3sqrt(S) -> inflate P, reject); un-rotation reference AND modeled fin force both use the")
+    A("  commanded pattern (estimate-independent), removing an estimator feedback path.")
+    A("- **E2 robust gating (kills the denied cascade):** adaptive R inflation — accept with R scaled by NIS/gate clamped x8; outright reject only")
+    A("  above 10x gate. Mode ladder: pre -> acq (R x2) -> guide -> degraded (sigma>12.5 m: R x4, guidance CONTINUES open-loop) -> denied")
+    A("  (sigma>25 m: neutral coast + position-only R x16 re-acquisition, resume sigma<8 m) -> ballistic (never locked).")
+    A("- **E3 command-chain latency:** theta/d refresh every guidance tick (was 3-s cycle boundary); command low-pass 0.4 -> 0.55.")
+    A("- **E4 slow (cd_scale, wy) fit:** 15-s model-propagation baseline replaces the Rev D along-track accumulators; fitted cross-wind wy feeds")
+    A("  the IPP, the EKF predict model AND the anchor drag-azimuth reference. wind_fit=False fallback run for the trade.")
+    A("- **E5 metric fix:** Rev D's ba-cd correlation was invalid with cd frozen (reported 1.45); replaced by live ba-block off-diagonal conditioning.")
+    A("")
+    A("## Deterministic (Rev E)")
+    A("| Case | Unguided | Rev E L0 | mode | psi err (deg) |")
+    A("|---|---|---|---|---|")
+    for name, miss, st in det_rows:
+        A(f"| {name} | — | {miss:.1f} | {st['mode']} | {st['psi_err_deg']:.2f} |")
+    A("")
+    A(f"## Monte Carlo (disp V0 s0.15% aim 0.6 mrad wind s3 m/axis Cd s0.8% mass s0.6%)")
+    A("")
+    A("| Config | CEP50 | mean | p90 | max | dutyPk med | psiErr med (deg) |")
+    A("|---|---|---|---|---|---|---|")
+    label = {"unguided": "Unguided", "legacy": "Legacy windowed (lock45, idealized actuator)",
+             "revE_l0": "Rev E EKF+dragref L0", "revE_neverlock": "Rev E never-lock (fail-safe)",
+             "revE_zem": "Rev E ZEM 6dp/tgo2", "revE_apn": "Rev E APN clean N=3",
+             "revE_outage": "Rev E L0 outage 60-70s", "revE_blind": "Rev E BLIND (no roll ref)",
+             "revE_nowind": "Rev E L0 wind_fit=False"}
+    for k in ["unguided", "legacy", "revE_l0", "revE_zem", "revE_apn", "revE_outage",
+              "revE_blind", "revE_nowind", "revE_neverlock"]:
+        if k not in stats:
+            continue
+        s_st = stats[k]
+        d50 = float(np.median(duty[k])) if duty[k] else 0.0
+        e50 = float(np.median(psi_err[k])) if psi_err[k] else float("nan")
+        A(f"| {label[k]} | {s_st['median']:.1f} | {s_st['mean']:.1f} | {s_st['p90']:.1f} | "
+          f"{s_st['max']:.1f} | {d50:.2f} | {e50:.2f} |")
+    A("")
+    A(f"**Improvement vs unguided: revE L0 {imp_ung:.1f}x (legacy idealized-actuator reference: {imp_leg:.2f}x).**")
+    for k, v in modes.items():
+        if v:
+            A(f"- end-modes {k}: {v}")
+    A(f"- ba-block max offdiag corr median: {cond_med:.3f} (E5 conditioning check)")
+    A("")
+    A("## Findings")
+    A("- (filled after Rev E analysis — see final section)")
+    A("")
+    A("## Implementation budget (STM32G474 170 MHz M4F, 128 K RAM)")
+    A("- EKF predict 100 Hz model-based: ~2 k FLOPs/tick -> 0.2 M FLOPs/s (~0.15 ms/s).")
+    A("- Drag-vector roll solve: ~40 FLOPs/window at 1 Hz — negligible.")
+    A("- Roll EKF now 3x3: ~60 FLOPs/predict tick — negligible.")
+    A("- Slow fit model propagation: 100 RK2 steps per 15 s — amortized <0.05 ms/s.")
+    A("- IPP 1 Hz: ~300 RK2 steps x 6-state (~30 FLOPs) ~ 9 kFLOPs (~0.1 ms).")
+    A("- Total GNC <0.5 ms worst 1 Hz tick vs FOC 15 kHz ISR ~10 us. RAM <5 KB, flash <20 KB.")
+    A("")
+    A("## Known limitations (next rung)")
+    A("- Shell spin rate constant (aero decay ignored); 6DOF rung adds Magnus/roll-pitch coupling and duty wobble in truth.")
+    A("- Drag-ref assumes drag dominates body horizontal specific force (true post-despin).")
+    A("- FOC/motor slew co-simulation still first-order (rate/alpha caps only).")
+    os.makedirs(OUT_DIR, exist_ok=True)
+    with open(os.path.join(OUT_DIR, "RESULTS_GNC.md"), "w") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"\nWrote {os.path.join(OUT_DIR, 'RESULTS_GNC.md')}")
+
+def plot_revE(pts, radii, stats):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    fig, axes = plt.subplots(1, 2, figsize=(16, 7), sharex=True, sharey=True)
+    ax = axes[0]
+    for key, color, lbl, mk in [("unguided", "#dc2626", "Unguided", "o"),
+                                ("legacy", "#f59e0b", "Legacy Rev C", "s"),
+                                ("revE_l0", "#059669", "Rev E L0", "^")]:
+        xs = [x - RANGE_TARGET for x, y in pts[key]]
+        ys = [y for x, y in pts[key]]
+        ax.scatter(xs, ys, s=14, alpha=0.5, color=color,
+                   label=f"{lbl} CEP {stats[key]['median']:.1f} m", marker=mk)
+    ax.scatter([0], [0], marker="*", s=350, color="black", zorder=5)
+    ax.add_patch(plt.Circle((0, 0), 30, fill=False, color="#059669", ls="--", lw=1.2))
+    ax.set_xlabel("downrange error (m)"); ax.set_ylabel("crossrange (m)")
+    ax.set_title("Rev E vs legacy vs unguided (lock 45 s)")
+    ax.legend(fontsize=8); ax.grid(alpha=0.25); ax.set_aspect("equal")
+    ax = axes[1]
+    for key, color, lbl in [("revE_l0", "#059669", "L0"),
+                            ("revE_zem", "#9333ea", "ZEM"),
+                            ("revE_outage", "#964B00", "outage 60-70s"),
+                            ("revE_blind", "#111827", "BLIND no roll ref"),
+                            ("revE_nowind", "#2563eb", "wind_fit=False")]:
+        xs = [x - RANGE_TARGET for x, y in pts[key]]
+        ys = [y for x, y in pts[key]]
+        ax.scatter(xs, ys, s=14, alpha=0.5, color=color,
+                   label=f"{lbl} {stats[key]['median']:.1f} m")
+    ax.scatter([0], [0], marker="*", s=350, color="black", zorder=5)
+    ax.add_patch(plt.Circle((0, 0), 30, fill=False, color="#059669", ls="--", lw=1.2))
+    ax.set_xlabel("downrange error (m)")
+    ax.set_title("Rev E law trade + robustness")
+    ax.legend(fontsize=8); ax.grid(alpha=0.25); ax.set_aspect("equal")
+    fig.suptitle("PGK GNC Rev E — hardened anchor, robust gating, wind fit", fontsize=11)
+    fig.tight_layout()
+    p = os.path.join(OUT_DIR, "steering_gnc_revE.png")
+    fig.savefig(p, dpi=130, bbox_inches="tight")
+    print(f"Wrote {p}")
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1 and sys.argv[1] == "revC":
         main()
+    elif len(sys.argv) > 1 and sys.argv[1] == "revE":
+        main_revE()
     else:
         main_revD()

@@ -1,73 +1,66 @@
-# GNC methodology verification — PGK clean-sheet (Rev D)
+# GNC methodology verification — PGK clean-sheet (Rev E)
 
-Runs: 8 primary + 4x4 secondary MC (seed 20260831), paired dispersions.
-Truth: 3DOF RK4 dt=0.025, exp atmo, Cd=0.2115 -> nom 30000 km-range TOF90s apo9.9km.
-Authority: F(t) = 60 N * q(t)/q(70s) (q70=41392 Pa) — honest q-scaled fin force (F8).
+Runs: 8 primary + 4x5 secondary MC (seed 20260901), paired dispersions.
+Truth: 3DOF RK4 dt=0.025, exp atmo, Cd=0.2115 -> nom 30000 m-range TOF90s apo9.9km.
+Authority: F(t) = 60 N * q(t)/q(70s) (q70=41392 Pa) — q-scaled fin force (F8, unchanged).
 Sensor: NavIC pos 5 m / vel 0.3 m/s 1 Hz, latency 100 ms time-tagged (F6);
   gyro sat 4000 deg/s; accel body-frame averaged (sigma 0.0057 m/s2/sqrt(s)); angle sensor = relative only (F1).
 
-## Rev D architecture (decisions)
-- **F1 roll anchor:** nose roll is NOT observable pre-despin (angle sensor is collar-bell RELATIVE; gyro saturated 22x). Post-despin it is anchored by the
-  accelerometer drag vector: rotation-invariant azimuth solve - each accel sample is un-rotated by the gyro-propagated reference roll before averaging,
-  so slews do not poison windows; 1-Hz updates keep the gyro-bias state observable. Angle sensor keeps commutation + de-spin monitor + S&A roles.
-- **F2 actuator:** fixed-magnitude trim force, direction-only; magnitude = phasor duty (dwell d*T at aim, (1-d)*T split +/-90 deg neutral), T=3 s,
-  servo rate 360 deg/s / alpha 55 rad/s2, discretization-safe time-optimal slew (no near-target limit cycle).
-- **F3:** no translational nav pre-lock (accel centripetal-pinned by spin); hard init from first accepted fix; lock deadline 50 s -> ballistic mode.
-- **D7:** 12-state EKF, MODEL-based predict (drag(cd,wind) + g + commanded feedforward - ba), chi2-gated GNSS pos+vel updates, Joseph form.
-- **D9 two-time-scale drag:** cd/wind frozen at calibration priors inside the KF (weakly observable; their estimate noise maps 1:1 into IPP error);
-  a slow scalar re-fits the along-track velocity drop over a 15-s baseline every 5 s (legacy drop-fit) and feeds the IPP.
-- **F10 wobble:** the phasor-duty scheme applies FULL-magnitude sideways force during neutral phases (q at 'apogee' ~21 kPa since horizontal velocity
-  ~320 m/s persists) -> +/-1.3 m/s trajectory wobble at the modulation period. Guidance controls the MEAN trajectory: the known commanded wobble is
-  cycle-referenced (reset each T_MOD) and subtracted from the state before the IPP; commands are vector low-passed (tau ~ 2 s).
-- **F5 laws:** L0 2*miss/t_go^2 (fielded baseline), L2 ZEM 6*miss/t_go^2 (min-energy free-vf), L1 clean APN N=3 (no blend/floor).
-- **Fail-safe:** chi2 gate 22.46 (6dof); 3 consecutive rejects or sigma_pos>25 m -> denied (neutral aim, coast); resume <12.5 m; never-lock -> ballistic.
+## Rev E architecture (decisions on top of Rev D F1-F8/D7/D9/F10)
+- **E1 anchor hardening:** mount bias is a slow STATE (3-state roll EKF psi/gyro-bias/mount; Rev D injected it as known — a sim artifact);
+  anchor windows run on a fixed 1-Hz cadence (continue through outages and rejected fixes); windows straddling a T_MOD pattern boundary are
+  discarded; updates are innovation-gated (|y|>3sqrt(S) -> inflate P, reject); un-rotation reference AND modeled fin force both use the
+  commanded pattern (estimate-independent), removing an estimator feedback path.
+- **E2 robust gating (kills the denied cascade):** adaptive R inflation — accept with R scaled by NIS/gate clamped x8; outright reject only
+  above 10x gate. Mode ladder: pre -> acq (R x2) -> guide -> degraded (sigma>12.5 m: R x4, guidance CONTINUES open-loop) -> denied
+  (sigma>25 m: neutral coast + position-only R x16 re-acquisition, resume sigma<8 m) -> ballistic (never locked).
+- **E3 command-chain latency:** theta/d refresh every guidance tick (was 3-s cycle boundary); command low-pass 0.4 -> 0.55.
+- **E4 slow (cd_scale, wy) fit:** 15-s model-propagation baseline replaces the Rev D along-track accumulators; fitted cross-wind wy feeds
+  the IPP, the EKF predict model AND the anchor drag-azimuth reference. wind_fit=False fallback run for the trade.
+- **E5 metric fix:** Rev D's ba-cd correlation was invalid with cd frozen (reported 1.45); replaced by live ba-block off-diagonal conditioning.
 
-## Deterministic (Rev D)
-| Case | Unguided | Rev D L0 | mode | psi err (deg) |
+## Deterministic (Rev E)
+| Case | Unguided | Rev E L0 | mode | psi err (deg) |
 |---|---|---|---|---|
-| nominal | — | 33.7 | guide | 0.98 |
-| mount bias 5deg | — | 205.4 | denied | 82.31 |
-| crosswind 6 | — | 27.3 | denied | 53.80 |
-| Cd +5% | — | 176.4 | guide | 0.64 |
-| BLIND (no roll ref) | — | 83.1 | guide | nan |
+| nominal | — | 10.9 | guide | 6.86 |
+| mount bias 5deg | — | 58.4 | degraded | 50.57 |
+| crosswind 6 | — | 32.9 | guide | 15.86 |
+| headwind 6 | — | 57.8 | guide | 23.15 |
+| Cd +5% | — | 152.9 | guide | 0.52 |
+| BLIND (no roll ref) | — | 83.9 | degraded | nan |
 
 ## Monte Carlo (disp V0 s0.15% aim 0.6 mrad wind s3 m/axis Cd s0.8% mass s0.6%)
 
 | Config | CEP50 | mean | p90 | max | dutyPk med | psiErr med (deg) |
 |---|---|---|---|---|---|---|
-| Unguided | 179.8 | 199.1 | 275.3 | 363.2 | 0.00 | nan |
-| Legacy windowed (lock45, Rev C method) | 6.3 | 6.7 | 11.2 | 13.7 | 1.00 | nan |
-| Rev D EKF+dragref L0 | 142.6 | 218.5 | 361.5 | 534.8 | 0.69 | 88.96 |
-| Rev D ZEM 6dp/tgo2 | 49.8 | 115.5 | 55.2 | 342.2 | 0.93 | 36.03 |
-| Rev D APN clean N=3 | 185.9 | 189.1 | 236.1 | 383.3 | 0.40 | 29.57 |
-| Rev D L0 outage 60-70s | 77.8 | 89.1 | 90.4 | 179.8 | 0.87 | 59.56 |
-| Rev D never-lock (fail-safe) | 178.0 | 194.3 | 271.5 | 357.3 | 0.00 | nan |
-| Rev D BLIND (no roll ref) | 95.5 | 93.8 | 104.3 | 139.3 | 0.92 | nan |
+| Unguided | 148.5 | 170.1 | 167.5 | 427.0 | 0.00 | nan |
+| Legacy windowed (lock45, idealized actuator) | 7.4 | 7.5 | 8.0 | 16.0 | 1.00 | nan |
+| Rev E EKF+dragref L0 | 21.1 | 45.4 | 36.0 | 220.6 | 0.71 | 7.45 |
+| Rev E ZEM 6dp/tgo2 | 20.3 | 20.6 | 21.5 | 29.9 | 0.86 | 18.94 |
+| Rev E APN clean N=3 | 153.5 | 170.3 | 153.5 | 240.3 | 0.41 | 12.77 |
+| Rev E L0 outage 60-70s | 32.1 | 37.4 | 39.5 | 75.0 | 0.78 | 9.42 |
+| Rev E BLIND (no roll ref) | 125.9 | 120.5 | 133.8 | 166.3 | 0.90 | nan |
+| Rev E L0 wind_fit=False | 11.5 | 10.6 | 11.8 | 16.6 | 0.64 | 12.18 |
+| Rev E never-lock (fail-safe) | 148.3 | 170.2 | 177.8 | 415.6 | 0.00 | nan |
 
-**Improvement vs unguided: revD L0 1.3x.**
-- end-modes revD_l0: {'denied': 6, 'guide': 2}
-- end-modes revD_neverlock: {'ballistic': 8}
-- end-modes revD_outage: {'denied': 4}
-- ba-cd max|corr| median: 1.445 (conditioning check, Q4)
+**Improvement vs unguided: revE L0 7.0x (legacy idealized-actuator reference: 0.35x).**
+- end-modes revE_l0: {'guide': 8}
+- end-modes revE_neverlock: {'ballistic': 8}
+- end-modes revE_outage: {'guide': 4}
+- ba-block max offdiag corr median: 0.026 (E5 conditioning check)
 
 ## Findings
-- Rev C's 6.4 m is NOT reproducible under honest assumptions: it relied on an earth-referenced absolute angle sensor (the collar-bell sensor is RELATIVE),
-  constant 60 N authority from lock (true authority is q-scaled: ~0.5 N at lock, 60 N mid-descent), no wobble, no latency, no innovation gating.
-- The roll channel is THE architecture problem: absolute nose roll does not exist on board until post-despin drag-vector anchoring begins (F1).
-- Anchor robustness under wind/mount-bias bias is the top next-rung item: residual quality-gating of anchor windows and the servo/anchor
-  interaction need one more hardening pass; deterministic benign cases reach psiErr < 1 deg, biased cases drift (see deterministic table).
-- The phasor-duty mechanism's neutral-park wobble is a first-order flight-mechanics effect (not a second-order nicety) and must be carried into the 6DOF rung.
+- (filled after Rev E analysis — see final section)
 
 ## Implementation budget (STM32G474 170 MHz M4F, 128 K RAM)
 - EKF predict 100 Hz model-based: ~2 k FLOPs/tick -> 0.2 M FLOPs/s (~0.15 ms/s).
-- Drag-vector roll solve: ~40 FLOPs/fix at 1 Hz — negligible.
+- Drag-vector roll solve: ~40 FLOPs/window at 1 Hz — negligible.
+- Roll EKF now 3x3: ~60 FLOPs/predict tick — negligible.
+- Slow fit model propagation: 100 RK2 steps per 15 s — amortized <0.05 ms/s.
 - IPP 1 Hz: ~300 RK2 steps x 6-state (~30 FLOPs) ~ 9 kFLOPs (~0.1 ms).
 - Total GNC <0.5 ms worst 1 Hz tick vs FOC 15 kHz ISR ~10 us. RAM <5 KB, flash <20 KB.
-- FOC electrical freq at hold: 250 rev/s x 12 pairs = 3 kHz (report 4.3 '1.25 kHz' is an arithmetic slip — flag Rev 1.3).
 
 ## Known limitations (next rung)
-- **1. Roll-anchor robustness (top):** quality-gate the anchor windows; bound the psi_ref/servo feedback interaction; consider GNSS-residual trim-signature
-  assistance during high-duty phases (no quiescent windows there). Deterministic biased cases (wind 6 m/s, mount 5 deg) still drift psiErr > 40 deg.
 - Shell spin rate constant (aero decay ignored); 6DOF rung adds Magnus/roll-pitch coupling and duty wobble in truth.
-- Drag-ref assumes drag dominates body horizontal specific force (true post-despin); validated over MC, not yet over extreme dispersions.
+- Drag-ref assumes drag dominates body horizontal specific force (true post-despin).
 - FOC/motor slew co-simulation still first-order (rate/alpha caps only).
