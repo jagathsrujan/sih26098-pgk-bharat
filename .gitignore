@@ -20,6 +20,11 @@ Thumbs.db
 *.iges
 *.igs
 *.fcbak
+*.FCBak
+*.FCStd1
+
+# Allow clean-sheet design of record (tracked via git, ~9 MB)
+!cleansheet/PGK_CleanSheet.FCStd
 
 # Simulation outputs
 *.csv
@@ -38,3 +43,11 @@ outputs/
 # OS
 .AppleDouble
 .LSOverride
+
+# Local tooling (not for repo)
+.commandcode/
+opencode.json
+
+# Keep out_sim results (do not ignore)
+!cleansheet/out_sim/
+!cleansheet/out_sim/**

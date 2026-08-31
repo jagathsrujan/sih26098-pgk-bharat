@@ -21,6 +21,7 @@ Built bottom-up; axis = shell centerline, z=0 at base, +Z toward nose, seat plan
    - Verified kinematically: rotor spins +180°/s, nose rolls −60°/s opposite (frames 0/30/60/90 screenshotted). Kinematic integration drift ≈6° over 4 s (normal).
    - Display state: all links visible, shell/canard/radome translucent (55–62%) via link `OverrideColorList`, sections hidden. To restore section views: unhide `Section_*`, hide `Assembly`.
 - Full kinematic/assembly detail: `03_DESIGN_REPORT.md` §2.4 (Rev 1.1).
+- **Rev 1.2 (2026-08-30): steering-effectiveness sim + spec deltas** — `scripts/sim_guidance_check.py` + `out_sim/RESULTS.md` (3DOF MC, 250 paired runs: guided CEP 6.9 m vs unguided 207 m; lock-45 s variant 8.5 m median/worst 145 m). De-spin re-specced **15 s @ ≤40 A** with boost stage + brake chopper (was 10 s/60 A regen-dominant — zero torque margin, L/t = 0.143 vs 0.14 spec); GNSS lock 35→45 s; energy ledger restated (≤0.9 Wh worst, regen now opportunistic); mass 1.77→1.84 kg. Deltas in BOM §G, report Rev 1.2. Materials unchanged.
 
 ## How to play the simulation (for demo/exhibition)
 Assembly workbench → tree → double-click `Assembly > Simulations > Simulation` → Play (or drag the frame slider). 122 frames = 4 s at 30 fps. Rotor does 2 turns CW while nose does 2/3 turn CCW.
@@ -28,7 +29,7 @@ Assembly workbench → tree → double-click `Assembly > Simulations > Simulatio
 ## NEXT RUNGS (user drives ideas, AI executes)
 1. REQ-1/REQ-2 modeling: inner-ring retention lip + 4× Ø3 shear pins (still "designed, not modeled" — see report §9).
 2. 6DOF Python sim, Monte Carlo ≥1000 runs → CEP ≤30 m evidence (report §10.1).
-3. Mass optimization → 1.49 kg path (report §6) if SWaP becomes gating.
+3. Mass optimization → 1.56 kg path (report §6, Rev 1.2) if SWaP becomes gating.
 4. Optional: second Simulation object for the de-spin transient (250→0 rev/s over 10 s) using a decaying formula (e.g. smooth/exponential form — `CommandCreateSimulation.py` documents supported formula shapes: linear/quadratic/harmonic/exponential/smooth-step).
 5. Update `00_REQUIREMENTS.md` open items when PS org answers arrive.
 

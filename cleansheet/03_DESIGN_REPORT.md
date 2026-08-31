@@ -1,7 +1,9 @@
 # SIH26098 — Clean-Sheet Precision Guidance Kit: Detailed Design Report
 **Project:** Low-Cost PGK + Smart Electronic Fuze, 155 mm Artillery Shell ("PGK Bharat" clean-sheet track)
-**Doc:** `cleansheet/03_DESIGN_REPORT.md` | **Rev:** 1.1 | **CAD of record:** `cleansheet/PGK_CleanSheet.FCStd`
+**Doc:** `cleansheet/03_DESIGN_REPORT.md` | **Rev:** 1.3 | **CAD of record:** `cleansheet/PGK_CleanSheet.FCStd`
 **Rev 1.1 change:** CAD of record now contains a **native FreeCAD Assembly** (24 links, 23 joints + ground) and a **kinematic Simulation** (122 frames @ 30 fps) implementing the §2.1 three-frame topology — see §2.4.
+**Rev 1.2 change:** steering-effectiveness sim added (§10.1 precursor — `scripts/sim_guidance_check.py`, `out_sim/RESULTS.md`: guided CEP 6.9 m vs unguided 207 m); de-spin re-specced **15 s @ ≤40 A** with boost stage (was 10 s/60 A regen-dominant, zero torque margin); GNSS lock 35→45 s; energy ledger restated. Spec deltas: BOM §G.
+**Rev 1.3 change:** GNC methodology pass (`scripts/sim_gnc_check.py`, `out_sim/RESULTS_GNC.md` Rev D). §4.5 roll-reference story corrected — the collar↔bell angle sensor is **relative-only**; absolute nose roll is acquired post-despin by drag-vector referencing against GNSS velocity (accelerometer). Fin authority restated as **q-scaled** (60 N reference = q at 70 s; ~0.5 N at lock). §4.3 electrical frequency corrected 1.25→3 kHz at hold. §8 decisions 12–15 added.
 **Companion docs:** `00_REQUIREMENTS.md`, `02_BOM_MANUFACTURING_ASSEMBLY.md`, `01_POWER_MOTOR_SPEC.md`
 **Coordinate system:** origin at shell base center, +Z toward nose. Fuze seat plane z = 696.0. All dimensions mm.
 
@@ -39,10 +41,11 @@ t=0        bore ride: setback 15 kg·g design peak; module co-rotates (S frame)
 t≈2 s      muzzle exit; battery-backed electronics boot; GNSS receiver ON (not acquiring)
 t≈2–25 s   ballistic coast, co-rotating at shell rate; MEMS gyros saturated by roll —
            roll estimate carried by the absolute magnetic angle sensor (spin-proof)
-t≈25 s     motor spin-up → DE-SPIN TRANSIENT: rotor braked 250→0 rev/s relative over ~10 s,
-           regenerating ~0.2–0.3 Wh into the bus (supercap-smoothed)
-t≈35 s     GNSS/NavIC acquisition (scheduled post-despin; antenna now steady)
-t≈35 s+    guidance active: impact-point prediction, ψ updates each nav cycle,
+t≈25 s     motor spin-up → DE-SPIN TRANSIENT: rotor braked 250→0 rev/s over ~15 s
+           (≤40 A boost-sourced braking — Rev 1.2; was 10 s/60 A regen-dominant, zero torque margin)
+t≈40 s     de-spin complete
+t≈45 s     GNSS/NavIC acquisition (scheduled post-despin; antenna now steady)
+t≈45 s+    guidance active: impact-point prediction, ψ updates each nav cycle,
            0/180 pair deflection commands correction (start EARLY — see §8.2)
 t≈80 s     proximity head armed (HOB 6/12/18 m) or time/impact per setting
 t≈90 s     fuze action
@@ -123,13 +126,13 @@ Mounted on the collar (cartridge frame, **shear-pinned to shell ⇒ shell-locked
 | Rotor bell | Ø76.4–83 × 22 wall + cap Ø83; magnet ring Ø74.7–76.4 × 15, N42SH, potted | CAD |
 | Air gap | 0.5 mm radial | CAD |
 | **K_T (decided)** | **0.0024 N·m/A** (single-turn-class winding) | voltage-wall: EMF = K_T·ω ≤ 3.7 V bus at ω_rel = 1,571 rad/s |
-| Peak | 0.14 N·m @ ~60 A for 10 s (de-spin, regen-dominant) | L/I = 1.4 kg·m²/s ÷ 10 s |
+| Peak | 0.095 N·m @ ≤40 A for 15 s (de-spin; boost-sourced braking — Rev 1.2) | L = 1.43 kg·m²/s (J from BOM masses, sim-verified) ÷ 15 s; 1.39× current margin |
 | Continuous | 0.05 N·m @ 5 A | roll hold (aero disturbance ~mN·m) + corrections |
-| Electrical frequency | ≤ 1.25 kHz at max relative rate (12 pairs) | FOC current loop ≥ 15 kHz |
+| Electrical frequency | ≤ 3 kHz at max relative rate (250 rev/s × 12 pairs; Rev 1.3 — 1.25 kHz was an arithmetic slip) | FOC current loop ≥ 15 kHz |
 | Feedback | absolute magnetic angle sensor (collar↔bell), 12-bit = 0.09° | also spin-signature source for S&A |
 | Support | pilot: Ø20.4 stub shaft + thin-section bearing Ø20.8/24.7 (carries bell only) | CAD |
 
-**EM budget:** B ≈ 0.6 T, active length 16 mm, r = 37 mm ⇒ F ≈ 0.1 N/conductor·A ⇒ >1 N·m available at 10 A ⇒ ≥7× torque margin over de-spin/hold requirement. Thermal: 120–360 J copper loss over a 10 s pulse — adiabatic, no heatsink needed.
+**EM budget:** B ≈ 0.6 T, active length 16 mm, r = 37 mm ⇒ F ≈ 0.1 N/conductor·A ⇒ >1 N·m available at 10 A ⇒ ≥7× torque margin over de-spin/hold requirement. Thermal: ≤720 J copper loss over the 15 s pulse (40 A) → adiabatic ΔT ≤50 K, class H — no heatsink needed.
 
 ### 4.4 One-piece machined canard shell
 
@@ -155,7 +158,7 @@ Mounted on the collar (cartridge frame, **shear-pinned to shell ⇒ shell-locked
 | Prox head | FMCW 24 GHz Ø30 + patch, HOB 6/12/18 m; z 738.3–746.3 |
 | Slip ring | 3-contact axial Ø12 (dome power ~1.5 W crosses rotor↔shell frame) |
 
-**Sensor/processor logic:** IMU gyros saturate above ~4,000 °/s ⇒ during co-rotation and de-spin transient, roll state is carried by the **absolute angle sensor** (0.09° = 0.09°·300 m·sin ≈ 0.5 m attribution error). GNSS acquisition is **scheduled after de-spin settles**. Post-settle, gyros take over fine attitude (drift 0.25°/flight → ~1.3 m attribution).
+**Sensor/processor logic (Rev 1.3):** the collar↔bell angle sensor is a **relative** device — during co-rotation it reads a constant and carries **no** inertial roll information; the nose gyro is saturated 22× (250 rev/s = 90,000 °/s vs 4,000 °/s clip). Absolute nose roll therefore does not exist on board until the nose is de-spun; it is then **acquired by drag-vector referencing**: the accelerometer's horizontal specific force (drag-dominated, ~2 m/s²) is compared in azimuth against the GNSS-velocity drag direction, giving absolute roll to ~0.3–2° per second, continuously, with the gyro propagating between fixes. The angle sensor's real roles: FOC commutation, de-spin progress monitor, S&A spin signature. Its 0.09° resolution is commutation-relevant, not a roll-reference budget item. Residual slow aim biases (mount, trim-model) self-correct through the closed guidance loop. GNSS acquisition is scheduled after de-spin settles. See `out_sim/RESULTS_GNC.md` (Rev D) for the estimator/guidance methodology and §8 decisions 12–15.
 
 ### 4.6 Multi-mode fuze (functional architecture)
 
@@ -174,11 +177,11 @@ Inductive setter (EPIAFS-class, ground unit): loads target grid, fuze mode, HOB/
 
 | Item | Decision | Basis |
 |---|---|---|
-| Battery | **1× 26500 high-drain Li-ion (NMC), 4.5 Ah, 16.7 Wh, 45 A class**, in core bay (bay bored Ø26.2) | rechargeable → absorbs regen; 45 A covers 60 A-pulse de-spin with supercap assist; fits bay |
+| Battery | **1× 26500 high-drain Li-ion (NMC), 4.5 Ah, 16.7 Wh, 45 A class**, in core bay (bay bored Ø26.2) | rechargeable; de-spin re-specced **≤40 A/15 s** — within the cell's continuous rating (Rev 1.2); boost stage (A6) guarantees cold-start voltage headroom; fits bay |
 | Chemistry rejects | Li-SOCl₂ (primary — cannot take regen/high pulse); thermal battery (one-shot, no regen, cost) | §7.2 |
-| Bus | 3.7 V single-cell; motor winding matched (K_T 0.0024); logic rails via buck/LDO | fits bay geometry |
-| Energy ledger | consumption ≤ 0.10 Wh (electronics 0.025 + motor hold 0.05 + transients); **regen return 0.2–0.3 Wh** | §8 |
-| Margin | 16.7 Wh vs ≤0.5 Wh worst case ⇒ **≥30×** (≥10× after −40 °C/50% derate) | |
+| Bus | 3.7 V single-cell + **de-spin boost to 5 V** (Rev 1.2); motor winding matched (K_T 0.0024); logic rails via buck/LDO | fits bay geometry |
+| Energy ledger | consumption ≤ **0.9 Wh worst** (de-spin 0.83 boost-sourced + electronics 0.025 + roll-hold 0.05); regen return **opportunistic 0–0.2 Wh** | Rev 1.2 — was 0.10 Wh with 0.2–0.3 Wh regen reliance |
+| Margin | 16.7 Wh vs ≤0.9 Wh worst ⇒ **≥18×** (≥8× after −40 °C/50% derate) | |
 | Residual risk | Li-ion cold soak at −40 °C: ogive stagnation + setback heating give a few °C; qualify cell at cold | risk register R7 |
 | Regen crossing | stator + battery both shell-frame (post shear-pins) ⇒ motor power needs **no slip ring**; only dome ~1.5 W crosses (C3 slip ring) | §4.3 |
 
@@ -188,11 +191,11 @@ Inductive setter (EPIAFS-class, ground unit): loads target grid, fuze mode, HOB/
 
 | Group | Mass |
 |---|---|
-| Core + battery + power (shell frame) | ≈ 344 g |
+| Core + battery + power (shell frame) | ≈ 414 g (Rev 1.2: +chopper/boost/fitting) |
 | Bearing (rings, balls, cage) | ≈ 515 g |
 | Actuator (stator, windings, magnets, shaft, pilot bearing) | ≈ 470 g |
 | Canard shell + radome + electronics | ≈ 445 g |
-| **Total** | **≈ 1.77 kg as-built** → optimization path (thin-wall A1 ring, Al bell yoke w/ steel sleeve): **≈ 1.49 kg** (target ≤1.5 kg) |
+| **Total** | **≈ 1.84 kg as-built** → optimization path (thin-wall A1 ring, Al bell yoke w/ steel sleeve): **≈ 1.56 kg** (hard limit 2.0 kg; ≤1.5 kg now a stretch — see BOM §G) |
 
 Module: ~260 mm total (90 in-well + ~170 protrusion). SWaP-C fit: P3 pass after mass optimization; cost pass (§ BOM: ex-works ~₹0.7–0.9 L @1k units, 8–12% of PS ceiling).
 
@@ -201,14 +204,14 @@ Module: ~260 mm total (90 in-well + ~170 protrusion). SWaP-C fit: P3 pass after 
 ## 7. Physics verification audit (first-principles)
 
 | # | Mechanism | Requirement | Delivered | Margin | Verdict |
-|---|---|---|---|---|
+|---|---|---|---|---|---|
 | 1 | Setback design level | survive shot | 15,000 g design (kinematic mean ~5,000 g, peak/mean ≈ 3) | — | ✓ case |
 | 2 | Steering force (30 km, correct from ~45 s-to-go) | 2×300/45² × 46 kg ≈ **14 N** | 30–100 N (fin pair + body lift amplification 2–3×) at 3–5° of ±8° authority | 2–7× | ✓ |
-| 3 | De-spin torque | L/t = 1.4/10 = **0.14 N·m** | ≥ 1 N·m EM available @10 A (typ. 0.14 @ 60 A single-cell) | ≥7× | ✓ |
-| 4 | Voltage wall | EMF ≤ bus at ω_rel 1,571 rad/s | K_T 0.0024 ⇒ 3.8 V vs 3.7 V bus (supercap-assisted) | exact fit | ✓ (spec'd) |
-| 5 | Energy | ≤ 0.5 Wh worst | 16.7 Wh + 0.25 Wh regen | ≥30× | ✓ |
+| 3 | De-spin torque | L/t = 1.43/15 = **0.095 N·m** | 0.095 @ ≤40 A for 15 s, boost-sourced (Rev 1.2); EM ≥1 N·m @10 A | 1.39× current margin; ≥10× EM | ✓ |
+| 4 | Voltage wall | braking current sustainable at ω_rel 1,571 rad/s | boost stage 3.7→5 V ⇒ terminal headroom ~3× at −40 °C/50 % SoC (Rev 1.2; was exact-fit regen) | 1.39× | ✓ |
+| 5 | Energy | ≤ 0.9 Wh worst | 16.7 Wh (+ opportunistic regen 0–0.2 Wh) | ≥18× | ✓ (Rev 1.2) |
 | 6 | Fin structure | — | root bending 33 MPa vs 500 MPa (7075) | 15× | ✓ |
-| 7 | Pointing/roll | ψ error → miss | 0.09° sensor ⇒ 0.5 m; gyro drift ⇒ 1.3 m; NavIC 3–10 m | inside 30 m budget | ✓ |
+| 7 | Pointing/roll | ψ error → miss | drag-ref roll anchor σ ~0.3–2°/fix (Rev 1.3); angle sensor is relative-only (commutation role); gyro drift bounded by 1-Hz re-anchoring | inside 30 m budget, **analysis pending anchor robustness pass** | ✓ w/ condition |
 | 8 | Roll hold | vs aero disturbance (mN·m) | 0.05 N·m continuous | 10×+ | ✓ |
 | 9 | Radome heating | M ≈ 0.8 descent | +38 °C stagnation | negligible | ✓ |
 | 10 | Setback axial path | 220 kN | **[REQ] retention lip** — designed, not yet in CAD | — | ✗→REQ |
@@ -232,6 +235,10 @@ Module: ~260 mm total (90 in-well + ~170 protrusion). SWaP-C fit: P3 pass after 
 | 9 | One-piece machined canard shell | printed fins + fasteners | no root joints (flutter/fatigue), YIL machining story, fin clocks + balance in one setup |
 | 10 | Electronics stack on rotor frame | shell-frame electronics + slip-ring everything | IMU measures commanded frame directly; antennas steady; only 1.5 W crosses via slip ring |
 | 11 | All-COTS electronics | rad-hard/custom | 90 s mission, error-corrected; cost |
+| 12 | Roll reference = drag-vector anchoring (accel × GNSS velocity), post-despin only | earth-referenced angle sensor (physically impossible — sensor is relative); magnetometer (motor magnet ring swamps Earth field) | no new hardware; σ ~0.3–2°/fix; angle sensor stays on commutation/S&A |
+| 13 | Phasor-duty actuation model (dwell at aim, ±90° neutral split, T = 3 s) | continuous proportional-force model (not realizable — trim is machined in) | honest actuator: force magnitude is fixed by aero, direction-only control |
+| 14 | Two-time-scale drag estimation (KF cd frozen at prior; slow 15-s along-track scalar fit) | per-fix cd/wind states in KF (weakly observable, estimate noise maps 1:1 into IPP error, gate churn) | along-track IPP bias needs cd; bandwidth separation stabilizes it |
+| 15 | Guidance controls the MEAN trajectory (cycle-referenced wobble subtraction + command low-pass) | chasing 1-Hz IPP miss incl. wobble (servo churns, no quiescent windows, anchor starvation) | neutral-park wobble is ±1.3 m/s — first-order, must be modeled |
 
 ## 9. Open items (REQ register)
 
@@ -249,7 +256,7 @@ Module: ~260 mm total (90 in-well + ~170 protrusion). SWaP-C fit: P3 pass after 
 ## 10. Verification & qualification roadmap
 
 0. **Kinematic assembly demo (DONE, Rev 1.1):** native Assembly + Simulation in CAD of record — three-frame topology closes kinematically (§2.4). Shell/nose transparency set in GUI for exhibition viewing.
-1. **Sim:** 3DOF → 6DOF (spin, Magnus, roll channel), guidance-in-loop, **Monte Carlo ≥1,000 runs** (wind, muzzle velocity, nav noise, actuator lag) → CEP histogram vs 30 m. *Deliverable: out_sim/ report.*
+1. **Sim:** 3DOF steering check **DONE (Rev 1.2)** — `scripts/sim_guidance_check.py`, `out_sim/RESULTS.md`: guided CEP 6.9 m vs unguided 207 m (250 paired runs); lock-45 s variant 8.5 m. GNC methodology pass **DONE (Rev 1.3)** — `scripts/sim_gnc_check.py`, `out_sim/RESULTS_GNC.md` (Rev D): estimator-in-loop (12-state EKF + drag-ref roll anchoring + phasor-duty actuator + fail-safe modes) under honest q-scaled authority. **Open (next rung): roll-anchor robustness under wind/mount bias**, then 6DOF (spin, Magnus, roll channel), **Monte Carlo ≥1,000 runs** → CEP histogram vs 30 m. *Deliverable: out_sim/ report.*
 2. **Bench de-spin rig:** spin cartridge+canard assembly to 250 rev/s equivalent; demonstrate regen harvest, roll-hold at ψ (live angle readout), braking time constant.
 3. **Bearing spin-survival:** 15,000 g spike fixture + spin test; post-test drag torque.
 4. **Structural:** fin root static 3× UL, modal (flutter margin), shock 15k g half-sine on fixture.
@@ -296,11 +303,13 @@ vs **M1156 PGK (TRL9, ~25k fielded, ₹9–10 L):** same accuracy class target, 
 | Fins | root 24 / tip 18 chord, span 24.5, tip Ø138, 3 mm, bevel 1 mm, blend 3 mm, trim ±3° |
 | Radome | Ø84 × 49.6 tangent ogive, wall 2, tip R2 |
 | Kinematic sim (Rev 1.1) | Assembly: 24 links · Joints: 21 Fixed + 2 Revolute + Ground · Simulation: 0–4 s, 30 fps, 122 frames, drives 180 °/s rotor / −60 °/s nose |
-| Module mass (as-built) | ≈ 1.77 kg (→1.49 kg optimized) |
+| Steering sim (Rev 1.2) | 3DOF MC, 250 paired runs: guided CEP 6.9 m vs unguided 207 m (lock 35 s); 8.5 m (lock 45 s); authority duty ≤27 % mean; `out_sim/RESULTS.md` |
+| GNC sim (Rev 1.3) | estimator-in-loop 3DOF: 12-state EKF + drag-ref roll anchor + phasor-duty actuator (T=3 s) + fail-safe; q-scaled authority; `out_sim/RESULTS_GNC.md` Rev D |
+| Module mass (as-built) | ≈ 1.84 kg (→1.56 kg optimized; Rev 1.2 +70 g power stage) |
 | Module station span | z 606–776.1 |
 
 ## Appendix B — Glossary
 See `attachments/SIH26098_TEAM_BRIEFING.md` §3 (CEP, S&A, FMCW, SWaP-C, TRL, STANAG 2916/4187, 6DOF, Monte Carlo, K_T, FOC).
 
 ---
-*End of design report. CAD of record: `cleansheet/PGK_CleanSheet.FCStd` (Rev 1.1 — now with native Assembly, joints and playable kinematic Simulation). BOM: `02_BOM_MANUFACTURING_ASSEMBLY.md`. Requirements: `00_REQUIREMENTS.md`.*
+*End of design report. CAD of record: `cleansheet/PGK_CleanSheet.FCStd` (Rev 1.1 — native Assembly, joints and playable kinematic Simulation). Rev 1.2: steering sim + de-spin re-spec (BOM §G). Rev 1.3: GNC methodology pass — §4.5 roll-reference correction, q-scaled authority, §8 decisions 12–15, `out_sim/RESULTS_GNC.md` Rev D. BOM: `02_BOM_MANUFACTURING_ASSEMBLY.md`. Requirements: `00_REQUIREMENTS.md`.*
