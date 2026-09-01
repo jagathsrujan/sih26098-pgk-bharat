@@ -1,13 +1,27 @@
-# Active PGK demonstrator exports
+# Active PGK 155mm exports
 
-This directory is reserved for generated exports from `../generate_pgk_155.py`.
+Regenerate everything here from the active baseline with:
 
-The active model is an inert exhibition demonstrator: one bearing-isolated carrier
-holds four fixed illustrative canards, while a shell-side rotor and carrier-side
-stator show relative-rotation power. Use a guarded, low-speed stand only. The
-directory contains no launch interface, fuze, propellant, primer, detonator, or
-other energetic component.
+```bash
+cd cad_models
+/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd render_pgk_155mm.py
+```
 
-Run the generator from this directory's parent with a compatible FreeCAD Python
-environment. The superseded two-motor exports are preserved in
-`../../legacy/old_two_motor_design/out_pgk_two_motor/`.
+Source of truth: `../PGK_155mm.FCStd` (see `../PGK_155MM_ASSEMBLY.md` for the
+part-by-part stack and demo script).
+
+| File | What it is |
+|---|---|
+| `preview_mated.png` | matplotlib render, kit mated on the reference shell |
+| `preview_mated_gui.png` | FreeCAD viewport capture (canonical hero shot) |
+| `preview_assembly.png` | PGK nose module alone, per-part colors |
+| `preview_section.png` | `SEC_*` half-section cutaway of shell + kit |
+| `preview_section_pgk.png` | cutaway zoom: bearing, ring motor, stack, cells, GNSS |
+| `PGK_155mm_mated.step` | full mated assembly (shell + kit) |
+| `PGK_155mm_nose_module.step` | kit only (drop into any shell/flow sim) |
+| `PGK_155mm_section.step` | half-section solids |
+| `stl/*.stl` | per-part STLs (28 parts, meshed at 0.25 mm) |
+| `viewer_data.json` | lathe profiles + coarse meshes feeding `../pgk_3d_viewer.html` |
+
+The directory contains no launch interface, fuze, propellant, primer, detonator,
+or other energetic component — inert geometry only.

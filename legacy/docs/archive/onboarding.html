@@ -147,7 +147,7 @@ html{scroll-behavior:smooth}
           <tr><th class="text-left px-4 py-3 w-[30%]">PS SAYS (OFFICIAL)</th><th class="text-left px-4 py-3 w-[32%]">WHAT IT MEANS</th><th class="text-left px-4 py-3">OUR ACTIVE EXHIBIT</th></tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
-          <tr><td class="px-4 py-3 font-semibold">Canard Actuation Assembly (CAA) for in-flight trajectory correction</td><td class="px-4 py-3 text-slate-600">Small wings near nose that steer shell mid-flight</td><td class="px-4 py-3"><span class="inline-flex px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-xs font-bold">A1/B1</span> One common carrier holds 4 fixed illustrative canards; bearings and one torque element demonstrate relative rotation</td></tr>
+          <tr><td class="px-4 py-3 font-semibold">Canard Actuation Assembly (CAA) for in-flight trajectory correction</td><td class="px-4 py-3 text-slate-600">Small wings near nose that steer shell mid-flight</td><td class="px-4 py-3"><span class="inline-flex px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-xs font-bold">A1/B1</span> 4 fixed strakes on ONE de-spun stator; a single 61811 bearing isolates it; ring-motor roll torque steers (and regenerates power)</td></tr>
           <tr><td class="px-4 py-3 font-semibold">GNC system improving terminal accuracy</td><td class="px-4 py-3 text-slate-600">A future flight article would need a brain; the exhibit only shows the electronics story</td><td class="px-4 py-3">Low-voltage display controller + relative-angle sensor + LEDs; flight GNC remains simulation/reference work</td></tr>
           <tr><td class="px-4 py-3 font-semibold">Multi-mode Electronic Fuze: Proximity / Time / Impact</td><td class="px-4 py-3 text-slate-600">A project requirement to explain, not hardware to reproduce</td><td class="px-4 py-3">Clearly labelled mock state machine/UI only; no radar, initiator, arming, fuze, or firing hardware</td></tr>
           <tr><td class="px-4 py-3 font-semibold">Embedded electronics & software for real-time flight control</td><td class="px-4 py-3 text-slate-600">A future flight-article requirement</td><td class="px-4 py-3">Display controller/status electronics only; no launch-survivability claim</td></tr>
@@ -443,7 +443,7 @@ html{scroll-behavior:smooth}
 <section id="system" class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
   <span class="px-2.5 py-1 rounded-full bg-slate-900 text-white text-xs font-bold tracking-widest">05 — OUR SOLUTION</span>
   <h2 class="mt-3 font-display font-bold text-[28px] leading-tight">Active architecture — inert common-carrier PGK demonstrator</h2>
-  <p class="mt-2 text-slate-600">A lightweight, guarded bench model with one common carrier, four fixed canards, front/rear display bearings, a shell-to-carrier alternator concept, and one low-voltage torque emulator. It is not an exact production teardown or launch article.</p>
+  <p class="mt-2 text-slate-600">A detailed inert CAD model (<code>PGK_155mm.FCStd</code>) with a de-spun stator, four fixed strakes, ONE 61811 thin-section bearing, a 12-pole ring motor (torque ⇄ regen), a detent launch lock, a Ø87 GNC PCB and a 6× 14430 battery bay. It is not an exact production teardown or launch article.</p>
 
   <div class="mt-6 rounded-2xl border border-slate-200 bg-white overflow-hidden">
     <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
@@ -476,13 +476,13 @@ html{scroll-behavior:smooth}
           <div class="rounded-xl bg-violet-50 border border-violet-200 p-3">Tester(6) <b>→ checks everyone’s numbers →</b> Planner(1) puts in deck</div>
         </div>
         <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-          <div class="text-xs font-bold tracking-widest text-slate-500">KEY SPECS (CAD: generate_pgk_155.py)</div>
+          <div class="text-xs font-bold tracking-widest text-slate-500">KEY SPECS (CAD: PGK_155mm.FCStd)</div>
           <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
             <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">Total length</div><div class="font-bold">~220mm (124.7mm intrusion)</div></div>
             <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">Diameter</div><div class="font-bold">Ø56mm body • Ø50 shank</div></div>
             <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">Weight</div><div class="font-bold">~770g</div></div>
             <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">Span</div><div class="font-bold">~151mm (≈ shell Ø)</div></div>
-            <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">Canard</div><div class="font-bold">4 fixed • one common carrier</div></div>
+            <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">Strakes</div><div class="font-bold">4 fixed • one de-spun stator</div></div>
             <div class="bg-white rounded-xl p-2.5 border"><div class="text-slate-500">De-spin</div><div class="font-bold">front + rear display bearings</div></div>
           </div>
         </div>
@@ -513,10 +513,10 @@ html{scroll-behavior:smooth}
       <div class="mt-2 font-bold">OPEN — hiring: aero/CFD or controls</div><div class="text-xs text-slate-500">Aerodynamics + Canards</div>
       <div class="mt-3 space-y-2 text-xs">
         <div class="rounded-xl bg-white border p-2.5"><b>Learn:</b> How small wings steer, why shell spins, use spin to turn</div>
-        <div class="rounded-xl bg-white border p-2.5"><b>Decide:</b> One common carrier with four fixed illustrative canards; use a single low-voltage torque emulator for the bench demo (B1)</div>
+        <div class="rounded-xl bg-white border p-2.5"><b>Decide:</b> One de-spun stator with four fixed strakes; a single ring motor provides steering torque and regen power on the bench (B1)</div>
         <div class="rounded-xl bg-slate-900 text-white p-2.5"><b>Show:</b> Canard CAD + CFD + steering-authority graph (miss vs time)</div>
       </div>
-      <div class="mt-3 text-[11px] text-slate-500">Ideas: B1–B16 • Active exhibit: common carrier, bearings, torque emulator</div>
+      <div class="mt-3 text-[11px] text-slate-500">Ideas: B1–B16 • Active exhibit: de-spun stator, 61811 bearing, ring motor</div>
     </div>
     <div class="rounded-2xl border-t-4 border-emerald-500 bg-slate-50 p-5 card-hover border border-slate-200">
       <div class="flex items-start justify-between"><span class="px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[11px] font-bold">3 — THE BRAIN</span><span class="text-xs font-mono text-slate-500">research/D_sensors</span></div>
@@ -656,7 +656,7 @@ html{scroll-behavior:smooth}
   </div>
   <div class="mt-6 rounded-2xl bg-slate-900 text-white p-5 grid md:grid-cols-3 gap-4 text-sm">
     <div><div class="text-xs font-bold tracking-widest text-amber-300">FOR JAGATH — LEAD CHECKLIST</div><ul class="mt-2 space-y-1 text-slate-300 list-disc list-inside"><li>GitHub invites sent to 5 + pending 6th</li><li>LIVEBOARD auto-merge via research/merge.py + Action</li><li>Excalidraw board: 6 panels (problem→fix→mission→physics→anatomy→team)</li></ul></div>
-    <div><div class="text-xs font-bold tracking-widest text-sky-300">CAD & SIM QUICK START</div><div class="mt-2 font-mono text-xs bg-white/10 rounded-xl p-2.5">cd cad_models<br>freecadcmd generate_shell_155.py  # inert mockup<br>freecadcmd generate_pgk_155.py    # common-carrier PGK demo<br>read PGK_DEMO_ASSEMBLY.md          # assembly map<br>python simulate_trajectory_155.py  # separate simulation</div></div>
+    <div><div class="text-xs font-bold tracking-widest text-sky-300">CAD & SIM QUICK START</div><div class="mt-2 font-mono text-xs bg-white/10 rounded-xl p-2.5">open PGK_155mm.FCStd               # active model<br>cd cad_models<br>freecadcmd render_pgk_155mm.py     # exports + renders<br>read PGK_155MM_ASSEMBLY.md         # assembly map<br>python simulate_trajectory_155.py  # separate simulation</div></div>
     <div><div class="text-xs font-bold tracking-widest text-emerald-300">WHAT MAKES US WIN</div><p class="mt-2 text-slate-300">A clear public-architecture explanation + safe inert model + visible relative-rotation/power demo + separate simulation/reference track → checks the SIH story without presenting a launch-capable article.</p></div>
   </div>
 </div>
@@ -702,7 +702,7 @@ html{scroll-behavior:smooth}
   <h2 class="font-display font-bold text-xl">Deliverables checklist — PS requirement → our file</h2>
   <div class="mt-4 grid md:grid-cols-2 gap-3 text-sm">
     <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>System architecture doc</b> — A–J full trade, 108 ideas → <code class="text-xs">SIH26098_Exhaustive_Ideas_Catalog.md</code> + freeze doc</span></label>
-    <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>CAD of CAA</b> — common carrier + bearing pair + shell/carrier alternator concept → <code class="text-xs">cad_models/generate_pgk_155.py</code> (STEP/STL)</span></label>
+    <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>CAD of steering assembly</b> — de-spun stator + 4 strakes + ring motor + 61811 bearing + detent → <code class="text-xs">PGK_155mm.FCStd</code> (STEP/STL in cad_models/out_pgk/)</span></label>
     <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>Electronics block</b> — RF→MCU→power→actuator (D+E+F+J) → block diagram PDF</span></label>
     <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>GNC algorithm</b> — PID/MPC/LSTM, 20-line Python → <code class="text-xs">C10/C11</code> documented</span></label>
     <label class="flex gap-3 items-start rounded-2xl bg-white border p-3"><input type="checkbox" class="mt-1"><span><b>Simulation</b> — 6DOF + Monte Carlo 1000 runs → CEP histogram (≤30m)</span></label>
@@ -765,7 +765,7 @@ const glossaryItems=[
   ["EPIAFS / inductive setter","Wireless coil programs fuze, no pins. Phone/NFC for our demo."],
   ["PGK","Fuze-shaped GPS+canard module replacing standard fuze — our product."],
   ["Canards","Small wings near nose. Ours fixed at tilt; rolling nose aims lift."],
-  ["Common carrier / de-spin","One inner carrier holds all four fixed canards; a bearing pair permits relative rotation against the outer shell."],
+  ["De-spun stator","One steering frame holds all four fixed strakes; a single 61811 bearing permits relative rotation against the spinning shell."],
   ["GNC","Guidance (where go), Navigation (where am), Control (move canards)."],
   ["IMU","Inertial Measurement Unit — accel + gyro."],
   ["GNSS / NavIC / GPS","Satellite nav. NavIC = India’s own (L5), sovereign."],

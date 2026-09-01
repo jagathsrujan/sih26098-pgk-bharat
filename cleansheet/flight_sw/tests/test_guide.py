@@ -39,7 +39,9 @@ def test_laws_match_sim():
 
 def test_pre_flight_tables_match_sim():
     g = load("pretables.json")
-    assert q_profile(g["cd_cal"]) == g["q_profile"]
+    # The table is generated with the same equations, but libm/Python builds
+    # can differ by a few ulps at isolated integration steps.
+    assert q_profile(g["cd_cal"]) == pytest.approx(g["q_profile"], rel=1e-12, abs=1e-9)
     assert q70_ref(g["cd_cal"]) == pytest.approx(g["q70"], rel=1e-12)
 
 

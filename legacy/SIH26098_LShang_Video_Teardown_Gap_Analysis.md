@@ -4,7 +4,7 @@
 
 **Video:** `Canard control vertical recovery guidance technology experimental rocket development - L Shang (720p, h264).mp4` | **Duration:** 23:16 | **Probe:** 1280x720 29.97fps 1071kb/s h264/aac | **Frames extracted:** 1397 JPG @1fps `thumb_%04d.jpg` (`/tmp/canard_frames/`) via `ffmpeg fps=1` | **Analysis date:** 2026-08-25
 
-> Teardown method: ffprobe + 1fps thumbs + visual OCR (read 35 key frames) + cross-ref `SIH26098_Exhaustive_Ideas_Catalog.md` (108 ideas A-J) + `cad_models/generate_pgk_155.py` + `simulate_trajectory_155.py`.
+> Teardown method: ffprobe + 1fps thumbs + visual OCR (read 35 key frames) + cross-ref `SIH26098_Exhaustive_Ideas_Catalog.md` (108 ideas A-J) + `PGK_155mm.FCStd` + `simulate_trajectory_155.py`.
 
 ---
 
@@ -75,7 +75,7 @@ Interconnect: 0.5mm FFC (vibration failure point)
 | # | SIH Deliverable | L Shang Coverage | Gap & Action |
 |---|-----------------|-----------------|--------------|
 | **1** | System arch doc A-J | 70%: 5-bay + 3-PCB + failures documented | Keep the modular documentation pattern only; the active physical baseline is the inert common-carrier demonstrator. See `research/A_system/entry_20260825_lshang_system_teardown_pgka1.md` |
-| **2** | CAD CAA | Historical CAD: 150x34 ogive, staggered shafts 146/152mm, face-gear r8/pinion r6 | **Use active** `cad_models/generate_pgk_155.py`: common carrier, front/rear display bearings, shell/carrier rotor-stator, and one low-voltage torque emulator |
+| **2** | CAD CAA | Historical CAD: 150x34 ogive, staggered shafts 146/152mm, face-gear r8/pinion r6 | **Use active** `PGK_155mm.FCStd`: de-spun stator + 4 strakes, ONE 61811 bearing, ring motor (torque ⇄ regen), detent launch lock |
 | **3** | Electronics block | 50%: STM32F4 circular 65mm proven, JLCPCB cheap | **Replace:** LiPo→super-cap+alternator `F1` (rotors 40/41), Beitian→ZED-F9P+NavIC `D2-D5`, FFC→Mezzanine, potting `G5` for 20kG. Keep his `KEY/GPIO/I2C` labels |
 | **4** | GNC algorithm | 60%: ADRC+adaptive EKF+HITL+rail test | **Adapt:** add spin 300Hz + Magnus + despin phase, baro out for flight, add `C7 LSTM GNSS-denied <5m` + `C11 MPC`. Port Simulink ADRC to STM32H743 |
 | **5** | Simulation trajectory correction | 80%: ICEM→Fluent Xeon→streamlines→Excel DB→Simulink | **Copy pipeline:** MID `30m/s` table header `升力/阻力/俯仰力矩/压心/升阻比` for Mach 0.8-3.0. Your `simulate_trajectory_155.py` already does ZEM; upgrade to 6DOF spin + Monte Carlo `I1` |
@@ -111,7 +111,7 @@ Interconnect: 0.5mm FFC (vibration failure point)
 | Role | Folder | Learn | Decide (using this teardown) | Show |
 |------|--------|-------|------------------------------|------|
 | M1 Planner | `A_system` | Old kits, public PGK references | **Freeze the inert common-carrier baseline** | Architecture map + safe exhibition brief |
-| M2 Steering | `B_aero` | ICEM/Fluent his slides | **Common carrier + fixed illustrative canards** | Safe bench rotation diagram + active `generate_pgk_155.py` STEP |
+| M2 Steering | `B_aero` | ICEM/Fluent his slides | **Common carrier + fixed illustrative canards** | Safe bench rotation diagram + active `cad_models/out_pgk/PGK_155mm_nose_module.step` |
 | M3 Brain | `D_sensors` | Data10+GNSS | **STM32H7 + ZED-F9P/NavIC, adaptive EKF** | Table rail demo 0-100cm |
 | M4 Fuze | `E_fuze` | His missing fuze | **FMCW 24GHz + MEMS S&A** | Circuit + phone NFC demo |
 | M5 Body | `F_power` | LiPo vs display alternator | **Shell/carrier rotor-stator + supercap** | 3D print + guarded low-speed LED power test |
@@ -124,7 +124,7 @@ Interconnect: 0.5mm FFC (vibration failure point)
 ## References
 
 - Video teardown: `/tmp/canard_frames/thumb_*.jpg`, ffprobe `1280x720 h264 1396s`, frames `thumb_0001/0005/0015/0025/0045/0080/0095/0175/0185/0195/0205/0215/0285/0300/0315/0330/0400/0500/0530/0600/0850/1200.jpg`
-- Repo: `cad_models/generate_pgk_155.py:32-60`, `simulate_trajectory_155.py:40-90`, `SIH26098_Exhaustive_Ideas_Catalog.md:32-207`, `SIH26098_Ideas_Database.json`
+- Repo: `PGK_155mm.FCStd`, `cad_models/PGK_155MM_ASSEMBLY.md`, `simulate_trajectory_155.py:40-90`, `SIH26098_Exhaustive_Ideas_Catalog.md:32-207`, `SIH26098_Ideas_Database.json`
 - This analysis split into 4 DB entries: `research/A_system/entry_20260825_lshang_system_teardown_pgka1.md`, `B_aero/...cfd...`, `C_gnc/...adrc...`, `I_test/...7flight...` → `SIH26098_LIVEBOARD.md`
 
 *Generated 2026-08-25 for SIH26098 — use as primary evidence for internal review & SIH PPT slide "Why canard PGK works: proven by L Shang, hardened for 15kG."*

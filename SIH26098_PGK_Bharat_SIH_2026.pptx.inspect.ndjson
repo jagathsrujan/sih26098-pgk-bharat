@@ -1,0 +1,145 @@
+{"kind":"deck","id":"pr/mbuvpd","name":"Deck"}
+{"kind":"layout","layoutId":"d31cfc19-0c1a-4019-93ea-57b01aa4ca75","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"5a7088de-3588-4ff5-ad49-032a9582ab8c","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/8ziudk","slide":1,"title":"SMART INDIA HACKATHON 2026","textShapes":11}
+{"kind":"textbox","id":"sh/twzqpgv6","slide":1,"text":"SMART INDIA HACKATHON 2026","textPreview":"SMART INDIA HACKATHON 2026","textChars":26,"textLines":1,"bbox":[115,24,650,42]}
+{"kind":"textbox","id":"sh/rux8n6d0","slide":1,"text":"PGK BHARAT","textPreview":"PGK BHARAT","textChars":10,"textLines":1,"bbox":[260,103,420,46]}
+{"kind":"shape","id":"sh/gzq9kbux","slide":1,"bbox":[680,94,146,24]}
+{"kind":"textbox","id":"sh/10zatgbi","slide":1,"text":"INERT EXHIBITION CONCEPT","textPreview":"INERT EXHIBITION CONCEPT","textChars":24,"textLines":1,"bbox":[687,99,132,14]}
+{"kind":"textbox","id":"sh/ex8rilcr","slide":1,"text":"• Problem Statement ID - SIH26098","textPreview":"• Problem Statement ID - SIH26098","textChars":33,"textLines":1,"bbox":[34,193,475,27]}
+{"kind":"textbox","id":"sh/fyhsrqtc","slide":1,"text":"• Problem Statement Title -","textPreview":"• Problem Statement Title -","textChars":27,"textLines":1,"bbox":[34,246,475,24]}
+{"kind":"textbox","id":"sh/w3698rud","slide":1,"text":"Precision guidance kit with canard actuation and multi-mode electronic fuze for a 155 mm artillery shell","textPreview":"Precision guidance kit with canard actuation and multi-mode electronic fuze for a 155 mm artillery shell","textChars":104,"textLines":1,"bbox":[54,273,470,48]}
+{"kind":"textbox","id":"sh/h4fqhwvy","slide":1,"text":"• Theme - Miscellaneous","textPreview":"• Theme - Miscellaneous","textChars":23,"textLines":1,"bbox":[34,337,475,25]}
+{"kind":"textbox","id":"sh/5076lo7a","slide":1,"text":"• PS Category - Hardware","textPreview":"• PS Category - Hardware","textChars":24,"textLines":1,"bbox":[34,382,475,25]}
+{"kind":"textbox","id":"sh/kfe5sj6p","slide":1,"text":"• Team ID - [add registered team ID]","textPreview":"• Team ID - [add registered team ID]","textChars":36,"textLines":1,"bbox":[34,427,475,25]}
+{"kind":"textbox","id":"sh/je5ojyp4","slide":1,"text":"• Team Name - PGK Bharat (provisional)","textPreview":"• Team Name - PGK Bharat (provisional)","textChars":38,"textLines":1,"bbox":[34,472,515,25]}
+{"kind":"textbox","id":"sh/t476p87m","slide":1,"text":"Concept architecture deck | metrics are labelled as target, simulation, bench, or verified","textPreview":"Concept architecture deck | metrics are labelled as target, simulation, bench, or verified","textChars":90,"textLines":1,"bbox":[34,518,560,12]}
+{"kind":"image","id":"im/nqd0f2to","slide":1,"name":"","alt":"Smart India Hackathon 2026 logo from the provided template","bbox":[782,3,168,82]}
+{"kind":"image","id":"im/pkbil03e","slide":1,"name":"","alt":"Smart India Hackathon visual mark from the provided template","bbox":[575,120,320,360]}
+{"kind":"notes","id":"nt/8ziudk","slide":1,"text":"[Sources]\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026-IDEA-Presentation-Format.pdf - title-page layout and SIH branding.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026_Hardware_PS.md - SIH26098 title, organization, theme, and category.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH26098_TEAM_BRIEFING.md - inert exhibition demonstrator boundary.\n[/Sources]"}
+{"kind":"slide","id":"sl/31f2sz","slide":2,"title":"PGK","textShapes":13}
+{"kind":"shape","id":"sh/1kzqhc7q","slide":2,"bbox":[25,6,78,44]}
+{"kind":"textbox","id":"sh/eho76xoz","slide":2,"text":"PGK\nBHARAT","textPreview":"PGK | BHARAT","textChars":10,"textLines":2,"bbox":[36,11,56,34]}
+{"kind":"textbox","id":"sh/zix8f2pk","slide":2,"text":"IDEA TITLE","textPreview":"IDEA TITLE","textChars":10,"textLines":1,"bbox":[225,27,530,42]}
+{"kind":"shape","id":"sh/dgfqds7e","slide":2,"bbox":[0,500,960,40]}
+{"kind":"textbox","id":"sh/qdo72xo3","slide":2,"text":"(c)SIH Idea submission- Template","textPreview":"(c)SIH Idea submission- Template","textChars":32,"textLines":1,"bbox":[305,510,350,20]}
+{"kind":"textbox","id":"sh/rexob2p8","slide":2,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[902,509,24,20]}
+{"kind":"textbox","id":"sh/4b6p0n6x","slide":2,"text":"◆ Proposed solution - a modular, safety-first concept","textPreview":"◆ Proposed solution - a modular, safety-first concept","textChars":53,"textLines":1,"bbox":[32,162,895,38]}
+{"kind":"textbox","id":"sh/pcf69s7i","slide":2,"text":"A modular nose-module concept for the SIH26098 requirement, organized around interfaces, evidence, and future qualification gates.\nOne system story connects mechanical packaging, sensing and compute, power and telemetry, and the Proximity / Time / Impact requirement.\nThe workspace proof-of-concept is inert and bench-bound: it demonstrates packaging, telemetry, and a labelled state-machine story; it is not launch hardware.","textPreview":"A modular nose-module concept for the SIH26098 requirement, organized around interfaces, evidence, and future qualification gates. | One ...","textChars":425,"textLines":3,"bbox":[34,217,875,122]}
+{"kind":"textbox","id":"sh/l8rmt4zi","slide":2,"text":"WHAT MAKES THE CONCEPT DISTINCT","textPreview":"WHAT MAKES THE CONCEPT DISTINCT","textChars":31,"textLines":1,"bbox":[35,352,265,18]}
+{"kind":"textbox","id":"sh/k7i5kzix","slide":2,"text":"MECHANICAL\nINTERFACE","textPreview":"MECHANICAL | INTERFACE","textChars":20,"textLines":2,"bbox":[35,380,190,52]}
+{"kind":"shape","id":"sh/z694rehc","slide":2,"bbox":[232,395,17,22]}
+{"kind":"textbox","id":"sh/y503i907","slide":2,"text":"SENSING +\nCOMPUTE","textPreview":"SENSING + | COMPUTE","textChars":17,"textLines":2,"bbox":[247,380,190,52]}
+{"kind":"shape","id":"sh/xk7mp4zm","slide":2,"bbox":[444,395,17,22]}
+{"kind":"textbox","id":"sh/cjylgzi1","slide":2,"text":"POWER +\nTELEMETRY","textPreview":"POWER + | TELEMETRY","textChars":17,"textLines":2,"bbox":[459,380,190,52]}
+{"kind":"shape","id":"sh/bip4nuhg","slide":2,"bbox":[656,395,17,22]}
+{"kind":"textbox","id":"sh/ahg3ep0v","slide":2,"text":"SAFETY\nSTATES","textPreview":"SAFETY | STATES","textChars":13,"textLines":2,"bbox":[671,380,190,52]}
+{"kind":"shape","id":"sh/pg7mlkja","slide":2,"bbox":[35,452,260,34]}
+{"kind":"textbox","id":"sh/ofylcfip","slide":2,"text":"Official PS target: CEP <= 30 m*","textPreview":"Official PS target: CEP <= 30 m*","textChars":32,"textLines":1,"bbox":[48,460,235,18]}
+{"kind":"textbox","id":"sh/gz258zql","slide":2,"text":"*Target from the PS; not a verified result in this deck.","textPreview":"*Target from the PS; not a verified result in this deck.","textChars":56,"textLines":1,"bbox":[312,460,530,18]}
+{"kind":"image","id":"im/p4zup0n2","slide":2,"name":"","alt":"Smart India Hackathon 2026 logo from the provided template","bbox":[782,3,168,82]}
+{"kind":"notes","id":"nt/31f2sz","slide":2,"text":"[Sources]\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026-IDEA-Presentation-Format.pdf - idea-title layout and footer treatment.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026_Hardware_PS.md - required guidance, GNC, fuze modes, and CEP target.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH26098_PGK_KIT_DEEP_DIVE.md - high-level architecture and inert exhibition scope.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH26098_TEAM_BRIEFING.md - explicit no-launch and display-only boundary.\n[/Sources]"}
+{"kind":"slide","id":"sl/un4nrj","slide":3,"title":"PGK","textShapes":18}
+{"kind":"shape","id":"sh/l03yhsnu","slide":3,"bbox":[25,6,78,44]}
+{"kind":"textbox","id":"sh/yxsfmdo3","slide":3,"text":"PGK\nBHARAT","textPreview":"PGK | BHARAT","textChars":10,"textLines":2,"bbox":[36,11,56,34]}
+{"kind":"textbox","id":"sh/zylgfi5o","slide":3,"text":"TECHNICAL APPROACH","textPreview":"TECHNICAL APPROACH","textChars":18,"textLines":1,"bbox":[225,27,530,42]}
+{"kind":"shape","id":"sh/dwjydsni","slide":3,"bbox":[0,500,960,40]}
+{"kind":"textbox","id":"sh/qtsfidor","slide":3,"text":"(c)SIH Idea submission- Template","textPreview":"(c)SIH Idea submission- Template","textChars":32,"textLines":1,"bbox":[305,510,350,20]}
+{"kind":"textbox","id":"sh/bu1gbi5c","slide":3,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[902,509,24,20]}
+{"kind":"textbox","id":"sh/o7axg361","slide":3,"text":"Requirements-to-evidence pipeline","textPreview":"Requirements-to-evidence pipeline","textChars":33,"textLines":1,"bbox":[32,162,600,38]}
+{"kind":"textbox","id":"sh/p8jy98nm","slide":3,"text":"Translate the PS into interfaces, safety states, measurable acceptance criteria, and a traceable evidence register.\nUse system-level simulation and hardware-in-the-loop to explore behavior before any physical flight-article decision.\nDemonstrate only low-voltage telemetry and inert mechanical behavior on a guarded bench rig.\nPlace authorized safety, environmental, and range qualification gates before any future flight-article work.","textPreview":"Translate the PS into interfaces, safety states, measurable acceptance criteria, and a traceable evidence register. | Use system-level si...","textChars":435,"textLines":4,"bbox":[34,217,420,174]}
+{"kind":"textbox","id":"sh/5of2143e","slide":3,"text":"PROGRAM FLOW","textPreview":"PROGRAM FLOW","textChars":12,"textLines":1,"bbox":[505,190,220,18]}
+{"kind":"textbox","id":"sh/4nm1szmt","slide":3,"text":"PS\nREQS","textPreview":"PS | REQS","textChars":7,"textLines":2,"bbox":[500,225,88,60]}
+{"kind":"shape","id":"sh/jmdkzelo","slide":3,"bbox":[595,245,12,23]}
+{"kind":"textbox","id":"sh/il4jq943","slide":3,"text":"MODEL +\nSIM","textPreview":"MODEL + | SIM","textChars":11,"textLines":2,"bbox":[615,225,105,60]}
+{"kind":"shape","id":"sh/hkv2x43i","slide":3,"bbox":[728,245,12,23]}
+{"kind":"textbox","id":"sh/wzm1ozmx","slide":3,"text":"BENCH\nDEMO","textPreview":"BENCH | DEMO","textChars":10,"textLines":2,"bbox":[748,225,105,60]}
+{"kind":"shape","id":"sh/vyd0vulc","slide":3,"bbox":[861,245,12,23]}
+{"kind":"textbox","id":"sh/ux4jmp4r","slide":3,"text":"QUALIFY","textPreview":"QUALIFY","textChars":7,"textLines":1,"bbox":[881,225,70,60]}
+{"kind":"textbox","id":"sh/9wbitk36","slide":3,"text":"Evidence label on every claim","textPreview":"Evidence label on every claim","textChars":29,"textLines":1,"bbox":[505,319,300,22]}
+{"kind":"textbox","id":"sh/8v21kfml","slide":3,"text":"TARGET  /  SIMULATION  /  BENCH  /  VERIFIED","textPreview":"TARGET  /  SIMULATION  /  BENCH  /  VERIFIED","textChars":44,"textLines":1,"bbox":[505,346,420,20]}
+{"kind":"shape","id":"sh/kbqtwjyt","slide":3,"bbox":[505,376,420,0]}
+{"kind":"textbox","id":"sh/lczapoze","slide":3,"text":"Three-mode requirement","textPreview":"Three-mode requirement","textChars":22,"textLines":1,"bbox":[505,396,240,20]}
+{"kind":"textbox","id":"sh/yp8bu9gn","slide":3,"text":"PROXIMITY","textPreview":"PROXIMITY","textChars":9,"textLines":1,"bbox":[505,425,120,36]}
+{"kind":"textbox","id":"sh/zqhsneh8","slide":3,"text":"TIME","textPreview":"TIME","textChars":4,"textLines":1,"bbox":[640,425,120,36]}
+{"kind":"textbox","id":"sh/cn6tsjyx","slide":3,"text":"IMPACT","textPreview":"IMPACT","textChars":6,"textLines":1,"bbox":[775,425,120,36]}
+{"kind":"textbox","id":"sh/xozalozi","slide":3,"text":"Mock state-machine only in the exhibit","textPreview":"Mock state-machine only in the exhibit","textChars":38,"textLines":1,"bbox":[505,470,390,15]}
+{"kind":"image","id":"im/pcnm9cj6","slide":3,"name":"","alt":"Smart India Hackathon 2026 logo from the provided template","bbox":[782,3,168,82]}
+{"kind":"notes","id":"nt/un4nrj","slide":3,"text":"[Sources]\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026-IDEA-Presentation-Format.pdf - technical-approach layout.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026_Hardware_PS.md - expected architecture, simulation, and validation deliverables.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH26098_PGK_KIT_DEEP_DIVE.md - simulation / bench separation and display-only fuze story.\n[/Sources]"}
+{"kind":"slide","id":"sl/x7wcg9","slide":4,"title":"PGK","textShapes":30}
+{"kind":"shape","id":"sh/juxsvuxs","slide":4,"bbox":[25,6,78,44]}
+{"kind":"textbox","id":"sh/kv69ozyd","slide":4,"text":"PGK\nBHARAT","textPreview":"PGK | BHARAT","textChars":10,"textLines":2,"bbox":[36,11,56,34]}
+{"kind":"textbox","id":"sh/5wfax4fy","slide":4,"text":"FEASIBILITY AND VIABILITY","textPreview":"FEASIBILITY AND VIABILITY","textChars":25,"textLines":1,"bbox":[225,27,530,42]}
+{"kind":"shape","id":"sh/v6dsraxw","slide":4,"bbox":[0,500,960,40]}
+{"kind":"textbox","id":"sh/w769kfyh","slide":4,"text":"(c)SIH Idea submission- Template","textPreview":"(c)SIH Idea submission- Template","textChars":32,"textLines":1,"bbox":[305,510,350,20]}
+{"kind":"textbox","id":"sh/x8fatkfm","slide":4,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[902,509,24,20]}
+{"kind":"textbox","id":"sh/m14re5gz","slide":4,"text":"Feasible as a staged R&D programme; not a launch claim","textPreview":"Feasible as a staged R&D programme; not a launch claim","textChars":54,"textLines":1,"bbox":[32,162,895,38]}
+{"kind":"textbox","id":"sh/n2dsnaxk","slide":4,"text":"FEASIBLE NOW","textPreview":"FEASIBLE NOW","textChars":12,"textLines":1,"bbox":[35,220,230,20]}
+{"kind":"textbox","id":"sh/bmx07udk","slide":4,"text":"Requirements capture and modular system architecture.\nInert CAD / exhibition proof-of-concept and telemetry narrative.\nSimulation and reference-track trade studies.","textPreview":"Requirements capture and modular system architecture. | Inert CAD / exhibition proof-of-concept and telemetry narrative. | Simulation and...","textChars":164,"textLines":3,"bbox":[35,250,390,110]}
+{"kind":"textbox","id":"sh/qlozypcz","slide":4,"text":"KEY RISKS -> GATES","textPreview":"KEY RISKS -> GATES","textChars":18,"textLines":1,"bbox":[500,220,300,20]}
+{"kind":"shape","id":"sh/dofit4bq","slide":4,"bbox":[500,247,410,150]}
+{"kind":"textbox","id":"sh/cn6h0zu5","slide":4,"text":"Spin / load environment","textPreview":"Spin / load environment","textChars":23,"textLines":1,"bbox":[518,260,190,18]}
+{"kind":"textbox","id":"sh/zqx0vetw","slide":4,"text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[712,260,22,18]}
+{"kind":"textbox","id":"sh/ypoz29cb","slide":4,"text":"qualification testing","textPreview":"qualification testing","textChars":21,"textLines":1,"bbox":[740,260,150,18]}
+{"kind":"textbox","id":"sh/lczixobm","slide":4,"text":"Sensor / state integrity","textPreview":"Sensor / state integrity","textChars":24,"textLines":1,"bbox":[518,292,190,18]}
+{"kind":"textbox","id":"sh/0b6h4juh","slide":4,"text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[712,292,22,18]}
+{"kind":"textbox","id":"sh/fudgzadc","slide":4,"text":"independent review","textPreview":"independent review","textChars":18,"textLines":1,"bbox":[740,292,150,18]}
+{"kind":"textbox","id":"sh/et4zq5cr","slide":4,"text":"Power availability","textPreview":"Power availability","textChars":18,"textLines":1,"bbox":[518,324,190,18]}
+{"kind":"textbox","id":"sh/i9s3ydwf","slide":4,"text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[712,324,22,18]}
+{"kind":"textbox","id":"sh/ja1k7id0","slide":4,"text":"budget + bench measurement","textPreview":"budget + bench measurement","textChars":26,"textLines":1,"bbox":[740,324,150,18]}
+{"kind":"textbox","id":"sh/4bul0nel","slide":4,"text":"Interface compatibility","textPreview":"Interface compatibility","textChars":23,"textLines":1,"bbox":[518,356,190,18]}
+{"kind":"textbox","id":"sh/5c329sv6","slide":4,"text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[712,356,22,18]}
+{"kind":"textbox","id":"sh/u5s3udwj","slide":4,"text":"fit-check + fixtures","textPreview":"fit-check + fixtures","textChars":20,"textLines":1,"bbox":[740,356,150,18]}
+{"kind":"shape","id":"sh/v61k3id4","slide":4,"bbox":[35,385,875,0]}
+{"kind":"textbox","id":"sh/w7alwnep","slide":4,"text":"READINESS SNAPSHOT","textPreview":"READINESS SNAPSHOT","textChars":18,"textLines":1,"bbox":[35,408,210,20]}
+{"kind":"textbox","id":"sh/h8j25svu","slide":4,"text":"CONCEPT","textPreview":"CONCEPT","textChars":7,"textLines":1,"bbox":[35,438,110,24]}
+{"kind":"textbox","id":"sh/mh8jqtw7","slide":4,"text":"READY","textPreview":"READY","textChars":5,"textLines":1,"bbox":[35,463,110,18]}
+{"kind":"textbox","id":"sh/7ihkzyxs","slide":4,"text":"|","textPreview":"|","textChars":1,"textLines":1,"bbox":[180,444,15,30]}
+{"kind":"textbox","id":"sh/p8rel0jm","slide":4,"text":"INERT DEMO","textPreview":"INERT DEMO","textChars":10,"textLines":1,"bbox":[225,438,150,24]}
+{"kind":"textbox","id":"sh/o7yxsv21","slide":4,"text":"BOUNDED","textPreview":"BOUNDED","textChars":7,"textLines":1,"bbox":[225,463,150,18]}
+{"kind":"textbox","id":"sh/n6pwjq1g","slide":4,"text":"|","textPreview":"|","textChars":1,"textLines":1,"bbox":[410,444,15,30]}
+{"kind":"textbox","id":"sh/2lgfqlkv","slide":4,"text":"FLIGHT ARTICLE","textPreview":"FLIGHT ARTICLE","textChars":14,"textLines":1,"bbox":[460,438,170,24]}
+{"kind":"textbox","id":"sh/1k7ehgjq","slide":4,"text":"FUTURE SCOPE","textPreview":"FUTURE SCOPE","textChars":12,"textLines":1,"bbox":[460,463,170,18]}
+{"kind":"textbox","id":"sh/0jyxov25","slide":4,"text":"The proposal is viable because each claim has a next evidence gate.","textPreview":"The proposal is viable because each claim has a next evidence gate.","textChars":67,"textLines":1,"bbox":[680,448,230,34]}
+{"kind":"image","id":"im/zi5sza1w","slide":4,"name":"","alt":"Smart India Hackathon 2026 logo from the provided template","bbox":[782,3,168,82]}
+{"kind":"notes","id":"nt/x7wcg9","slide":4,"text":"[Sources]\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026-IDEA-Presentation-Format.pdf - feasibility-and-viability layout.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026_Hardware_PS.md - compatibility, harsh-environment, SWaP-C, reliability, and safety constraints.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH26098_TEAM_BRIEFING.md - current inert demo boundary and future flight-article separation.\n[/Sources]"}
+{"kind":"slide","id":"sl/js858x","slide":5,"title":"PGK","textShapes":14}
+{"kind":"shape","id":"sh/qpwvy58n","slide":5,"bbox":[25,6,78,44]}
+{"kind":"textbox","id":"sh/ds7u907y","slide":5,"text":"PGK\nBHARAT","textPreview":"PGK | BHARAT","textChars":10,"textLines":2,"bbox":[36,11,56,34]}
+{"kind":"textbox","id":"sh/cryd0vqd","slide":5,"text":"IMPACT AND BENEFITS","textPreview":"IMPACT AND BENEFITS","textChars":19,"textLines":1,"bbox":[225,27,530,42]}
+{"kind":"shape","id":"sh/edgv25oj","slide":5,"bbox":[0,500,960,40]}
+{"kind":"textbox","id":"sh/1g7udk7a","slide":5,"text":"(c)SIH Idea submission- Template","textPreview":"(c)SIH Idea submission- Template","textChars":32,"textLines":1,"bbox":[305,510,350,20]}
+{"kind":"textbox","id":"sh/0fyd4f6p","slide":5,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[902,509,24,20]}
+{"kind":"textbox","id":"sh/vilcz6p0","slide":5,"text":"Value comes from modularity, evidence, and safer development","textPreview":"Value comes from modularity, evidence, and safer development","textChars":60,"textLines":1,"bbox":[32,162,895,38]}
+{"kind":"textbox","id":"sh/uhcbq18f","slide":5,"text":"INDUSTRIAL","textPreview":"INDUSTRIAL","textChars":10,"textLines":1,"bbox":[35,225,220,22]}
+{"kind":"shape","id":"sh/0jixcnel","slide":5,"bbox":[35,255,250,0]}
+{"kind":"textbox","id":"sh/1krylsfq","slide":5,"text":"Builds on YIL's shell-manufacturing context and supports a domestic subsystem pathway.","textPreview":"Builds on YIL's shell-manufacturing context and supports a domestic subsystem pathway.","textChars":86,"textLines":1,"bbox":[35,278,255,84]}
+{"kind":"textbox","id":"sh/ex0faxwf","slide":5,"text":"ECONOMIC","textPreview":"ECONOMIC","textChars":8,"textLines":1,"bbox":[335,225,220,22]}
+{"kind":"shape","id":"sh/fi9gj2x0","slide":5,"bbox":[335,255,250,0]}
+{"kind":"textbox","id":"sh/on2xg7eh","slide":5,"text":"A modular architecture can reduce redesign, maintenance, and variant-integration burden over the programme life.","textPreview":"A modular architecture can reduce redesign, maintenance, and variant-integration burden over the programme life.","textChars":112,"textLines":1,"bbox":[335,278,255,84]}
+{"kind":"textbox","id":"sh/9obypcf2","slide":5,"text":"SAFETY + ENVIRONMENT","textPreview":"SAFETY + ENVIRONMENT","textChars":20,"textLines":1,"bbox":[635,225,285,22]}
+{"kind":"shape","id":"sh/mlkfexwb","slide":5,"bbox":[635,255,250,0]}
+{"kind":"textbox","id":"sh/nmtgn2xw","slide":5,"text":"Inert demos, staged testing, and traceable evidence reduce hazardous handling and unnecessary test-article waste during development.","textPreview":"Inert demos, staged testing, and traceable evidence reduce hazardous handling and unnecessary test-article waste during development.","textChars":132,"textLines":1,"bbox":[635,278,255,84]}
+{"kind":"shape","id":"sh/4ryx43ed","slide":5,"bbox":[35,394,875,68]}
+{"kind":"textbox","id":"sh/5s7ed8fy","slide":5,"text":"Success measure","textPreview":"Success measure","textChars":15,"textLines":1,"bbox":[58,410,150,22]}
+{"kind":"textbox","id":"sh/5ozuh47m","slide":5,"text":"A credible, independently reviewable path to the PS target - not an unsupported performance promise.","textPreview":"A credible, independently reviewable path to the PS target - not an unsupported performance promise.","textChars":100,"textLines":1,"bbox":[215,408,650,28]}
+{"kind":"textbox","id":"sh/knqd8zq1","slide":5,"text":"Benefits remain conditional on authorized validation and qualification.","textPreview":"Benefits remain conditional on authorized validation and qualification.","textChars":71,"textLines":1,"bbox":[35,474,700,15]}
+{"kind":"image","id":"im/ahozah8b","slide":5,"name":"","alt":"Smart India Hackathon 2026 logo from the provided template","bbox":[782,3,168,82]}
+{"kind":"notes","id":"nt/js858x","slide":5,"text":"[Sources]\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026-IDEA-Presentation-Format.pdf - impact-and-benefits layout.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026_Hardware_PS.md - stated operational, economic, environmental, SWaP-C, and safety objectives.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH26098_TEAM_BRIEFING.md - domestic manufacturing and inert-demo framing.\n[/Sources]"}
+{"kind":"slide","id":"sl/749d7k","slide":6,"title":"PGK","textShapes":11}
+{"kind":"shape","id":"sh/e5o7yxc3","slide":6,"bbox":[25,6,78,44]}
+{"kind":"textbox","id":"sh/18zq9cve","slide":6,"text":"PGK\nBHARAT","textPreview":"PGK | BHARAT","textChars":10,"textLines":2,"bbox":[36,11,56,34]}
+{"kind":"textbox","id":"sh/g76p07ut","slide":6,"text":"RESEARCH AND REFERENCES","textPreview":"RESEARCH AND REFERENCES","textChars":23,"textLines":1,"bbox":[225,27,530,42]}
+{"kind":"shape","id":"sh/29872hcz","slide":6,"bbox":[0,500,960,40]}
+{"kind":"textbox","id":"sh/pczqdcvq","slide":6,"text":"(c)SIH Idea submission- Template","textPreview":"(c)SIH Idea submission- Template","textChars":32,"textLines":1,"bbox":[305,510,350,20]}
+{"kind":"textbox","id":"sh/obqp47u5","slide":6,"text":"6","textPreview":"6","textChars":1,"textLines":1,"bbox":[902,509,24,20]}
+{"kind":"textbox","id":"sh/jedozidg","slide":6,"text":"Internal sources used for this proposal","textPreview":"Internal sources used for this proposal","textChars":39,"textLines":1,"bbox":[32,162,895,38]}
+{"kind":"textbox","id":"sh/id47qdcv","slide":6,"text":"PRIMARY BRIEF + FORMAT","textPreview":"PRIMARY BRIEF + FORMAT","textChars":22,"textLines":1,"bbox":[35,220,390,20]}
+{"kind":"textbox","id":"sh/g7ytc72h","slide":6,"text":"SIH2026_Hardware_PS.md - official PS 26098 text, deliverables, and constraints.\nSIH2026-IDEA-Presentation-Format.pdf - six-slide structure and layout.\nSIH26098_TEAM_BRIEFING.md - proposal spine, roles, and safe exhibition boundary.","textPreview":"SIH2026_Hardware_PS.md - official PS 26098 text, deliverables, and constraints. | SIH2026-IDEA-Presentation-Format.pdf - six-slide struct...","textChars":231,"textLines":3,"bbox":[35,250,405,105]}
+{"kind":"textbox","id":"sh/18rals32","slide":6,"text":"WORKSPACE EVIDENCE","textPreview":"WORKSPACE EVIDENCE","textChars":18,"textLines":1,"bbox":[500,220,390,20]}
+{"kind":"textbox","id":"sh/e5graxkr","slide":6,"text":"SIH26098_PGK_KIT_DEEP_DIVE.md - high-level architecture and inert exhibition scope.\ncad_models/PGK_155MM_ASSEMBLY.md - CAD documentation referenced, not reproduced here.\ncad_models/simulate_trajectory_155.py - simulation track used as reference only.\nSIH26098_LIVEBOARD.md - research index and linked entries.","textPreview":"SIH26098_PGK_KIT_DEEP_DIVE.md - high-level architecture and inert exhibition scope. | cad_models/PGK_155MM_ASSEMBLY.md - CAD documentatio...","textChars":309,"textLines":4,"bbox":[500,250,410,130]}
+{"kind":"shape","id":"sh/f6psj2lc","slide":6,"bbox":[35,391,875,0]}
+{"kind":"textbox","id":"sh/ovitg72t","slide":6,"text":"REFERENCE DISCIPLINE","textPreview":"REFERENCE DISCIPLINE","textChars":20,"textLines":1,"bbox":[35,409,225,20]}
+{"kind":"textbox","id":"sh/pwrapc3e","slide":6,"text":"Every metric is tagged TARGET / SIMULATION / BENCH / VERIFIED. This deck contains no live-weapon test result.","textPreview":"Every metric is tagged TARGET / SIMULATION / BENCH / VERIFIED. This deck contains no live-weapon test result.","textChars":109,"textLines":1,"bbox":[35,440,855,34]}
+{"kind":"image","id":"im/658fepc3","slide":6,"name":"","alt":"Smart India Hackathon 2026 logo from the provided template","bbox":[782,3,168,82]}
+{"kind":"notes","id":"nt/749d7k","slide":6,"text":"[Sources]\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026-IDEA-Presentation-Format.pdf - references-slide layout and format guidance.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH2026_Hardware_PS.md - official problem statement source.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH26098_PGK_KIT_DEEP_DIVE.md - workspace design-study source and safety boundary.\n/Users/jagathsrujan/Documents/smart india hackathon/cad_models/PGK_155MM_ASSEMBLY.md - workspace CAD reference.\n/Users/jagathsrujan/Documents/smart india hackathon/cad_models/simulate_trajectory_155.py - workspace simulation reference.\n/Users/jagathsrujan/Documents/smart india hackathon/SIH26098_LIVEBOARD.md - workspace research index.\n[/Sources]"}

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIH26098 — Inert PGK Exhibition Demonstrator</title>
+<style>
+  :root{--bg:#0f172a;--card:#1e293b;--line:#334155;--accent:#38bdf8;--accent2:#fbbf24;--accent3:#4ade80;--text:#f1f5f9;--muted:#94a3b8}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text);line-height:1.5}
+  header{padding:24px 24px 0;max-width:1200px;margin:0 auto}
+  h1{font-size:22px;letter-spacing:.04em}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--muted);font-size:13px;margin-top:4px}
+  .pill{display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:#0b1224;border:1px solid #1e3a5f;color:var(--accent);padding:3px 8px;border-radius:999px;margin-top:10px}
+  .wrap{max-width:1200px;margin:16px auto;padding:0 16px 40px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .tabs{display:flex;gap:8px;margin:14px 0 12px;flex-wrap:wrap}
+  .tab{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:#0b1224;color:var(--muted);font-size:13px;cursor:pointer}
+  .tab.active{background:var(--accent);color:#0b1224;border-color:var(--accent);font-weight:700}
+  .stage{position:relative;overflow:auto;background:#0b1224;border:1px solid var(--line);border-radius:12px;padding:12px}
+  svg{width:1120px;max-width:100%;height:auto;display:block}
+  .legend{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+  @media(max-width:900px){.legend{grid-template-columns:1fr}}
+  .leg{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#0f172a}
+  .leg h4{font-size:13px;margin-bottom:6px}
+  .leg h4 i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+  .leg p{color:var(--muted);font-size:12px;line-height:1.5}
+  .specs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  @media(max-width:900px){.specs{grid-template-columns:1fr}}
+  .spec{border:1px solid var(--line);border-radius:12px;padding:12px;background:#0f172a}
+  .spec h3{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .kv{display:grid;grid-template-columns:140px 1fr;gap:6px 10px;font-size:12px}
+  .kv dt{color:var(--muted)}
+  .kv dd{color:var(--text);font-weight:600}
+  .callout{margin-top:12px;border-left:3px solid var(--accent2);padding:10px 12px;background:#1a1a0b;border-radius:8px;color:#fde68a;font-size:12px}
+  .tip{position:absolute;pointer-events:none;background:#020617;color:#e2e8f0;border:1px solid #334155;padding:8px 10px;border-radius:10px;font-size:12px;max-width:260px;box-shadow:0 10px 30px rgba(0,0,0,.5);display:none;z-index:5}
+  .ann{font-size:10px;fill:var(--muted);font-weight:600;letter-spacing:.04em}
+  .hoverRect{fill:transparent;stroke:transparent;stroke-width:0;cursor:pointer;transition:fill .15s}
+  .hoverRect:hover{fill:rgba(56,189,248,.08);stroke:rgba(56,189,248,.6);stroke-dasharray:4 4}
+  .dim{stroke:#475569;stroke-width:1;stroke-dasharray:4 4}
+  .dimText{fill:#94a3b8;font-size:9px;font-weight:700}
+</style>
+</head>
+<body>
+<header>
+  <div class="pill">SIH26098 — Ministry of Defence / YIL Ambajhari • STANAG 2916 • 39/45/52 cal</div>
+  <h1>Inert PGK + <span>155mm Shell</span> — Exhibition Assembly</h1>
+  <div class="sub">Active public-architecture demonstrator: one common carrier, 4 fixed canards, front/rear display bearings, shell-to-carrier alternator concept, and one low-voltage torque emulator. Bench-only; not an exact production teardown.</div>
+</header>
+<div class="wrap">
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" data-view="assembled">Assembled (Bench Demo)</button>
+      <button class="tab" data-view="exploded">Exploded (Dummy Interface)</button>
+      <button class="tab" data-view="section">Section Cut (Inside)</button>
+      <span style="margin-left:auto;color:var(--muted);font-size:12px;align-self:center">Visual scale: 155mm Ø • lightweight printed shell • guarded low-speed stand</span>
+    </div>
+    <div class="stage" id="stage">
+      <div class="tip" id="tip"></div>
+      <!-- ASSEMBLED -->
+      <svg id="svgAssembled" viewBox="0 0 1120 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Assembled PGK on 155mm shell">
+        <!-- dimension line diameter -->
+        <line x1="40" y1="310" x2="40" y2="130" class="dim"/><line x1="30" y1="310" x2="50" y2="310" class="dim"/><line x1="30" y1="130" x2="50" y2="130" class="dim"/>
+        <text x="8" y="225" class="dimText" transform="rotate(-90 8 225)">155mm Ø</text>
+        <text x="40" y="325" class="dimText">NONFUNCTIONAL DISPLAY ADAPTER</text>
+
+        <!-- SHELL BODY silhouette -->
+        <!-- PGK NOSE -->
+        <!-- Radome quartz RF transparent G8 -->
+        <path d="M 110 200 C 110 165, 135 145, 165 135 L 165 265 C 135 255, 110 235, 110 200 Z" fill="#0ea5e9" stroke="#38bdf8" stroke-width="1.8" />
+        <text x="118" y="122" class="ann">RADOME G8</text>
+        <text x="118" y="132" class="ann" style="font-size:8px;fill:#7dd3fc">RADOME • ANTENNA PLACEHOLDER</text>
+
+        <!-- GNSS antenna bay -->
+        <rect x="165" y="138" width="52" height="124" rx="4" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.4"/>
+        <text x="166" y="152" class="ann" style="fill:#7dd3fc">ANTENNA PLACEHOLDER</text>
+        <text x="166" y="162" class="ann" style="font-size:8px">DISPLAY ONLY</text>
+        <rect x="172" y="170" width="38" height="18" rx="2" fill="#0b1224" stroke="#334155"/><text x="176" y="182" style="font-size:7px;fill:#94a3b8">PATCH</text>
+
+        <!-- Flight computer bay -->
+        <rect x="217" y="138" width="86" height="124" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="1.4"/>
+        <text x="220" y="152" class="ann" style="fill:#38bdf8">DISPLAY CONTROLLER</text>
+        <text x="220" y="162" class="ann" style="font-size:7px;fill:#94a3b8">MCU + RELATIVE-ANGLE SENSOR</text>
+        <rect x="224" y="170" width="34" height="26" rx="2" fill="#020617" stroke="#38bdf8"/><text x="228" y="180" style="font-size:6px;fill:#e2e8f0">MCU</text><text x="228" y="188" style="font-size:5px;fill:#94a3b8">C_gnc</text>
+        <rect x="262" y="170" width="34" height="26" rx="2" fill="#020617" stroke="#4ade80"/><text x="266" y="180" style="font-size:6px;fill:#e2e8f0">IMU</text><text x="266" y="188" style="font-size:5px;fill:#94a3b8">20kG</text>
+        <rect x="224" y="202" width="72" height="18" rx="2" fill="#0b1224" stroke="#334155"/><text x="228" y="214" style="font-size:6px;fill:#94a3b8">HALL/OPTICAL INDEX + LEDS</text>
+
+        <!-- Power / super-cap -->
+        <rect x="217" y="226" width="86" height="22" rx="2" fill="#1a2e1a" stroke="#4ade80" stroke-width="1"/><text x="220" y="241" style="font-size:7px;fill:#86efac">SUPER-CAP F1 + PWR MGMT</text>
+
+        <!-- Canard section + despun bearing -->
+        <rect x="303" y="128" width="72" height="144" rx="6" fill="#0f2a3a" stroke="#38bdf8" stroke-width="1.6"/>
+        <text x="306" y="142" class="ann" style="fill:#7dd3fc">COMMON CANARD CARRIER</text>
+        <!-- bearing ring -->
+        <rect x="306" y="148" width="66" height="10" rx="5" fill="#334155" stroke="#fbbf24"/><text x="310" y="155" style="font-size:6px;fill:#fef3c7">FRONT + REAR DISPLAY BEARINGS</text>
+        <!-- canards fixed to the same carrier -->
+        <path d="M 320 162 L 355 168 L 355 182 L 320 188 Z" fill="#38bdf8" stroke="#0ea5e9"/><text x="322" y="178" style="font-size:6px;fill:#020617;font-weight:800">FIXED FIN</text>
+        <path d="M 320 238 L 355 244 L 355 258 L 320 252 Z" fill="#1e3a5f" stroke="#38bdf8"/><text x="322" y="250" style="font-size:6px;fill:#7dd3fc;font-weight:800">SAME CARRIER</text>
+        <!-- opposite side canards (top view hint) -->
+        <path d="M 332 128 L 338 112 L 350 112 L 342 128 Z" fill="#38bdf8" opacity=".9"/>
+        <path d="M 332 272 L 338 288 L 350 288 L 342 272 Z" fill="#1e3a5f" opacity=".9"/>
+        <text x="312" y="268" style="font-size:6px;fill:#94a3b8">4 FIXED • ONE COMMON CARRIER</text>
+
+        <!-- Fuze well thread intrusion -->
+        <rect x="375" y="165" width="58" height="70" rx="2" fill="#1f2937" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="5 3"/>
+        <text x="378" y="178" style="font-size:6px;fill:#fde68a">DUMMY ADAPTER</text>
+        <text x="378" y="186" style="font-size:5px;fill:#94a3b8">NO LIVE INTERFACE</text>
+        <line x1="375" y1="200" x2="433" y2="200" stroke="#fbbf24" stroke-width="0.8" stroke-dasharray="2 2"/>
+        <text x="385" y="208" style="font-size:6px;fill:#fbbf24">SLIP-FIT</text>
+
+        <!-- SHELL OGIVE -->
+        <path d="M 433 165 C 455 165, 485 175, 505 200 C 485 225, 455 235, 433 235 Z" fill="#334155" stroke="#94a3b8" stroke-width="1.4"/>
+        <text x="438" y="152" class="ann">OGIVE</text>
+        <!-- Bourrelet -->
+        <rect x="505" y="170" width="48" height="60" fill="#475569" stroke="#94a3b8"/>
+        <text x="508" y="162" class="ann">BOURRELET</text>
+        <text x="508" y="244" style="font-size:7px;fill:#cbd5e1">rides barrel</text>
+        <!-- Body HE fill -->
+        <rect x="553" y="160" width="280" height="80" fill="#1f2937" stroke="#94a3b8" stroke-width="1.4"/>
+        <text x="560" y="152" class="ann">BODY — LIGHTWEIGHT PRINTED MOCK-UP</text>
+        <rect x="565" y="175" width="256" height="50" rx="4" fill="#334155" stroke="#94a3b8" stroke-dasharray="4 3"/><text x="640" y="205" style="font-size:10px;fill:#cbd5e1;letter-spacing:.1em">SOLID INERT INTERIOR</text>
+        <!-- Rotating band copper -->
+        <rect x="620" y="238" width="36" height="14" rx="2" fill="#a16207" stroke="#fbbf24"/><text x="622" y="248" style="font-size:6px;fill:#fef3c7">Cu BAND</text>
+        <!-- Boat tail -->
+        <path d="M 833 160 L 895 175 L 895 225 L 833 240 Z" fill="#334155" stroke="#94a3b8"/>
+        <text x="838" y="152" class="ann">BOAT TAIL</text>
+        <text x="840" y="248" style="font-size:7px;fill:#94a3b8">drag cut</text>
+        <!-- Base -->
+        <rect x="895" y="180" width="18" height="40" fill="#0f172a" stroke="#94a3b8"/><text x="896" y="172" class="ann">BASE</text>
+
+        <!-- Overall length dims -->
+        <line x1="110" y1="295" x2="913" y2="295" class="dim"/><line x1="110" y1="290" x2="110" y2="300" class="dim"/><line x1="913" y1="290" x2="913" y2="300" class="dim"/>
+        <text x="420" y="305" class="dimText">DISPLAY ASSEMBLY • PGK NOSE + LIGHTWEIGHT PRINTED SHELL</text>
+
+        <!-- Hover rects for interactivity -->
+        <rect class="hoverRect" x="110" y="135" width="55" height="130" data-tip="Printed radome and antenna placeholder. Display component only."/>
+        <rect class="hoverRect" x="165" y="138" width="52" height="124" data-tip="Antenna placeholder bay for the educational cutaway. No navigation hardware is required for the bench demo."/>
+        <rect class="hoverRect" x="217" y="138" width="86" height="124" data-tip="Display controller: relative-angle sensor, LEDs, and low-voltage power indicators."/>
+        <rect class="hoverRect" x="303" y="128" width="72" height="144" data-tip="Common carrier: all four fixed canards attach to one inner member. The carrier rotates relative to the outer housing on two display bearings."/>
+        <rect class="hoverRect" x="375" y="165" width="58" height="70" data-tip="Dummy slip-fit adapter. It is deliberately not a live-compatible fuze interface."/>
+        <rect class="hoverRect" x="433" y="165" width="72" height="70" data-tip="Printed nose/ogive transition for the display shell."/>
+        <rect class="hoverRect" x="505" y="160" width="48" height="80" data-tip="Printed bearing-surface placeholder. It is not intended to contact a gun barrel."/>
+        <rect class="hoverRect" x="553" y="160" width="280" height="80" data-tip="Lightweight printed shell mock-up with a solid inert interior."/>
+        <rect class="hoverRect" x="620" y="238" width="36" height="14" data-tip="Visual spin marker/band for the guarded low-speed stand."/>
+        <rect class="hoverRect" x="833" y="160" width="80" height="80" data-tip="Printed boat-tail and base for visual completeness only."/>
+
+        <!-- Power flow arrow -->
+        <line x1="260" y1="270" x2="340" y2="270" stroke="#4ade80" stroke-width="1.2" marker-end="url(#arrowG)"/>
+        <text x="268" y="284" style="font-size:7px;fill:#86efac">RELATIVE ROTATION → POWER</text>
+      </svg>
+
+      <svg id="svgExploded" viewBox="0 0 1120 360" xmlns="http://www.w3.org/2000/svg" style="display:none">
+        <defs><marker id="arrowY" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#fbbf24"/></marker></defs>
+        <!-- PGK separated -->
+        <g opacity="0.95">
+          <path d="M 80 200 C 80 165, 105 145, 135 135 L 135 265 C 105 255, 80 235, 80 200 Z" fill="#0ea5e9" stroke="#38bdf8" stroke-width="1.8"/>
+          <rect x="135" y="138" width="52" height="124" rx="4" fill="#1e3a5f" stroke="#38bdf8"/>
+          <rect x="187" y="138" width="86" height="124" rx="4" fill="#1e293b" stroke="#38bdf8"/>
+          <rect x="273" y="128" width="72" height="144" rx="6" fill="#0f2a3a" stroke="#38bdf8"/>
+          <rect x="306" y="148" width="40" height="10" rx="5" fill="#334155" stroke="#fbbf24"/>
+          <path d="M 290 162 L 325 168 L 325 182 L 290 188 Z" fill="#38bdf8"/><path d="M 290 238 L 325 244 L 325 258 L 290 252 Z" fill="#1e3a5f"/>
+          <rect x="345" y="175" width="38" height="50" rx="2" fill="#1f2937" stroke="#fbbf24" stroke-dasharray="5 3"/>
+          <text x="78" y="122" class="ann">INERT PGK DEMO MODULE</text>
+          <text x="78" y="300" style="font-size:9px;fill:#fbbf24">← DUMMY SLIP-FIT ADAPTER — BENCH ONLY →</text>
+          <!-- arrow -->
+          <line x1="385" y1="200" x2="430" y2="200" stroke="#fbbf24" stroke-width="1.8" marker-end="url(#arrowY)" stroke-dasharray="6 4"/>
+          <text x="390" y="192" style="font-size:7px;fill:#fde68a">124.7mm</text>
+        </g>
+        <!-- Shell well open -->
+        <rect x="440" y="180" width="24" height="40" rx="2" fill="#020617" stroke="#fbbf24" stroke-width="1.5"/><text x="442" y="172" style="font-size:7px;fill:#fbbf24">DUMMY WELL</text>
+        <path d="M 464 165 C 486 165, 516 175, 536 200 C 516 225, 486 235, 464 235 Z" fill="none" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="6 4"/>
+        <rect x="536" y="170" width="48" height="60" fill="#475569" stroke="#94a3b8"/>
+        <rect x="584" y="160" width="280" height="80" fill="#1f2937" stroke="#94a3b8"/>
+        <rect x="620" y="238" width="36" height="14" rx="2" fill="#a16207" stroke="#fbbf24"/>
+        <path d="M 864 160 L 926 175 L 926 225 L 864 240 Z" fill="#334155" stroke="#94a3b8"/>
+        <text x="500" y="300" style="font-size:10px;fill:#94a3b8">LIGHTWEIGHT PRINTED SHELL MOCK-UP — GUARDED LOW-SPEED BENCH USE</text>
+        <!-- inductive setter hint -->
+        <rect x="140" y="305" width="140" height="22" rx="11" fill="#0b1224" stroke="#38bdf8" stroke-dasharray="4 3"/><text x="150" y="320" style="font-size:7px;fill:#7dd3fc">LED / CONTROLLER STATUS (DEMO)</text>
+        <line x1="210" y1="305" x2="210" y2="265" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="3 3"/>
+      </svg>
+
+      <svg id="svgSection" viewBox="0 0 1120 360" xmlns="http://www.w3.org/2000/svg" style="display:none">
+        <!-- section cut: show internals stacked -->
+        <rect x="90" y="100" width="300" height="160" rx="10" fill="#0f172a" stroke="#334155"/>
+        <text x="100" y="120" style="font-size:11px;fill:#38bdf8;font-weight:800">PGK STACK — SECTION CUT</text>
+        <!-- layers -->
+        <g font-size="7px">
+          <rect x="100" y="130" width="280" height="18" rx="3" fill="#0ea5e9" opacity=".9"/><text x="108" y="142" fill="#020617" font-weight="700">1 RADOME + ANTENNA PLACEHOLDER</text>
+          <rect x="100" y="152" width="280" height="18" rx="3" fill="#1e3a5f"/><text x="108" y="164" fill="#7dd3fc">2 COMMON CARRIER — 4 FIXED FINS</text>
+          <rect x="100" y="174" width="280" height="26" rx="3" fill="#1e293b" stroke="#4ade80"/><text x="108" y="185" fill="#f1f5f9">3 DISPLAY CONTROLLER + RELATIVE-ANGLE SENSOR</text><text x="108" y="194" fill="#94a3b8">low-voltage LEDs and bench indicators</text>
+          <rect x="100" y="204" width="280" height="18" rx="3" fill="#334155"/><text x="108" y="216" fill="#cbd5e1">4 SINGLE TORQUE EMULATOR — CARRIER-LEVEL DEMO</text>
+          <rect x="100" y="226" width="140" height="18" rx="3" fill="#1a2e1a" stroke="#4ade80"/><text x="108" y="238" fill="#86efac">5 SUPERCAP + RECTIFIER</text>
+          <rect x="245" y="226" width="135" height="18" rx="3" fill="#334155" stroke="#fbbf24"/><text x="252" y="238" fill="#fef3c7">6 BEARING PAIR + ROTOR/STATOR</text>
+        </g>
+        <!-- interface -->
+        <line x1="390" y1="180" x2="440" y2="180" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrowY)"/>
+        <text x="398" y="172" style="font-size:7px;fill:#fde68a">DUMMY ADAPTER</text>
+        <!-- shell section -->
+        <rect x="440" y="130" width="260" height="100" rx="8" fill="#1f2937" stroke="#94a3b8"/>
+        <rect x="450" y="145" width="240" height="45" rx="4" fill="#334155" opacity=".8"/><text x="520" y="172" style="font-size:9px;fill:#cbd5e1">SOLID INERT INTERIOR</text>
+        <text x="450" y="122" style="font-size:10px;fill:#94a3b8;font-weight:700">PRINTED SHELL MOCK-UP — NO LIVE INTERFACE</text>
+        <text x="450" y="248" style="font-size:9px;fill:#94a3b8">Lightweight printed body • visual band • printed tail • inert bench model</text>
+        <!-- callout -->
+        <rect x="740" y="100" width="340" height="160" rx="10" fill="#0b1224" stroke="#334155"/>
+        <text x="755" y="125" style="font-size:11px;fill:#fbbf24;font-weight:800">WHAT THIS DEMO SHOWS</text>
+        <text x="755" y="145" style="font-size:11px;fill:#e2e8f0">• One carrier moves all four fixed canards</text>
+        <text x="755" y="162" style="font-size:11px;fill:#e2e8f0">• Outer shell and carrier rotate independently</text>
+        <text x="755" y="179" style="font-size:11px;fill:#e2e8f0">• Rotor/stator path makes display power</text>
+        <text x="755" y="196" style="font-size:11px;fill:#e2e8f0">• One low-voltage torque emulator controls phase</text>
+        <text x="755" y="213" style="font-size:11px;fill:#86efac">• Lightweight, inert, guarded, bench-only</text>
+        <text x="755" y="235" style="font-size:9px;fill:#94a3b8">Reference architecture only; no launch validation or fuze function</text>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <div class="leg"><h4><i style="background:#38bdf8"></i>PGK Demonstrator</h4><p>One common inner carrier, four fixed canards, two display bearings, shell/carrier alternator concept, and one low-voltage torque emulator.</p></div>
+      <div class="leg"><h4><i style="background:#475569"></i>Printed Shell Mock-up</h4><p>Lightweight printed body, ogive, visual band, and tail. Solid inert interior; it is not intended for a barrel or launch.</p></div>
+      <div class="leg"><h4><i style="background:#fbbf24"></i>Dummy Interface</h4><p>Nonfunctional slip-fit adapter for the exhibition stand. No live-compatible thread, fuze, setter, or firing path.</p></div>
+    </div>
+
+    <div class="specs">
+      <div class="spec">
+        <h3>SWaP-C & Performance</h3>
+        <dl class="kv">
+          <dt>Carrier</dt><dd>1 common carrier for all 4 fixed canards</dd>
+          <dt>Bearings</dt><dd>Front + rear coaxial display bearings</dd>
+          <dt>Torque</dt><dd>1 low-voltage exhibition emulator</dd>
+          <dt>Power</dt><dd>Shell-side rotor → carrier-side stator → supercap</dd>
+          <dt>Drive</dt><dd>Guarded low-speed bench stand only</dd>
+          <dt>Interior</dt><dd>Solid inert printed/mock electronics parts</dd>
+          <dt>Reference</dt><dd>Public PGK architecture; not a production claim</dd>
+          <dt>Safety</dt><dd>Physically incapable of firing</dd>
+        </dl>
+      </div>
+      <div class="spec">
+        <h3>How to use in SIH</h3>
+        <dl class="kv">
+          <dt>CAD</dt><dd>`cad_models/generate_pgk_155.py` + FreeCAD</dd>
+          <dt>Assembly</dt><dd>`PGK_DEMO_ASSEMBLY.md` → carrier/bearing/power path</dd>
+          <dt>Controller</dt><dd>Relative-angle sensor + LEDs for the bench demo</dd>
+          <dt>Power</dt><dd>Rectifier + supercap + low-voltage indicators</dd>
+          <dt>Actuation</dt><dd>One carrier-level torque emulator; no fin servos</dd>
+          <dt>Test</dt><dd>Hand/low-speed rotation with a physical guard</dd>
+          <dt>Boundary</dt><dd>No fuze function, launch, or flight validation</dd>
+        </dl>
+      </div>
+    </div>
+    <div class="callout">Hover any block for the demonstrator explanation. Use <b>Assembled</b> for the spin/de-spin story, <b>Exploded</b> for the carrier and power path, and <b>Section Cut</b> for the safe display electronics. This is a public-architecture exhibit, not launch hardware.</div>
+  </div>
+</div>
+<script>
+const tips=document.querySelectorAll('.hoverRect'), tip=document.getElementById('tip'), stage=document.getElementById('stage');
+tips.forEach(r=>{
+  r.addEventListener('mousemove',e=>{
+    const rect=stage.getBoundingClientRect();
+    tip.style.display='block';
+    tip.textContent=r.dataset.tip;
+    tip.style.left=(e.clientX-rect.left+12)+'px';
+    tip.style.top=(e.clientY-rect.top+12)+'px';
+  });
+  r.addEventListener('mouseleave',()=>tip.style.display='none');
+});
+document.querySelectorAll('.tab').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const v=b.dataset.view;
+    document.getElementById('svgAssembled').style.display=v==='assembled'?'block':'none';
+    document.getElementById('svgExploded').style.display=v==='exploded'?'block':'none';
+    document.getElementById('svgSection').style.display=v==='section'?'block':'none';
+  });
+});
+</script>
+</body>
+</html>

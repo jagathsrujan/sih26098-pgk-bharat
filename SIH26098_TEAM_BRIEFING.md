@@ -4,7 +4,7 @@
 
 > **One-line version:** The army's normal 155mm shells miss the target by ~267m at long range. We design a **screw-on smart nose** (guidance kit + electronic fuze) that makes the same old shell land within **30m** — at ₹8–11 lakh per kit instead of ₹60L+ for imported rounds. YIL (the factory that makes India's 155mm shells) wants this.
 
-> **Active build boundary:** The physical artifact in this workspace is an inert, low-speed exhibition demonstrator. Its active mechanical baseline is a common four-canard carrier, coaxial bearing isolation, and a shell-to-carrier alternator/torque concept. It is not launch hardware and must not be presented as an exact production teardown.
+> **Active build boundary:** The physical artifact in this workspace is an inert, low-speed exhibition demonstrator. Its active mechanical baseline is detailed CAD: `PGK_155mm.FCStd` — shell-spin rotor hub, ONE 61811 thin-section de-spin bearing, Ø106 dome-nosed de-spun stator carrying 4 fixed strakes, a 12-pole ring motor (steering torque + regen power), detent pawl + solenoid launch lock, Ø87 GNC PCB (2× STM32F405, ICM-42688, MMC-5983, dual Hall index), 6× 14430 battery bay, NEO-M9N + Ø25 patch. It is not launch hardware and must not be presented as an exact production teardown.
 
 > **Clean-sheet design of record (Rev 1.1, 2026-08-30):** `cleansheet/PGK_CleanSheet.FCStd` — threaded-race bearing-in-well, pancake outrunner, roll-decoupled canard shell. Native Assembly + 122-frame kinematic Simulation. Docs: `cleansheet/03_DESIGN_REPORT.md` (Rev 1.1), `cleansheet/HANDOFF.md` (Rev B). The bench demonstrator above is the exhibition artifact; the clean-sheet track is the analysis/design of record.
 
@@ -18,25 +18,25 @@ Official PS: `SIH2026_Hardware_PS.md:647` | S.No 98 | Category: **Hardware** | T
 
 | PS says (official text) | What it means in plain English | Our answer (from ideas catalog) |
 |---|---|---|
-| "Canard Actuation Assembly (CAA) for in-flight trajectory correction" | Small wings near the nose that steer the shell mid-flight | One common carrier holding 4 fixed illustrative canards; relative rotation is shown with bearings and a torque element (A1/B1 concept) |
+| "Canard Actuation Assembly (CAA) for in-flight trajectory correction" | Small steering surfaces near the nose that steer the shell mid-flight | 4 fixed strakes on ONE de-spun stator frame; isolation shown with a real 61811 thin-section bearing; steering = ring-motor roll torque (torque AND regen in one machine) |
 | "GNC system capable of improving terminal accuracy" | A brain that would guide the flight article; the exhibit only shows the electronics story | Display controller + relative-angle sensor + LEDs; flight GNC remains simulation/reference work (C1/C10/C11) |
 | "Multi-mode Electronic Fuze: Proximity / Time / Impact" | A project requirement to explain, not hardware to reproduce in the exhibit | Clearly labelled mock state machine/UI only; no radar, initiator, arming, fuze, or firing hardware |
 | "Embedded electronics and software for real-time flight control" | A future flight-article requirement; the exhibit only shows the electronics story | Low-voltage display controller, relative-angle sensor, and LEDs; flight electronics remain reference/simulation work |
-| "Power management suitable for high-g launch" | The exhibit demonstrates the energy path at low speed | Shell-side rotor + carrier-side stator → rectifier → supercapacitor → LEDs/controller |
+| "Power management suitable for high-g launch" | The exhibit demonstrates the energy path at low speed | Ring-motor regen (drag mode) → rectifier/boost → 6× 14430 bay → FOC/BlackPill rails |
 | "Communication and programming interface for fuze configuration prior to firing" | A project requirement to explain, not hardware to reproduce in the exhibit | Optional mock phone UI only; no live fuze, setter, initiator, or firing interface |
 | "CEP of 30 meters or better" | A future flight-performance target | Any trajectory/CEP result is simulation or public reference only—not a result from the printed bench model |
-| "Compatibility with existing 155mm shell design" | A future interface requirement | Nonfunctional slip-fit display adapter; no live-compatible thread or launch interface |
+| "Compatibility with existing 155mm shell design" | A future interface requirement | CAD shows a Ø56 STANAG 2916-class thread insert (simulated, printed for the demo); no live-compatible interface |
 | "Survive extreme mechanical and environmental conditions" | A future flight-article requirement, not a claim made by the printed exhibit | Lightweight printed housing, guarded low-speed operation, and explicit no-launch boundary (G1–G10 reference only) |
 | "Low SWaP-C, high reliability, modular" | Small, light, cheap, upgradeable | ~770g nose module, ₹8–11L, bay for future seekers |
 
 ### What we must SUBMIT (PS "Desired Deliverables" → our files)
 
-1. **System architecture document** → we have 108 ideas cataloged; we freeze the inert common-carrier demonstrator and document it
-2. **CAD model of the canard actuation assembly** → `cad_models/generate_pgk_155.py` + `cad_models/PGK_DEMO_ASSEMBLY.md` (FreeCAD, inert bench model)
+1. **System architecture document** → we have 108 ideas cataloged; baseline frozen in CAD (`PGK_155mm.FCStd`) + documented in `cad_models/PGK_155MM_ASSEMBLY.md`
+2. **CAD model of the steering assembly** → `PGK_155mm.FCStd` + `cad_models/PGK_155MM_ASSEMBLY.md` (de-spun stator + strakes + ring motor + 61811 bearing; exports/renders in `cad_models/out_pgk/`)
 3. **Electronics block diagram** → D/E/F/J categories combined block diagram
 4. **Guidance and control algorithm** → PID + impact-prediction (MPC-style), documented
 5. **Simulation demonstrating trajectory correction** → `cad_models/simulate_trajectory_155.py` (3DOF → 6DOF, Monte Carlo CEP)
-6. **Prototype or proof-of-concept (preferred)** → 3D-printed nose + bench de-spin rig + drop test plan
+6. **Prototype or proof-of-concept (preferred)** → CAD-detailed inert nose (print from `cad_models/out_pgk/stl/`) + bench de-spin rig + drop test plan
 7. **Performance estimation showing CEP ≤30m** → Monte Carlo histogram + report
 
 ### Why judges will care (our pitch spine)
@@ -136,10 +136,10 @@ Shell arcs 20–30km for ~60–90 seconds → fuze triggers → detonation at/ab
 - **MOFA:** Multi-Option Fuze for Artillery (existing Indian fuze family, ECIL/BEL).
 
 **Our project terms**
-- **PGK (Precision Guidance Kit):** A fuze-shaped module with GPS + canards that replaces the standard fuze and steers the shell. Our whole project.
-- **Canards:** Small wings near the nose ("duck" in French). Ours are fixed at a tilt; rolling the nose left/right aims their lift.
-- **Despun nose / carrier:** The inner canard carrier is bearing-isolated from the spinning outer housing. A torque element controls its relative orientation; the exhibition model shows this with two coaxial display bearings.
-- **GNC:** Guidance (where should I go), Navigation (where am I), Control (move canards to get there).
+- **PGK (Precision Guidance Kit):** A fuze-shaped module with GPS + steering surfaces that replaces the standard fuze and steers the shell. Our whole project.
+- **Strakes / canards:** Small fins near the nose. Ours are FIXED to the de-spun frame; holding that frame at an orientation aims their net lift.
+- **Despun nose / stator:** The steering frame is bearing-isolated from the spinning shell by ONE 61811 thin-section bearing; a 12-pole ring motor controls its relative orientation (and doubles as the spin-power harvester).
+- **GNC:** Guidance (where should I go), Navigation (where am I), Control (hold the de-spun frame at the steering orientation).
 - **IMU:** Inertial Measurement Unit — accelerometers + gyroscopes.
 - **GNSS / NavIC / GPS:** Satellite navigation. NavIC = India's own constellation (L5 band) — sovereign, can't be switched off by the US.
 - **FMCW radar:** Frequency-Modulated Continuous Wave — tiny radar that measures distance precisely (for proximity fuze).
@@ -193,23 +193,24 @@ The gun is aimed by calculation, but reality adds errors:
 
 Each error grows with time of flight (~80s) → **CEP ≈ 267m at 30km**. To reliably kill a target you must fire hundreds of shells: **~301 shells = 18.2 tonnes + 959 charges for ONE target** (idea H8).
 
-### 4.4 How 4 tiny canards fix 267m of error
+### 4.4 How 4 small strakes fix 267m of error
 ```
-Canard lift:            L = ½ ρ v² · (CL·S)
-  our canard lift-area: CL·S ≈ 0.005 m² (from sim)
+Strake lift:            L = ½ ρ v² · (CL·S)
+  our strake lift-area: CL·S ≈ 0.005 m² (from sim, canard-equivalent class)
   at q ≈ 287 kPa near muzzle → L ≈ 1.4 kN available → we cap at 3g
 
 Lateral correction:     Δx = ½ a t²
   with a = 3g = 29.4 m/s² held for just 20 s of guided flight:
   Δx = ½ × 29.4 × 20² ≈ 5.9 km of correction authority
 ```
-**We have ~6km of steering authority against a 267m problem — 20× margin.** That's the mathematical reason PGK works with just 4 fixed canards and one brake.
+**We have ~6km of steering authority against a 267m problem — 20× margin.** That's the mathematical reason PGK works with just 4 fixed strakes on one de-spun frame and one torque machine.
 
-### 4.5 How the fixed-canard carrier is represented in our model
-- All four illustrative canards are fixed to one common inner carrier; there are no individual fin hinges or gear motors.
-- The printed projectile and outer housing are the spin-side frame. The carrier can rotate relative to them on the coaxial bearing pair.
-- A shell-side rotor and carrier-side stator demonstrate the alternator concept. A single low-voltage torque emulator represents the control/brake function for the exhibition.
-- In the bench model, the carrier can be held nearly stationary while the outer shell rotates slowly. This demonstrates relative phase only; it does not validate flight guidance or launch survivability.
+### 4.5 How the de-spun steering frame is represented in our model
+- All four strakes are fixed to one de-spun stator (`PGK_Stator_Body`, Ø106, dome-nosed); there are no individual fin hinges or gear motors.
+- The shell + rotor hub are the spin-side frame (FRAME A). The stator rides on ONE 61811 thin-section bearing (55×72×9).
+- The 12-pole ring motor both steers FRAME B (torque mode) and harvests spin power (regen mode) — one machine, two acts.
+- A detent pawl + solenoid (D12×20) is the launch lock: engaged through setback/spin, release = "armed" (display-only).
+- On the bench, FRAME B is held nearly stationary while FRAME A rotates slowly. This demonstrates relative phase only; it does not validate flight guidance or launch survivability.
 
 ### 4.6 CEP math (what we report to judges)
 ```
@@ -223,18 +224,19 @@ Target: CEP ≤ 30m. Stretch: 10m (real PGK achieved 10m median in 2015 tests).
 
 ## SECTION 5 — Our Solution, Subsystem by Subsystem
 
-Active demonstrator architecture = **A1/B1 public-architecture analogue**: a fuze-shaped nose module with a nonfunctional slip-fit adapter, common four-canard carrier, coaxial bearing pair, shell-to-carrier alternator concept, and one low-voltage torque emulator. Dimensions and cost are display/project estimates, not production claims.
+Active demonstrator architecture = detailed CAD in `PGK_155mm.FCStd` (public-architecture analogue): a fuze-shaped nose module with a simulated STANAG 2916-class thread insert, shell-spin rotor hub, ONE 61811 de-spin bearing, Ø106 dome-nosed de-spun stator with 4 fixed strakes, 12-pole ring motor (torque + regen), detent pawl + solenoid, Ø87 GNC PCB (2× STM32F405, ICM-42688, MMC-5983, dual Hall), 6× 14430 bay, NEO-M9N + patch. Kit envelope Ø148 × 168 mm. Dimensions and cost are display/project estimates, not production claims.
 
 ```
  ┌──────────────────── ACTIVE INERT PGK DEMONSTRATOR ──────────────────────────┐
  │                                                                             │
- │  [Radome +      [Display controller + [Alternator: rotor = shell side,     │
- │   antenna       relative-angle       stator = carrier side]                │
- │   placeholder]  sensor + LEDs]       [single low-voltage torque emulator]   │
- │                                      [common carrier + 4 fixed canards]     │
- │  [Super-cap + rectifier + power board]                                      │
- │  [Printed outer housing + front/rear coaxial display bearings]              │
- │  [Inert status slider — no initiator, booster, or firing path]              │
+ │  [Dome + Ø25 GNSS patch   [Ø87 PCB: 2× STM32F405, ICM-42688,          │
+ │   under apex (NEO-M9N      MMC-5983, FOC driver, dual Hall index]      │
+ │   below the shelf]                                  ▲                  │
+ │                           [12-pole RING MOTOR: torque ⇄ regen]           │
+ │  [6× 14430 battery bay in hexagon @ r36.5]            │                  │
+ │  [Detent pawl + solenoid — launch lock (display-only)]│                  │
+ │  [ONE 61811 thin-section bearing] ◄───────────────────┘                  │
+ │  [Rotor hub + Ø56 simulated STANAG 2916 thread insert]                    │
  └─────────────────────────────────────────────────────────────────────────────┘
                          │ nonfunctional slip-fit display adapter
               ┌──────────▼──────────┐
@@ -245,10 +247,10 @@ Active demonstrator architecture = **A1/B1 public-architecture analogue**: a fuz
 | # | Subsystem | Owner | What it does | Key design choice | What you SUBMIT |
 |---|---|---|---|---|
 | 1 | **A_system + H_mfg** (Planner) | jagathsrujan | Overall architecture, requirements, cost model, interfaces between all subsystems | Active inert common-carrier demonstrator; separate simulation/reference track for future performance work | Architecture doc, cost sheet, master CAD, final PPT |
-| 2 | **B_aero** (Steering) | **OPEN — hiring** | Canard geometry, relative-rotation physics, lift/moment database | Four fixed illustrative canards on one common carrier; guarded bench validation | Canard CAD + CFD/simulation notes + safe rotation diagram |
+| 2 | **B_aero** (Steering) | **OPEN — hiring** | Strake geometry, relative-rotation physics, lift/moment database | 4 fixed strakes on the de-spun stator (per `PGK_155mm.FCStd`); guarded bench validation | Strake CAD + CFD/simulation notes + safe rotation diagram |
 | 3 | **D_sensors + C_gnc** (Brain) | Anvita Pranjal | Demonstrates relative-angle sensing and display control | Low-voltage controller + angle sensor + LEDs; flight GNC is simulation/reference only | Display PCB + live angle/power readout |
 | 4 | **E_fuze + J_integration** (Display Electronics) | Krupa Nalige | Explains public fuze concepts without reproducing them | Mock state machine/UI only; no radar, initiator, arming, fuze, or firing hardware | Clearly labelled display block diagram + mock-programming demo |
-| 5 | **G_structure + F_power** (Body) | Naman | Provides a clear, safe exhibition structure and demonstrates power harvesting | Lightweight printed housing + display bearing pair; shell/carrier rotor-stator → rectifier → supercap/LEDs | 3D-printed nose model + guarded low-speed power/angle demo |
+| 5 | **G_structure + F_power** (Body) | Naman | Provides a clear, safe exhibition structure and demonstrates power harvesting | Stator + strake print set, ONE 61811 bearing, ring motor (torque⇄regen) → rectifier → 14430 bay | 3D-printed nose model + guarded low-speed power/angle demo |
 | 6 | **I_test** (Tester) | Member 5 (TBD) | Proves it works without firing a real gun | 6DOF + Monte Carlo CEP, MIL-STD-331 test plan, drop/despin rigs | Sim report (CEP histogram) + test plan + final demo video |
 
 **Dependencies (talk to each other!):** Body(5) must give power before Brain(3) works • Steering(2) tells Brain(3) which way is up • Brain(3) tells Fuze(4) when/where to burst • Tester(6) checks everyone's numbers → Planner(1) puts it in the deck.

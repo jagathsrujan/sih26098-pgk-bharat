@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Guidance Kit for Spinning Projectiles — METU Thesis Explainer (Günay, 2022)</title>
+<meta name="description" content="Interactive explainer of the M.S. thesis 'Controller Design and Implementation for a Guidance Kit Used at Spinning Rockets and Projectiles' (Görkem Günay, METU, 2022)."/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%230f172a'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%2338bdf8' stroke-width='2.5'/%3E%3Cpath d='M16 16 L28 10' stroke='%23facc15' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8fafc; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --soft:#475569;
+  --line:#e2e8f0; --accent:#0ea5e9; --accent2:#6366f1; --good:#10b981;
+  --warn:#d97706; --bad:#dc2626; --radius:18px; --shadow:0 8px 30px rgba(15,23,42,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:15px}
+::selection{background:#bae6fd;color:#0f172a}
+a{color:var(--accent2);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.mono{font-family:JetBrains Mono,ui-monospace,monospace;font-feature-settings:"tnum"}
+.num{font-variant-numeric:tabular-nums}
+.container{max-width:1180px;margin:0 auto;padding:0 20px}
+.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 0;gap:14px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;padding:6px 12px;border-radius:999px;font-weight:700;font-size:12px;letter-spacing:.04em}
+.badge svg{width:12px;height:12px}
+.btn{appearance:none;border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;color:var(--ink);font-family:inherit}
+.btn:hover{border-color:#cbd5e1}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn svg{width:14px;height:14px}
+h1{font-size:clamp(30px,4.6vw,46px);line-height:1.08;font-weight:800;letter-spacing:-.03em;margin:14px 0 12px}
+h2{font-size:clamp(22px,3vw,28px);letter-spacing:-.02em;margin:0 0 6px}
+h3{font-size:16px;margin:0 0 8px}
+.meta{font-size:12.5px;color:var(--muted);margin:0 0 14px}
+p{margin:0 0 10px}
+.lead{font-size:16.5px;color:#334155;max-width:68ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.pad{padding:18px}
+.section{padding:34px 0 8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+@media(min-width:861px){#heroGrid{grid-template-columns:1.15fr .85fr}}
+.toc{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0}
+.toc a{font-size:12.5px;font-weight:600;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);color:#334155}
+.toc a:hover{border-color:#94a3b8;text-decoration:none}
+table{width:100%;border-collapse:collapse;font-size:13px;display:block;overflow-x:auto}
+.grid2>*,.grid3>*,.kpis>*{min-width:0}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#f8fafc;font-weight:700;font-size:12px}
+td.num,th.num{text-align:right}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;font-weight:700;white-space:nowrap}
+.tag-green{background:#dcfce7;color:#166534}
+.tag-red{background:#fee2e2;color:#991b1b}
+.tag-blue{background:#dbeafe;color:#1e40af}
+.tag-amber{background:#fef3c7;color:#92400e}
+.tag-slate{background:#f1f5f9;color:#334155}
+.notice{background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:12px 14px;border-radius:12px;font-size:13px}
+.notice-blue{background:#eff6ff;border-color:#bfdbfe;color:#1e40af}
+.notice-red{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+.small{font-size:12.5px;color:var(--muted)}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kpi b{font-size:22px;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.kpi span{font-size:12px;color:var(--muted);display:block}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+@media(max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.stat{padding:14px;border-radius:14px;border:1px solid var(--line);background:#fff}
+.stat b{font-size:19px;font-variant-numeric:tabular-nums}
+hr{border:0;height:1px;background:var(--line);margin:16px 0}
+canvas{display:block;max-width:100%}
+.canvas-wrap{background:#0f172a;border-radius:14px;padding:10px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+label{font-size:12px;font-weight:700;color:#334155;display:block;margin-bottom:4px}
+input.input,select.input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#fff;font-family:inherit}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.controls{grid-template-columns:1fr}}
+.eq{background:#0f172a;color:#e2e8f0;border-radius:12px;padding:12px 14px;font-family:JetBrains Mono,monospace;font-size:13px;line-height:1.7;overflow-x:auto}
+.eq .cmt{color:#7dd3fc}
+.eq .dim{color:#94a3b8}
+.frac{display:inline-block;vertical-align:middle;text-align:center;margin:0 3px}
+.frac .top{display:block;border-bottom:1px solid #94a3b8;padding:0 4px}
+.frac .bot{display:block;padding:0 4px}
+.matrix{display:inline-grid;gap:2px 10px;padding:6px 12px;position:relative;vertical-align:middle;font-family:JetBrains Mono,monospace;font-size:12.5px}
+.matrix::before,.matrix::after{content:"";position:absolute;top:0;bottom:0;width:8px;border:1.5px solid #94a3b8}
+.matrix::before{left:0;border-right:0;border-radius:3px 0 0 3px}
+.matrix::after{right:0;border-left:0;border-radius:0 3px 3px 0}
+.pass{color:#166534;font-weight:800}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:#cbd5e1}
+.legend .dot{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
+.accordion{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.acc-head{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;font-weight:700;font-size:13.5px;border-bottom:1px solid var(--line);background:#f8fafc}
+.acc-head:hover{background:#f1f5f9}
+.acc-body{padding:14px;display:none;font-size:13.5px;color:#334155;border-bottom:1px solid var(--line)}
+.acc-body.open{display:block}
+.acc-head .chev{transition:transform .2s}
+.acc-head.open .chev{transform:rotate(180deg)}
+.dropzone{border:2px dashed #cbd5e1;border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px;background:#f1f5f9;cursor:pointer}
+.dropzone.drag{background:#e0f2fe;border-color:var(--accent)}
+.diagram{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;overflow-x:auto}
+.diag-note{font-size:12px;color:var(--muted);padding:8px 6px 2px}
+svg text{font-family:Inter,sans-serif}
+.simgrid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px}
+@media(max-width:900px){.simgrid{grid-template-columns:1fr}}
+footer{padding:28px 0 40px;text-align:center}
+</style>
+</head>
+<body>
+<!--
+THESIS: one surface owns one mechanism — a spinning shell's guidance problem is collapsed into
+holding the roll angle of an unloaded generator; every section feeds that single sentence.
+OWN-WORLD: light paper-lab theme inherited from this folder's explainers (slate ink, sky/indigo
+accents, white cards, JetBrains Mono for real data), dark instrument canvases as the contrast fields.
+STORY: reader learns why spin-stabilized shells miss, how 4 fixed canards + an alternator replace
+servos and batteries, how a cascade PI/P loop is tuned and proven, and why the controller must
+re-tune itself mid-flight; leaves able to read chapters 4-7 of the PDF unaided.
+FIRST VIEWPORT: sticky bar; title + byline; live cross-section of the spinning body and the
+isolated canard rotor (drag to steer the net force); KPI strip of launch/servo numbers; TOC pills.
+FORM: inherited folder world, layered Read surface; seed key n/a (established world, compact confirmation).
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance.
+-->
+<div class="topbar">
+  <div class="container topbar-inner">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4.5 16.5c-1.5 1.5-2 5-2 5s3.5-.5 5-2M15 9l-6 6M14.5 3.5C17 2 21.5 2.5 21.5 2.5s.5 4.5-1 7L15 15l-6-6 5.5-5.5z"/></svg>
+      METU M.S. THESIS • MECHANICAL ENGINEERING • APR 2022
+    </span>
+    <span style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" onclick="document.getElementById('pdfSection').scrollIntoView({behavior:'smooth'})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v5h5M6 3h9l5 5v13H6z"/></svg>Read along (open the PDF)
+      </button>
+      <button class="btn" onclick="window.print()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>Print
+      </button>
+    </span>
+  </div>
+</div>
+
+<div class="container">
+  <div class="section" style="padding-top:26px">
+    <div class="grid2" style="align-items:start" id="heroGrid">
+      <div>
+        <h1>Steering a shell that spins 270 times per second</h1>
+        <p class="lead"><b>“Controller Design and Implementation for a Guidance Kit Used at Spinning Rockets and Projectiles”</b> — Görkem Günay’s 2022 METU master’s thesis (supervisors: Prof. Dr. Raif Tuna Balkan &amp; Assist. Prof. Dr. Hakan Çalışkan, with industry work at Roketsan). It asks one question: <i>can you guide a cheap, spin-stabilized artillery shell without servos, complicated electronics, or a battery?</i> The answer it builds and proves on a real test rig: <b>yes — by turning the whole actuation problem into holding the roll angle of an alternator.</b></p>
+        <div class="kpis">
+          <div class="kpi"><b>15,000 g</b><span>axial acceleration the electronics must survive at gun launch (5,000 g radial)</span></div>
+          <div class="kpi"><b>10–20k rpm</b><span>body spin (176–304 Hz at the muzzle) — far too fast for any servo to follow</span></div>
+          <div class="kpi"><b>1 kHz</b><span>control loop rate on the rig’s NI FPGA — the P position / PI velocity cascade</span></div>
+          <div class="kpi"><b>7-DOF</b><span>flight simulation (6-DOF + the free-spinning kit) that produced the aerodynamic torque used in the final tests</span></div>
+        </div>
+        <div class="toc" id="top">
+          <a href="#problem">Why shells miss</a>
+          <a href="#concept">The trick: fixed canards + alternator</a>
+          <a href="#rig">The test rig</a>
+          <a href="#model">Mathematical model</a>
+          <a href="#controller">Cascade controller</a>
+          <a href="#sim">Try the controller</a>
+          <a href="#flight">Flight dynamics</a>
+          <a href="#adaptive">Self-retuning in flight</a>
+          <a href="#results">Verdict</a>
+          <a href="#map">Chapter map</a>
+          <a href="#glossary">Glossary</a>
+        </div>
+      </div>
+      <div class="card pad">
+        <h3 style="margin-top:0">The document at a glance</h3>
+        <table>
+          <tr><th style="width:38%">File</th><td class="mono">10463953.pdf — 169 pages, 143 pages of thesis</td></tr>
+          <tr><th>Author</th><td>Görkem Günay, M.S. Mechanical Engineering</td></tr>
+          <tr><th>Institution</th><td>Middle East Technical University (METU), Ankara — April 2022</td></tr>
+          <tr><th>Industry link</th><td>Roketsan (Turkish rocket maker) — acknowledged for technical support</td></tr>
+          <tr><th>Structure</th><td>8 chapters + appendices A–G · ~60 figures · 19 tables</td></tr>
+          <tr><th>Deliverables</th><td>Working test rig + LabVIEW/FPGA controller · 6-DOF &amp; 7-DOF Simulink flight model · validated math model · flight-adaptive control law tested in hardware</td></tr>
+        </table>
+        <div class="notice notice-blue" style="margin-top:12px">
+          This page is built from the <b>actual text extracted from your PDF</b>. A previous explainer in this folder guessed the file was a Niantic patent from its filename — that was wrong and has been removed.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TL;DR ================= -->
+  <div class="section" id="tldr">
+    <div class="card pad">
+      <h2>The whole thesis in three moves</h2>
+      <p class="meta">If you read nothing else, read this — then everything below is detail.</p>
+      <div class="notice notice-amber" style="margin-bottom:12px"><b>Reference only:</b> this page explains the source thesis and its flight/test-rig architecture. The active workspace artifact is a separate inert CAD demonstrator (`PGK_155mm.FCStd`): de-spun stator + 4 fixed strakes, ONE 61811 bearing, ring motor (torque ⇄ regen), detent launch lock. Do not treat this page as a fabrication or launch specification.</div>
+      <div class="grid3">
+        <div class="stat">
+          <b style="color:var(--accent2)">1 · Isolate</b>
+          <p class="small" style="margin:8px 0 0">A <b>ring of 4 fixed canards</b> sits on the nose, mounted on bearings so it <b>doesn’t spin with the body</b>. Two “steering” canards create a net side-force; two “control” canards create a torque that fights the spin. No moving surfaces, no servo bandwidth problem.</p>
+        </div>
+        <div class="stat">
+          <b style="color:var(--accent)">2 · Load a generator</b>
+          <p class="small" style="margin:8px 0 0">The actuator is a <b>permanent-magnet alternator</b>: its stator spins with the body, its rotor holds the canards. Drawing load current brakes the rotor against the body spin. The entire actuation problem collapses to <b>one-axis position control</b> — and the alternator doubles as the power supply, so <b>no battery</b>.</p>
+        </div>
+        <div class="stat">
+          <b style="color:var(--good)">3 · Steer by roll angle</b>
+          <p class="small" style="margin:8px 0 0">The side-force always points in the kit’s roll direction θ<sub>gk</sub>. Hold θ<sub>gk</sub> “up” and the shell lifts; rotate it and the force rotates. A <b>cascade P + PI controller</b> holds that angle — and re-tunes its own saturation limits in flight using a <b>disturbance observer</b>, because aerodynamic torque collapses to ~0 near apogee.</p>
+        </div>
+      </div>
+      <hr/>
+      <p class="small" style="margin:0">Why it matters: unguided spin-stabilized shells need adjustment fire (“shoot–observe–shoot”) — slow and risky. Missile-grade guidance needs servos, batteries and complex drivers that must survive 15,000 g. This kit is the cheap middle path: fixed aerodynamics + a generator + one control loop. The same fixed-canard concept was patented as US 6,981,672 (2006); this thesis contributes the <b>rig, the model, the controller and the flight-proof of control authority</b>.</p>
+    </div>
+  </div>
+
+  <!-- ================= PROBLEM ================= -->
+  <div class="section" id="problem">
+    <h2>Why spin-stabilized shells miss</h2>
+    <p class="meta">Chapter 1 · pp. 1–8 — motivation, literature survey, contributions</p>
+    <div class="grid2">
+      <div>
+        <p>A spin-stabilized projectile is a gyroscope: rifling in the barrel spins it fast enough that aerodynamic wobble can’t tumble it. That stability is exactly what makes it <b>blind and unsteerable</b> — and any guidance hardware must live through the launch (15,000 g axial, 5,000 g radial) and then function while the world rotates around it up to 300 times a second.</p>
+        <p>The thesis surveys the two existing correction approaches:</p>
+        <table>
+          <tr><th style="width:26%">Approach</th><th>How it works</th><th>Catch</th></tr>
+          <tr><td><b>1-D guidance</b><br/><span class="small">drag brake</span></td><td>Aim behind the target; a deployable air brake shortens range only.</td><td class="small">No sideways correction at all.</td></tr>
+          <tr><td><b>2-D, movable canards</b></td><td>Traditional servos deflect fins in flight.</td><td class="small">Servo bandwidth can’t follow the spin → the fin section must be de-spun anyway; needs complex actuators, drivers and a battery.</td></tr>
+          <tr><td><b>2-D, fixed canards</b><br/><span class="small">this thesis</span></td><td>Fixed surfaces on a bearing-isolated nose; an alternator is both the actuator and the generator.</td><td class="small">One control axis — but you only steer when aerodynamic torque beats friction (the whole challenge of Ch. 6).</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3 style="margin-top:0">The launch environment sets every design choice</h3>
+        <table class="num">
+          <tr><th>Quantity</th><th class="num">Value</th><th>Consequence</th></tr>
+          <tr><td>Gun-launch acceleration</td><td class="num">15,000 g axial / 5,000 g radial</td><td>No delicate servo geartrains; prefer a rugged generator.</td></tr>
+          <tr><td>Body spin (155 mm shell)</td><td class="num">176–304 Hz at muzzle</td><td>Conventional actuators need bandwidth ∝ spin — impossible; isolate instead.</td></tr>
+          <tr><td>Muzzle velocity (charge 3M–6M)</td><td class="num">546–943 m/s</td><td>Aero torque spans huge range over one flight.</td></tr>
+          <tr><td>Spin decay in flight</td><td class="num">e.g. 262→191 Hz (5M)</td><td>Friction torque changes through flight too.</td></tr>
+        </table>
+        <p class="small" style="margin-top:10px">Table 2.1 of the thesis: powder charge vs. initial/final angular velocity — e.g. charge 6M: 943.5 m/s, 304.4 Hz → 221.3 Hz. Everything downstream (rig limits, controller saturation, test scaling) traces back to this table.</p>
+        <div class="notice" style="margin-top:10px"><b>Related work the thesis builds on:</b> Clancy et al.’s fixed-canard patent (US 6,981,672), Zhang et al. 2016 (mortar test rig with two motors), Yin/Jia/Yu 2018 (cascade P+PI with geomagnetic roll sensing), Costello 1998 &amp; Wernert/Theodoulis 2010 (dual-spin flight dynamics and the non-rolling frame choice).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CONCEPT ================= -->
+  <div class="section" id="concept">
+    <h2>The trick: four fixed canards and an alternator</h2>
+    <p class="meta">Chapter 2.1 · pp. 9–14 — the guidance kit and its force/torque budget</p>
+    <div class="grid2" style="align-items:start">
+      <div class="card" style="padding:14px">
+        <div class="canvas-wrap" style="background:#0f172a">
+          <svg id="kitSvg" viewBox="0 0 460 400" style="width:100%;display:block;touch-action:none" aria-label="Interactive cross-section of the guidance kit"></svg>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap">
+          <label style="flex:1;min-width:180px;margin:0">Kit roll angle θ<sub>gk</sub> — drag the handle
+            <input id="thgk" type="range" min="0" max="360" value="35" step="1">
+          </label>
+          <button class="btn" id="spinToggle" onclick="toggleSpin()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7M21 3v6h-6"/></svg><span id="spinLbl">Pause body spin</span>
+          </button>
+        </div>
+        <p class="small" style="margin:8px 0 0">Cross-section looking down the roll axis. The <b style="color:#34d399">green ring</b> is the body-driven stator (spinning, slowed ~2000×); the <b style="color:#38bdf8">blue rotor</b> carries the canards on bearings. Drag the slider: the <b style="color:#facc15">net steering force</b> (two steering canards, same cant) points wherever θ<sub>gk</sub> points. The two <b style="color:#f87171">control canards</b> (opposite cant) produce zero net force but a pure torque T<sub>aero</sub> against the spin — the “wind” that is the only thing that can turn the kit backwards.</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">The force/torque budget — who can push what</h3>
+        <table class="num">
+          <tr><th>Element</th><th>Net force</th><th>Net roll torque</th><th>Controlled by</th></tr>
+          <tr><td>Steering canards (0° &amp; 180°, same cant)</td><td class="num"><b>2F</b> — the guidance force</td><td class="num">0 (torques cancel)</td><td>nobody — fixed; its <i>direction</i> = θ<sub>gk</sub></td></tr>
+          <tr><td>Control canards (±90°, opposite cant)</td><td class="num">0</td><td class="num">T<sub>aero</sub> (−X, against spin)</td><td>flight conditions only: f(velocity, altitude)</td></tr>
+          <tr><td>Alternator torque T<sub>alt</sub> = K<sub>t</sub>·I<sub>a</sub></td><td class="num">—</td><td class="num">+X (with the spin)</td><td><b>the controller</b>, via load current</td></tr>
+          <tr><td>Bearing friction T<sub>f</sub></td><td class="num">—</td><td class="num">+X (with the spin)</td><td>nobody — the enemy (0.1 N·m on the rig)</td></tr>
+        </table>
+        <div class="card pad" style="margin-top:12px">
+          <h3>Controllability is a torque tug-of-war</h3>
+          <p class="small" style="margin-bottom:8px">Equations 5.1–5.2 of the thesis. The kit can only be turned “with the spin” by braking less, and “against the spin” only if the wind wins:</p>
+          <div class="eq">T<sub>+x</sub> = T<sub>alt</sub> + T<sub>f</sub> − T<sub>aero</sub>&nbsp;&nbsp;<span class="cmt">→ turning with the spin: always possible (load the alternator)</span>
+T<sub>−x</sub> = −(T<sub>alt</sub> + T<sub>f</sub>) + T<sub>aero</sub>&nbsp;&nbsp;<span class="cmt">→ turning against: needs T<sub>aero</sub> &gt; T<sub>f</sub></span></div>
+          <p class="small" style="margin:10px 0 0">Play with the balance — the symmetric-response envelope comes straight from Chapter 6 (Eq. 6.1–6.2):</p>
+          <div class="controls" style="margin-top:8px">
+            <div><label>Aerodynamic torque |T<sub>aero</sub>| (N·m) <span id="taV" class="mono">0.75</span></label><input id="taeroS" type="range" min="0" max="3" step="0.01" value="0.75"></div>
+            <div><label>Alternator current I<sub>load</sub> (A) <span id="ilV" class="mono">1.50</span></label><input id="iloadS" type="range" min="0" max="8" step="0.01" value="1.5"></div>
+          </div>
+          <div id="tugOut" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= RIG ================= -->
+  <div class="section" id="rig">
+    <h2>Chapter 2 — a bench that pretends to be a flying shell</h2>
+    <p class="meta">pp. 14–28 — test hardware, specifications, LabVIEW + FPGA software</p>
+    <p>The rig reproduces the two things the kit feels in flight — <b>body spin</b> and <b>aerodynamic torque</b> — with two industrial motors, and lets a computer “load” the alternator exactly like avionics would draw power:</p>
+    <div class="diagram">
+      <svg viewBox="0 0 980 210" style="min-width:760px;width:100%">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker>
+        </defs>
+        <g font-size="12.5" fill="#0f172a">
+          <rect x="16" y="60" width="130" height="64" rx="12" fill="#eef2ff" stroke="#6366f1"/>
+          <text x="81" y="86" text-anchor="middle" font-weight="700">Speed motor</text>
+          <text x="81" y="103" text-anchor="middle" font-size="11" fill="#475569">AKM63M · 4.95 kW</text>
+          <text x="81" y="117" text-anchor="middle" font-size="11" fill="#475569">simulates p_body</text>
+          <line x1="146" y1="92" x2="216" y2="92" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+          <rect x="220" y="42" width="170" height="100" rx="12" fill="#ecfeff" stroke="#0ea5e9"/>
+          <text x="305" y="66" text-anchor="middle" font-weight="700">Guidance kit</text>
+          <text x="305" y="84" text-anchor="middle" font-size="11" fill="#475569">alternator: stator ← body,</text>
+          <text x="305" y="98" text-anchor="middle" font-size="11" fill="#475569">rotor → 4 fixed canards</text>
+          <text x="305" y="118" text-anchor="middle" font-size="11" fill="#475569">encoder 2500 CPT between</text>
+          <text x="305" y="132" text-anchor="middle" font-size="11" fill="#475569">rotor and stator</text>
+          <line x1="305" y1="42" x2="305" y2="16" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+          <rect x="238" y="-8" width="0" height="0" fill="none"/>
+          <rect x="230" y="-14" width="150" height="0" fill="none"/>
+          <rect x="446" y="60" width="140" height="64" rx="12" fill="#fef2f2" stroke="#dc2626"/>
+          <text x="516" y="86" text-anchor="middle" font-weight="700">Torque motor</text>
+          <text x="516" y="103" text-anchor="middle" font-size="11" fill="#475569">AKM-33H · 2.27 N·m</text>
+          <text x="516" y="117" text-anchor="middle" font-size="11" fill="#475569">simulates T_aero</text>
+          <line x1="446" y1="92" x2="394" y2="92" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+          <line x1="390" y1="142" x2="390" y2="176" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+          <rect x="300" y="176" width="180" height="0" fill="none"/>
+          <rect x="296" y="176" width="188" height="0" fill="none"/>
+          <rect x="290" y="164" width="200" height="40" rx="10" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="390" y="182" text-anchor="middle" font-size="11" fill="#475569">slip ring → stationary side</text>
+          <text x="390" y="196" text-anchor="middle" font-size="11" fill="#475569">power + encoder signals</text>
+          <rect x="640" y="16" width="150" height="56" rx="12" fill="#fffbeb" stroke="#d97706"/>
+          <text x="715" y="38" text-anchor="middle" font-weight="700">DC electronic load</text>
+          <text x="715" y="55" text-anchor="middle" font-size="11" fill="#475569">LD400P · 80 A / 80 V</text>
+          <text x="715" y="90" text-anchor="middle" font-size="11" fill="#475569">← this current IS the</text>
+          <text x="715" y="104" text-anchor="middle" font-size="11" fill="#475569">controller’s command u(t)</text>
+          <line x1="390" y1="70" x2="636" y2="48" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+          <rect x="640" y="120" width="150" height="60" rx="12" fill="#0f172a"/>
+          <text x="715" y="143" text-anchor="middle" font-weight="700" fill="#fff">NI cRIO-9063 FPGA</text>
+          <text x="715" y="160" text-anchor="middle" font-size="11" fill="#7dd3fc">controller @ 1 kHz</text>
+          <line x1="640" y1="150" x2="640" y2="150" stroke="none"/>
+          <line x1="640" y1="150" x2="590" y2="150" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+          <line x1="590" y1="150" x2="590" y2="104" stroke="#64748b" stroke-width="1.6"/>
+          <line x1="590" y1="104" x2="446" y2="104" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+          <line x1="790" y1="44" x2="840" y2="44" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+          <line x1="790" y1="150" x2="840" y2="150" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+          <rect x="842" y="20" width="126" height="56" rx="12" fill="#f1f5f9" stroke="#cbd5e1"/>
+          <text x="905" y="42" text-anchor="middle" font-size="11" fill="#475569">AC/DC converter</text>
+          <text x="905" y="57" text-anchor="middle" font-size="11" fill="#475569">+ 50 µF filter cap</text>
+          <rect x="842" y="124" width="126" height="52" rx="12" fill="#f1f5f9" stroke="#cbd5e1"/>
+          <text x="905" y="146" text-anchor="middle" font-size="11" fill="#475569">host PC · LabVIEW UI</text>
+          <text x="905" y="161" text-anchor="middle" font-size="11" fill="#475569">scopes &amp; setpoints</text>
+        </g>
+      </svg>
+      <div class="diag-note">Rig signal flow (schematic of Figures 2.6–2.11). The alternator is loaded through a rectifier and filter capacitor into a programmable DC load — drawing current is what brakes the canard rotor, and that same current is the controller’s only output.</div>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div>
+        <h3>The components that matter for control</h3>
+        <table class="num">
+          <tr><th>Component</th><th>Key spec</th><th>Role in the story</th></tr>
+          <tr><td>Alternator (Volt Defence)</td><td class="num">K<sub>t</sub> = 0.716 N·m/A · K<sub>v</sub> = 0.749 V·s/rad · R<sub>a</sub> = 6.2 Ω · L<sub>a</sub> = 8.8 mH · 7 pole pairs · 1.2 kW</td><td>The plant. K<sub>t</sub>, K<sub>v</sub>, R<sub>a</sub>, L<sub>a</sub> appear in every equation of Ch. 3.</td></tr>
+          <tr><td>Encoder (FENAC, optical, incremental + index)</td><td class="num">2500 counts/rev</td><td>Measures the relative angle θ<sub>gk</sub>. At 1 ms sampling, velocity resolution is δV = 24 rpm (Eq. 2.1) — the source of the velocity noise you’ll see in test plots.</td></tr>
+          <tr><td>Speed motor (Kollmorgen AKM63M)</td><td class="num">4.95 kW · 4500 rpm · 10.5 N·m</td><td>Plays the flying body: 800 rpm scaled stand-in for 15,500 rpm.</td></tr>
+          <tr><td>Torque motor (Kollmorgen AKM-33H)</td><td class="num">2.27 N·m rated</td><td>Plays the wind: applies T<sub>aero</sub> from the 7-DOF sim.</td></tr>
+          <tr><td>DC electronic load (Aim TTI LD400P)</td><td class="num">80 A / 80 V / 400 W</td><td>Controller output. Note: it can only <b>sink</b> current — I<sub>load</sub> ∈ [0, I<sub>max</sub>], one-sided authority.</td></tr>
+          <tr><td>Filter capacitor + rectifier (TDK 800 V 50 µF, Vishay VS-36MT140)</td><td class="num">C<sub>f</sub> = 50 µF</td><td>Smooths alternator voltage; C<sub>f</sub> creates the fast electrical dynamics in the model.</td></tr>
+          <tr><td>NI cRIO-9063 + 9205/9264/9411</td><td class="num">FPGA @ 1 kHz</td><td>Runs the cascade controller, encoder decoding (30/45 µs line filters), saturation and anti-windup in fixed-point.</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>What “the same physics, scaled” means</h3>
+        <div class="stat">
+          <p class="small" style="margin:0 0 8px">A real shell spins at ~15,500 rpm — far beyond the rig. Chapter 6 scales the <b>body spin</b> but applies the <b>aerodynamic torque unchanged</b>:</p>
+          <div class="eq" style="font-size:12px">p<sub>relative,max</sub> = 80 V / K<sub>v</sub> = 106.6 rad/s
+p<sub>body,max</sub> = 106.6 − 31.42 = 75.18 rad/s
+C = 1623.2 / 75.18 = <b>21.6×</b> down-scaling
+→ test max body spin = 800 rpm (83.8 rad/s)</div>
+          <p class="small" style="margin:10px 0 0">Consequence to remember: on the rig the kit-to-body speed ratio is 21.6× larger than in flight — which is exactly why one controller variant overshoots on the rig but would work on the real shell (Ch. 7). The thesis is refreshingly honest about this.</p>
+        </div>
+        <div class="notice" style="margin-top:12px"><b>Software:</b> host PC LabVIEW UI for setpoints/scopes; FPGA target decodes the encoder, runs the 1 kHz control law with saturation + anti-windup and picks the rotation direction that demands <b>minimum control effort</b> (a roll angle is circular — you may rotate either way; Ch. 4.4).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODEL ================= -->
+  <div class="section" id="model">
+    <h2>Chapter 3 — the math model (and proof it matches the hardware)</h2>
+    <p class="meta">pp. 29–42 — linear-graph state space, Simulink cross-check, transfer functions, validation</p>
+    <div class="grid2">
+      <div>
+        <p>Using the <b>linear graph method</b>, the rig reduces to 3 states and 3 inputs — a tidy third-order system:</p>
+        <div class="eq">
+x = <span class="matrix"><span>p<sub>gk</sub></span><span>V<sub>Cf</sub></span><span>I<sub>La</sub></span></span>&nbsp;&nbsp;<span class="cmt">kit speed · capacitor volts · alternator current</span>
+u = <span class="matrix"><span>p<sub>body</sub>(t)</span><span>T<sub>aero</sub>(t)</span><span>I<sub>load</sub>(t)</span></span>&nbsp;&nbsp;<span class="cmt">spin · wind · command</span>
+<span class="dim">ẋ = Ax + Bu&nbsp;&nbsp;(Eq. 3.1–3.5)</span></div>
+        <p class="small" style="margin-top:10px">The A matrix is worth reading as physics, row by row:</p>
+        <div class="eq" style="font-size:12.5px">
+ṗ<sub>gk</sub> = −<span class="frac"><span class="top">b</span><span class="bot">J<sub>gk</sub></span></span>p<sub>gk</sub> + <span class="frac"><span class="top">K<sub>t</sub></span><span class="bot">J<sub>gk</sub></span></span>I<sub>La</sub> + <span class="frac"><span class="top">b</span><span class="bot">J<sub>gk</sub></span></span>p<sub>body</sub> + <span class="frac"><span class="top">1</span><span class="bot">J<sub>gk</sub></span></span>T<sub>aero</sub>
+V̇<sub>Cf</sub> = <span class="frac"><span class="top">1</span><span class="bot">C<sub>f</sub></span></span>(I<sub>La</sub> − I<sub>load</sub>)
+İ<sub>La</sub> = −<span class="frac"><span class="top">K<sub>v</sub></span><span class="bot">L<sub>a</sub></span></span>p<sub>gk</sub> − <span class="frac"><span class="top">1</span><span class="bot">L<sub>a</sub></span></span>V<sub>Cf</sub> − <span class="frac"><span class="top">R<sub>a</sub></span><span class="bot">L<sub>a</sub></span></span>I<sub>La</sub> + <span class="frac"><span class="top">K<sub>v</sub></span><span class="bot">L<sub>a</sub></span></span>p<sub>body</sub></div>
+        <p class="small" style="margin-top:10px">A pure mechanical balance (row 1: inertia vs friction + generator torque + wind), a capacitor (row 2), and an R–L circuit back-EMF coupled to relative speed (row 3). J<sub>gk</sub> = 1.117×10⁻³ kg·m² is the sum of the four rotor parts in Table 2.2.</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Three transfer functions into p<sub>gk</sub></h3>
+        <p class="small">Derived in Appendix B, each shares one denominator (Eq. 3.6–3.8):</p>
+        <div class="eq" style="font-size:12.5px">
+G<sub>Iload→pgk</sub> = <span class="frac"><span class="top">β₀</span><span class="bot">σ₃s³ + σ₂s² + σ₁s + σ₀</span></span> &nbsp;<span class="cmt">the control path</span>
+G<sub>Taero→pgk</sub>, G<sub>pbody→pgk</sub> &nbsp;<span class="cmt">the disturbance paths</span></div>
+        <div class="card pad" style="margin-top:10px">
+          <b>The poles tell the whole design story</b>
+          <div style="margin-top:8px">
+            <svg id="poleSvg" viewBox="0 0 460 190" style="width:100%"></svg>
+          </div>
+          <p class="small" style="margin:6px 0 0">Fast complex pair −352.3 ± 1483.2 i = the R–L–C electrical dance (ω = 1/√(L<sub>a</sub>C<sub>f</sub>) ≈ 1508 rad/s, damping R<sub>a</sub>/2L<sub>a</sub> ≈ 352). The slow real pole at <b>−1.04</b> is the one that limits control bandwidth — the thesis’s reduced model Ĝ = 588.4/(s+1.04) (Ch. 6) keeps just this.</p>
+        </div>
+        <h3 style="margin-top:14px">Model vs. reality (Section 3.5)</h3>
+        <table class="num">
+          <tr><th>Test</th><th>Condition</th><th>Result</th></tr>
+          <tr><td>Open-circuit</td><td class="num">p<sub>body</sub> = 10.5 → 73.3 rad/s, I<sub>load</sub> = 0</td><td>V<sub>Cf</sub> matches sim within ~6%; K<sub>v</sub> drifts 0.74 → 0.80 with speed (accepted, not control-relevant)</td></tr>
+          <tr><td>Closed-circuit</td><td class="num">5 speeds × 4–5 load currents</td><td>Voltage and torque match; K<sub>t</sub> ≈ 0.69–0.77 across loads (measurement offset suspected)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CONTROLLER ================= -->
+  <div class="section" id="controller">
+    <h2>Chapter 4 — a cascade P + PI controller, tuned the classical way</h2>
+    <p class="meta">pp. 43–66 — requirements, root-locus design, anti-windup, step &amp; chirp validation</p>
+    <div class="diagram" style="margin-bottom:14px">
+      <svg viewBox="0 0 960 170" style="min-width:740px;width:100%">
+        <defs><marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker></defs>
+        <g font-size="12">
+          <text x="8" y="95" font-weight="700">θ_ref</text>
+          <line x1="44" y1="90" x2="86" y2="90" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr2)"/>
+          <circle cx="100" cy="90" r="10" fill="#fff" stroke="#334155"/><text x="100" y="95" text-anchor="middle" font-size="11">Σ</text>
+          <line x1="100" y1="80" x2="100" y2="52" stroke="#64748b" stroke-width="1.2"/><line x1="100" y1="52" x2="60" y2="52" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr2)"/>
+          <text x="58" y="45" font-size="11" fill="#475569">θ_gk (encoder)</text>
+          <line x1="110" y1="90" x2="140" y2="90" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr2)"/>
+          <rect x="142" y="64" width="118" height="52" rx="10" fill="#eef2ff" stroke="#6366f1"/>
+          <text x="201" y="86" text-anchor="middle" font-weight="700">P — position</text>
+          <text x="201" y="102" text-anchor="middle" font-size="11" fill="#475569">K = 29.7 · min-effort</text>
+          <line x1="260" y1="90" x2="290" y2="90" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr2)"/>
+          <text x="275" y="80" text-anchor="middle" font-size="11" fill="#475569">v_ref</text>
+          <circle cx="304" cy="90" r="10" fill="#fff" stroke="#334155"/><text x="304" y="95" text-anchor="middle" font-size="11">Σ</text>
+          <line x1="314" y1="90" x2="346" y2="90" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr2)"/>
+          <rect x="348" y="64" width="150" height="52" rx="10" fill="#ecfeff" stroke="#0ea5e9"/>
+          <text x="423" y="86" text-anchor="middle" font-weight="700">PI — velocity</text>
+          <text x="423" y="102" text-anchor="middle" font-size="11" fill="#475569">0.29 + 7.82/s · clamp AW</text>
+          <line x1="498" y1="90" x2="528" y2="90" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr2)"/>
+          <rect x="530" y="64" width="128" height="52" rx="10" fill="#fffbeb" stroke="#d97706"/>
+          <text x="594" y="86" text-anchor="middle" font-weight="700">Saturation</text>
+          <text x="594" y="102" text-anchor="middle" font-size="11" fill="#475569">I_load ∈ [0, 1.9] A</text>
+          <line x1="658" y1="90" x2="688" y2="90" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr2)"/>
+          <rect x="690" y="64" width="150" height="52" rx="10" fill="#f1f5f9" stroke="#64748b"/>
+          <text x="765" y="86" text-anchor="middle" font-weight="700">Plant G_Iload→pgk</text>
+          <text x="765" y="102" text-anchor="middle" font-size="11" fill="#475569">3rd-order, pole at −1.04</text>
+          <line x1="840" y1="90" x2="872" y2="90" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr2)"/>
+          <text x="878" y="86" font-weight="700">p_gk</text>
+          <text x="878" y="104" font-size="11" fill="#475569">∫ → θ_gk</text>
+          <g stroke="#dc2626" stroke-width="1.4">
+            <line x1="765" y1="30" x2="765" y2="60" marker-end="url(#arr2)"/>
+            <line x1="700" y1="140" x2="700" y2="120" marker-end="url(#arr2)"/>
+          </g>
+          <text x="765" y="22" text-anchor="middle" font-size="11" fill="#dc2626">T_aero (disturbance)</text>
+          <text x="700" y="158" text-anchor="middle" font-size="11" fill="#dc2626">p_body (disturbance)</text>
+          <line x1="860" y1="90" x2="860" y2="40" stroke="#64748b" stroke-width="1.2"/>
+          <line x1="860" y1="40" x2="380" y2="40" stroke="#64748b" stroke-width="1.2"/>
+          <line x1="380" y1="40" x2="380" y2="84" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr2)"/>
+          <text x="620" y="34" font-size="11" fill="#475569">p_gk feedback (inner loop ≥5× faster than outer)</text>
+        </g>
+      </svg>
+      <div class="diag-note">Cascade structure (Figure 4.1). The inner velocity loop must be ≥5× faster than the outer position loop; it also absorbs the T<sub>aero</sub> and p<sub>body</sub> disturbances before the position loop feels them.</div>
+    </div>
+    <div class="grid2">
+      <div>
+        <h3>Requirements → achieved (all PASS)</h3>
+        <table class="num">
+          <tr><th>Loop</th><th>Requirement</th><th>Designed</th><th></th></tr>
+          <tr><td rowspan="4"><b>Position</b><br/><span class="small">(outer, P-only)</span></td><td class="num">cut-off ≥ 4 Hz</td><td class="num">6.2 Hz</td><td><span class="tag tag-green">PASS</span></td></tr>
+          <tr><td class="num">settling ≤ 0.1 s (5%)</td><td class="num">0.1 s</td><td><span class="tag tag-green">PASS</span></td></tr>
+          <tr><td class="num">overshoot ≤ 5%</td><td class="num">0%</td><td><span class="tag tag-green">PASS</span></td></tr>
+          <tr><td class="num">K<sub>p</sub> = ∞ (zero ss error)</td><td class="num">∞</td><td><span class="tag tag-green">PASS</span></td></tr>
+          <tr><td rowspan="4"><b>Velocity</b><br/><span class="small">(inner, PI)</span></td><td class="num">cut-off ≥ 20 Hz</td><td class="num">33.6 Hz</td><td><span class="tag tag-green">PASS</span></td></tr>
+          <tr><td class="num">settling ≤ 0.05 s (5%)</td><td class="num">0.05 s</td><td><span class="tag tag-green">PASS</span></td></tr>
+          <tr><td class="num">overshoot ≤ 25%</td><td class="num">9.57%</td><td><span class="tag tag-green">PASS</span></td></tr>
+          <tr><td class="num">K<sub>p</sub> = ∞</td><td class="num">∞</td><td><span class="tag tag-green">PASS</span></td></tr>
+        </table>
+        <p class="small" style="margin-top:8px">Tables 4.1–4.4. The 0.1 s settling target and the 4 Hz cut-off come from reference [10] on fixed-canard guidance; no overshoot matters because the reference angle itself is aggressive during corrections.</p>
+      </div>
+      <div>
+        <h3>How each choice was forced by the math</h3>
+        <div class="grid2" style="gap:10px">
+          <div class="stat"><b style="font-size:14px">Why PI in the velocity loop?</b><p class="small" style="margin:6px 0 0">Final Value Theorem on the step error: zero steady-state error needs a free integrator (K<sub>p</sub> = ∞). The same integrator drives step-disturbance error from T<sub>aero</sub> and p<sub>body</sub> to zero (Eq. 4.13, 4.15).</p></div>
+          <div class="stat"><b style="font-size:14px">Why P-only in the position loop?</b><p class="small" style="margin:6px 0 0">The inner loop’s integrator already makes the position open-loop type-1 — K<sub>p</sub> = ∞ for free. Disturbances are handled below. Adding more would only risk stability.</p></div>
+          <div class="stat"><b style="font-size:14px">Why clamping anti-windup?</b><p class="small" style="margin:6px 0 0">The velocity command saturates at the load’s current limit; a naive integrator keeps accumulating during saturation → overshoot on release. Clamping freezes the integrator exactly when pushing further into saturation.</p></div>
+          <div class="stat"><b style="font-size:14px">Why “minimum control effort”?</b><p class="small" style="margin:6px 0 0">θ<sub>gk</sub> is circular. For a 350° error, rotating −10° is cheaper than +350°. The FPGA picks the shorter way (Fig. 4.14).</p></div>
+        </div>
+        <div class="notice" style="margin-top:12px"><b>Hardware validation (Section 4.4):</b> step tests and a chirp (0.01 → 7.5 Hz over 15 s, amplitude π/8) match simulation; measured cut-off <b>6.23 Hz vs. designed 6.2 Hz</b>. Residual test-only wobble at standstill is traced to encoder velocity resolution (24 rpm) and non-linear Coulomb friction.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SIM ================= -->
+  <div class="section" id="sim">
+    <h2>Try the controller — the thesis plant, live in your browser</h2>
+    <p class="meta">Reconstruction: the exact 3-state model (Eq. 3.4–3.5) + the thesis gains (K = 29.7; 0.29 + 7.82/s), integrated at 5×10⁻⁵ s with the 1 kHz controller, I<sub>load</sub> ∈ [0, 1.9] A, p<sub>body</sub> = 83.8 rad/s, J<sub>gk</sub> and b consistent with the reported poles. Educational approximation, not the thesis code.</p>
+    <div class="simgrid">
+      <div class="card" style="padding:14px">
+        <div class="canvas-wrap"><canvas id="simCanvas" width="860" height="380" style="width:100%;height:auto"></canvas></div>
+        <div class="legend" style="margin-top:8px;color:#334155">
+          <span><i class="dot" style="background:#facc15"></i>reference θ (deg)</span>
+          <span><i class="dot" style="background:#38bdf8"></i>θ_gk response</span>
+          <span><i class="dot" style="background:#a78bfa"></i>p_gk (rad/s, ×10 scale)</span>
+          <span><i class="dot" style="background:#f87171"></i>I_load command (A, right axis)</span>
+        </div>
+      </div>
+      <div class="card pad">
+        <h3 style="margin-top:0">Experiment</h3>
+        <label>Step target (degrees) <span id="stepVal" class="mono">90°</span></label>
+        <input id="stepS" type="range" min="-170" max="170" value="90" step="5">
+        <label style="margin-top:10px">Wind |T<sub>aero</sub>| (N·m) <span id="windVal" class="mono">0.75</span></label>
+        <input id="windS" type="range" min="0" max="1.8" step="0.01" value="0.75">
+        <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+          <input type="checkbox" id="awChk" checked style="width:16px;height:16px;accent-color:var(--accent)">
+          <label for="awChk" style="margin:0">Clamping anti-windup ON</label>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="runSim()">Run step</button>
+          <button class="btn" onclick="presetWindup()">Windup demo</button>
+          <button class="btn" onclick="presetLost()">Lose authority</button>
+        </div>
+        <div id="simMetrics" style="margin-top:12px"></div>
+        <p class="small" style="margin:10px 0 0">Things to discover: (1) negative targets ride the wind passively — the load can only brake “with” the spin; (2) switch anti-windup off and watch overshoot appear; (3) push the wind past ≈1.46 N·m (K<sub>t</sub>·1.9 A + friction) and no gain can hold position — this is Chapter 6’s “lost control authority”, not bad tuning.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FLIGHT ================= -->
+  <div class="section" id="flight">
+    <h2>Chapter 5 — from 6-DOF to 7-DOF: what the wind actually does in flight</h2>
+    <p class="meta">pp. 67–80 — coordinate frames, 6-DOF &amp; 7-DOF Simulink models, torque histories</p>
+    <div class="grid2">
+      <div>
+        <h3 style="margin-top:0">Choosing the reference frame is a performance decision</h3>
+        <table>
+          <tr><th>Frame</th><th>Property</th><th>Verdict</th></tr>
+          <tr><td>Body frame</td><td>Rolls with the shell → sim must resolve the full spin frequency</td><td><span class="tag tag-red">too slow to simulate</span></td></tr>
+          <tr><td><b>Body Fixed Plane (used)</b></td><td>Zero Euler roll rate: p<sub>F</sub> = −r·tanθ; Y-axis stays parallel to the ground</td><td><span class="tag tag-green">chosen</span></td></tr>
+          <tr><td>Body non-spinning</td><td>p<sub>F</sub> = 0; simpler, faster</td><td><span class="tag tag-slate">valid alternative</span></td></tr>
+        </table>
+        <p class="small" style="margin-top:10px">The 6-DOF model (Eq. 5.7–5.10) integrates forces/moments — lift, drag, Magnus, pitch/yaw moments &amp; damping, roll damping, gravity (all in Appendix G) — in the non-rolling frame. Test case (Table 5.1): 155 mm, 43 kg, I<sub>xx</sub> = 0.144, I<sub>yy</sub> = I<sub>zz</sub> = 1.216 kg·m², V₀ = 800 m/s, spin 1600 rad/s, 63° elevation.</p>
+        <p><b>The 7-DOF extension</b> (Eq. 5.11–5.14) adds one rotational DOF: the free-spinning kit (p<sub>gk</sub> decoupled from p<sub>body</sub>, separate inertia I<sub>xgk</sub>). This is what produces the two numbers the rig needs: <b>T<sub>aero</sub>(t)</b> on the canards and <b>p<sub>body</sub>(t)</b>.</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">The flight-long torque story (stylized from Figs. 6.1–6.2)</h3>
+        <div class="canvas-wrap"><canvas id="flightCanvas" width="560" height="300" style="width:100%;height:auto"></canvas></div>
+        <p class="small" style="margin-top:8px">Aerodynamic torque is born and dies with dense air and speed: huge at launch, <b>≈0 at apogee</b>, large again on descent. Wherever |T<sub>aero</sub>| drops below friction, the kit can’t be turned against the spin — <b>control authority is a window, not a constant</b>. The thesis warns: if friction beats aero at apogee, guidance simply must wait until after it.</p>
+        <div class="notice" style="margin-top:10px"><b>Honest caveat in the data:</b> the aero-coefficient set exists only at Mach 0.9, 0.95, 1.1, 1.5, 2.0 — so the torque traces contain sudden unphysical jumps where the tables interpolate. The thesis flags these explicitly (Section 5.3.1).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ADAPTIVE ================= -->
+  <div class="section" id="adaptive">
+    <h2>Chapter 6 — the controller that re-tunes itself mid-flight</h2>
+    <p class="meta">pp. 81–94 — flight scenario, failure of the fixed controller, disturbance observer, three fixes</p>
+    <div class="grid2">
+      <div>
+        <h3 style="margin-top:0">Step 1: watch the fixed controller fail</h3>
+        <p>Feeding the rig the real T<sub>aero</sub>(t) (unscaled) and p<sub>body</sub>(t) (scaled 21.6×), with a square-wave reference of amplitude π/4 through the whole flight, the original controller <b>loses control between t ≈ 30–50 s</b> — around apogee, where the wind dies and can no longer turn the kit against friction. Overshoots grow until the system is effectively open-loop.</p>
+        <h3>Step 2: observe the total disturbance</h3>
+        <p>A <b>frequency-domain disturbance observer</b> estimates the combined wind + friction as an equivalent current Î — using only signals that exist (you can’t measure load voltage and current simultaneously, so the time-domain/observer-with-all-states route is out). Plant inverse needs a filter to stay causal:</p>
+        <div class="eq" style="font-size:12.5px">Ĝ = <span class="frac"><span class="top">588.4</span><span class="bot">s + 1.04</span></span>&nbsp;&nbsp;<span class="cmt">reduced plant (Appendix F)</span>
+Q = <span class="frac"><span class="top">1</span><span class="bot">0.5s + 1</span></span>&nbsp;&nbsp;<span class="cmt">1.1 s rise — slow on purpose; T_aero has no high frequencies</span></div>
+        <p class="small" style="margin-top:8px">Discretized for the FPGA (c2d, first-order hold, 1 ms): G<sub>obs</sub>(z) = (0.003397z − 0.003394)/(z − 0.998), Q(z) = (0.0009993z + 0.0009987)/(z − 0.998).</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Step 3: three ways to spend the estimate</h3>
+        <table>
+          <tr><th style="width:30%">Solution</th><th>Rule</th><th>Outcome</th></tr>
+          <tr><td><b>1 · Dynamic current limit</b><br/><span class="small">Ch. 6.4.1 + 7.2</span></td><td class="small">velocity-controller saturation = 2·Î → equal authority both directions</td><td class="small"><span class="tag tag-blue">controllable all flight</span> <span class="tag tag-red">overshoots remain</span> — velocity limit uncontrolled</td></tr>
+          <tr><td><b>2 · Dynamic velocity limit</b><br/><span class="small">Ch. 6.4.2 + 7.3</span></td><td class="small">position-controller output limit = 26·Î rad/s, capped at 31.4</td><td class="small"><span class="tag tag-green">no overshoot</span> <span class="tag tag-amber">asymmetric response</span> — and on the rig, alternator current limit is hit when kit spins with body (rig artifact of the 21.6× scaling)</td></tr>
+          <tr><td><b>3 · Combined</b><br/><span class="small">Ch. 6.4.3 + 7.4</span></td><td class="small">both limits track Î</td><td class="small"><span class="tag tag-green">no overshoot</span> <span class="tag tag-green">symmetric</span> <span class="tag tag-green">alternator limit never reached</span> — <b>the winner</b></td></tr>
+        </table>
+        <div class="notice" style="margin-top:12px"><b>Why the rig behaves worse than the sim (Ch. 7 honesty list):</b> DC-load response dynamics, continuous-vs-discrete differences, fixed-point rounding on the FPGA, non-linear Coulomb friction, and — the big one — the alternator simply <b>cannot make current at low relative speed</b>, so demanded braking torque vanishes exactly when the scaled-down body spin makes the kit relatively fast. Overshoot timestamps line up with the current-saturation trace (Fig. 7.4).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= RESULTS ================= -->
+  <div class="section" id="results">
+    <h2>Chapter 8 — verdict and what’s next</h2>
+    <p class="meta">pp. 103–105</p>
+    <div class="grid2">
+      <div class="card pad">
+        <h3 style="margin-top:0">The thesis proves, in order</h3>
+        <ol class="small" style="margin:0;padding-left:18px;line-height:1.9">
+          <li>A fixed-canard + alternator kit reduces 2-D guidance actuation to <b>one-axis position control</b> — and powers itself.</li>
+          <li>A bench rig can reproduce flight torque and (scaled) spin, and its 3-state model matches hardware within a few percent.</li>
+          <li>Classical cascade P/PI with clamping anti-windup meets every requirement <b>in hardware</b> (6.23 Hz measured vs 6.2 Hz designed).</li>
+          <li>7-DOF flight sim delivers the real T<sub>aero</sub>(t) and p<sub>body</sub>(t); control authority vanishes near apogee — a physics constraint, not a tuning flaw.</li>
+          <li>A disturbance observer + dynamic saturation limits keep the system controllable, overshoot-free and symmetric <b>through the whole flight — verified on hardware</b>.</li>
+        </ol>
+      </div>
+      <div class="card pad">
+        <h3 style="margin-top:0">Declared future work</h3>
+        <ul class="small" style="margin:0;padding-left:18px;line-height:1.9">
+          <li>Extend the flight model: Earth curvature, altitude-dependent gravity, Mach-only aero tables refined, incidence/sideslip dependence.</li>
+          <li>Add the actual <b>guidance algorithm</b> (impact-point prediction à la ref [10]) — this thesis stops at the actuation layer.</li>
+          <li>A rig/alternator sized for <b>unscaled</b> flight spin.</li>
+          <li><b>Hardware-in-the-loop</b>: feed kit position back into the flight sim so steering effects on trajectory close the loop, then test the guidance law with real actuator performance.</li>
+        </ul>
+        <div class="notice notice-blue" style="margin-top:12px">Best single paragraph to quote in a defense or interview: <b>Section 6.1</b> — the authority envelope T<sub>aero,min</sub> = T<sub>f</sub> = 0.1 N·m to T<sub>aero,max</sub> = (K<sub>t</sub>·8 + T<sub>f</sub>)/2 = 2.93 N·m, and <b>Figure 7.4</b> — saturation points overlaying the velocity-controller output.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CHAPTER MAP ================= -->
+  <div class="section" id="map">
+    <h2>Chapter map — what to open in the PDF</h2>
+    <p class="meta">Each entry: the chapter’s job in one line, plus the figures/tables worth opening.</p>
+    <div class="accordion" id="chapterAcc">
+      <div class="acc-head">Ch. 1 · Introduction (pp. 1–8)<span class="chev">▾</span></div>
+      <div class="acc-body">Motivation (precision strikes, 15,000 g / 5,000 g / ~270 Hz environment), literature survey of 1-D brake vs. movable vs. fixed canards, and the two stated contributions: the test system with controller, and the 6/7-DOF flight simulation feeding it. <b>Open:</b> Figures 1.1–1.4 for the three hardware approaches.</div>
+      <div class="acc-head">Ch. 2 · Test system (pp. 9–28)<span class="chev">▾</span></div>
+      <div class="acc-body">The kit’s three bodies (body / nose / canard rotor), the canard force budget, every component spec (Tables 2.1–2.14), and the LabVIEW/FPGA software with encoder filtering and the 24 rpm velocity resolution. <b>Open:</b> Figure 2.3 (section view), 2.4 (canard forces), 2.6–2.11 (rig), Eq. 2.1.</div>
+      <div class="acc-head">Ch. 3 · Mathematical model (pp. 29–42)<span class="chev">▾</span></div>
+      <div class="acc-body">Linear-graph → 3-state space model, independent Simulink cross-check, the three transfer functions with full coefficient definitions, and validation against open/closed-circuit tests. <b>Open:</b> Figure 3.2 (linear graph), Eq. 3.6, Tables 3.1–3.2.</div>
+      <div class="acc-head">Ch. 4 · Controller design (pp. 43–66)<span class="chev">▾</span></div>
+      <div class="acc-body">Cascade requirements (inner ≥5× outer), pole-placement via second-order assumptions, PI selection by Final Value Theorem, clamping anti-windup, min-effort direction logic, then step + chirp hardware validation. <b>Open:</b> Figure 4.1 (cascade), 4.3 (compensated root locus), Tables 4.3–4.4 (pass tables), Figures 4.15–4.24 (test vs sim).</div>
+      <div class="acc-head">Ch. 5 · Flight dynamics (pp. 67–80)<span class="chev">▾</span></div>
+      <div class="acc-body">Frame trade study → Body Fixed Plane choice, 6-DOF equations, then the 7-DOF extension adding the kit’s free roll DOF. Produces T<sub>aero</sub>(t) and p<sub>body</sub>(t) for the rig. <b>Open:</b> Figure 5.1 (torque directions), 5.10–5.11 (torque histories incl. apogee collapse).</div>
+      <div class="acc-head">Ch. 6 · Controller modification (pp. 81–94)<span class="chev">▾</span></div>
+      <div class="acc-body">The 2.93 N·m symmetric envelope and 0.1 N·m floor (Eq. 6.1–6.2), the 21.6× spin scaling, the fixed controller’s 30–50 s failure, frequency-domain disturbance observer with reduced plant Ĝ and filter Q, and the three dynamic-limit solutions. <b>Open:</b> Figure 6.3 (failure), 6.5 (observer), 6.7/6.9/6.12 (three fixes).</div>
+      <div class="acc-head">Ch. 7 · Test results (pp. 95–102)<span class="chev">▾</span></div>
+      <div class="acc-body">All four controllers on real hardware. Fixed controller loses more authority than in sim; dynamic current limit matches sim; velocity limit hits the alternator’s low-speed current ceiling (rig artifact); combined solution is clean. <b>Open:</b> Figure 7.4 (saturation vs demand — the smoking gun), 7.6 (observer vs real disturbance).</div>
+      <div class="acc-head">Ch. 8 + Appendices (pp. 103–143)<span class="chev">▾</span></div>
+      <div class="acc-body">Conclusions and future work (HIL, guidance law, full-scale rig). Appendices: A linear-graph equations, B transfer-function derivations with unit checks, C MATLAB code, D/E 6-DOF &amp; 7-DOF derivations, F model reduction + filter design, G every aerodynamic force/moment formula. <b>Open:</b> F for how Ĝ and Q were chosen.</div>
+    </div>
+  </div>
+
+  <!-- ================= GLOSSARY ================= -->
+  <div class="section" id="glossary">
+    <h2>Glossary — the notation the thesis uses everywhere</h2>
+    <div class="grid2">
+      <table class="num">
+        <tr><th>Symbol</th><th>Meaning</th></tr>
+        <tr><td class="mono">p<sub>body</sub></td><td>Angular velocity of the projectile body (roll axis)</td></tr>
+        <tr><td class="mono">p<sub>gk</sub>, θ<sub>gk</sub></td><td>Angular velocity / roll angle of the guidance-kit rotor (canards) relative to the body</td></tr>
+        <tr><td class="mono">J<sub>gk</sub>, b</td><td>Kit rotor inertia (1.117×10⁻³ kg·m²) and viscous friction coefficient</td></tr>
+        <tr><td class="mono">T<sub>aero</sub></td><td>Aerodynamic torque on the kit from the control canards (−X, against spin)</td></tr>
+        <tr><td class="mono">T<sub>alt</sub> = K<sub>t</sub>I<sub>a</sub></td><td>Braking torque from loading the alternator (+X, with spin)</td></tr>
+        <tr><td class="mono">T<sub>f</sub></td><td>Bearing friction torque (0.1 N·m on the rig at 800 rpm)</td></tr>
+        <tr><td class="mono">I<sub>load</sub></td><td>Current drawn by the DC load — the controller’s command signal</td></tr>
+        <tr><td class="mono">V<sub>Cf</sub>, I<sub>La</sub></td><td>Filter-capacitor voltage and alternator phase current (the electrical states)</td></tr>
+      </table>
+      <table class="num">
+        <tr><th>Term</th><th>Meaning</th></tr>
+        <tr><td>Steering canards</td><td>Pair at 0°/180°, same cant — pure net force = the guidance force</td></tr>
+        <tr><td>Control canards</td><td>Pair at ±90°, opposite cant — pure torque T<sub>aero</sub>, no net force</td></tr>
+        <tr><td>Cascade control</td><td>Outer position (P) loop commanding an inner velocity (PI) loop; inner ≥5× faster</td></tr>
+        <tr><td>Clamping anti-windup</td><td>Freeze the PI integrator when the output is saturated and the error pushes further in</td></tr>
+        <tr><td>Disturbance observer</td><td>Plant-inverse + low-pass filter estimating wind+friction as an equivalent current Î</td></tr>
+        <tr><td>6-DOF / 7-DOF</td><td>Rigid-body flight sim; 7-DOF adds the kit’s free roll DOF</td></tr>
+        <tr><td>Apogee</td><td>Top of trajectory — thin air, T<sub>aero</sub> ≈ 0, control authority window closes</td></tr>
+        <tr><td>Minimum control effort</td><td>Choose the shorter rotation direction on the circular roll coordinate</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================= PDF ================= -->
+  <div class="section" id="pdfSection">
+    <h2>Read along — open the PDF next to this page</h2>
+    <p class="meta">Everything stays local in your browser; nothing is uploaded.</p>
+    <div class="card pad">
+      <div class="dropzone" id="drop" role="button" tabindex="0" aria-label="Choose or drop the thesis PDF">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:26px;height:26px;flex:none"><path d="M12 16V4m0 0 4 4m-4-4L8 8M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+        <div><b>Drop <span class="mono">10463953.pdf</span> here or click to choose</b><div class="small">Opens in a built-in viewer so you can jump between this page and the figures named above.</div></div>
+      </div>
+      <div id="pdfViewer" style="display:none;margin-top:12px">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <b id="pdfName" class="mono" style="font-size:13px"></b><span id="pdfSize" class="small"></span>
+          <button class="btn" style="margin-left:auto" onclick="clearPdf()">Close</button>
+          <a id="pdfOpen" class="btn" target="_blank" rel="noopener">Open in new tab ↗</a>
+        </div>
+        <iframe id="pdfFrame" title="Thesis PDF viewer" style="width:100%;height:640px;border:1px solid var(--line);border-radius:12px;margin-top:10px;background:#fff"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p class="small" style="max-width:74ch;margin:0 auto">Study aid for <b>“Controller Design and Implementation for a Guidance Kit Used at Spinning Rockets and Projectiles”</b> (G. Günay, M.S. thesis, METU, April 2022) — built from the text of the local PDF. Interactive simulator and plots are faithful reconstructions of the thesis equations and reported values, not the original MATLAB/LabVIEW code; figures are original schematics. Not affiliated with METU or Roketsan.</p>
+  </footer>
+</div>
+
+<script>
+/* ---------- PDF dropzone ---------- */
+const drop=document.getElementById('drop'),pdfInput=document.createElement('input');
+pdfInput.type='file';pdfInput.accept='application/pdf';pdfInput.hidden=true;document.body.appendChild(pdfInput);
+let pdfUrl=null;
+function showPdf(f){
+  if(!f||f.type!=='application/pdf'){alert('Please choose a PDF file.');return;}
+  if(pdfUrl)URL.revokeObjectURL(pdfUrl);
+  pdfUrl=URL.createObjectURL(f);
+  document.getElementById('pdfName').textContent=f.name;
+  document.getElementById('pdfSize').textContent=(f.size/1048576).toFixed(1)+' MB';
+  document.getElementById('pdfOpen').href=pdfUrl;
+  document.getElementById('pdfFrame').src=pdfUrl;
+  document.getElementById('pdfViewer').style.display='';
+  drop.style.display='none';
+}
+function clearPdf(){
+  if(pdfUrl)URL.revokeObjectURL(pdfUrl);pdfUrl=null;
+  document.getElementById('pdfFrame').src='';
+  document.getElementById('pdfViewer').style.display='none';
+  drop.style.display='';
+}
+drop.addEventListener('click',()=>pdfInput.click());
+drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pdfInput.click();}});
+pdfInput.addEventListener('change',()=>showPdf(pdfInput.files[0]));
+drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('drag');});
+drop.addEventListener('dragleave',()=>drop.classList.remove('drag'));
+drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('drag');showPdf(e.dataTransfer.files[0]);});
+
+/* ---------- Accordion ---------- */
+document.querySelectorAll('.acc-head').forEach(h=>h.addEventListener('click',()=>{
+  h.classList.toggle('open');
+  h.nextElementSibling.classList.toggle('open');
+}));
+
+/* ---------- Hero kit cross-section ---------- */
+const svg=document.getElementById('kitSvg');
+let thgkDeg=35,spinAngle=0;
+const CX=230,CY=205,R_BODY=150,R_ROTOR=95,R_HUB=30;
+function el(n,attrs){const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+function buildKit(){
+  svg.innerHTML='';
+  // stator ring (green) — hatched rotating
+  const gBody=el('g',{id:'gBody'});
+  gBody.appendChild(el('circle',{cx:CX,cy:CY,r:R_BODY,fill:'none',stroke:'#34d399','stroke-width':10,opacity:.55}));
+  for(let i=0;i<36;i++){
+    const a=i*10*Math.PI/180;
+    gBody.appendChild(el('line',{x1:CX+Math.cos(a)*(R_BODY-9),y1:CY+Math.sin(a)*(R_BODY-9),x2:CX+Math.cos(a)*(R_BODY+9),y2:CY+Math.sin(a)*(R_BODY+9),stroke:'#34d399','stroke-width':3,opacity:.7}));
+  }
+  // bearing ring
+  gBody.appendChild(el('circle',{cx:CX,cy:CY,r:R_ROTOR+22,fill:'none',stroke:'#475569','stroke-width':2,'stroke-dasharray':'4 5'}));
+  svg.appendChild(gBody);
+  // rotor (blue) + canards
+  const gRot=el('g',{id:'gRot'});
+  gRot.appendChild(el('circle',{cx:CX,cy:CY,r:R_ROTOR,fill:'rgba(56,189,248,.10)',stroke:'#38bdf8','stroke-width':2.5}));
+  gRot.appendChild(el('circle',{cx:CX,cy:CY,r:R_HUB,fill:'rgba(56,189,248,.16)',stroke:'#38bdf8','stroke-width':1.5}));
+  gRot.appendChild(el('text',{x:CX,y:CY+4,'text-anchor':'middle','font-size':'11',fill:'#7dd3fc'})).textContent='alternator';
+  svg.appendChild(gRot);
+  // arrows drawn per-frame
+  svg.appendChild(el('g',{id:'gDyn'}));
+  // labels
+  const t1=el('text',{x:16,y:24,'font-size':'12',fill:'#34d399'});t1.textContent='body / stator — spins 10–20k rpm';svg.appendChild(t1);
+  const t2=el('text',{x:16,y:41,'font-size':'12',fill:'#38bdf8'});t2.textContent='canard rotor — isolated on bearings';svg.appendChild(t2);
+  const t3=el('text',{x:CX,y:390,'text-anchor':'middle','font-size':'12',fill:'#94a3b8'});t3.id='thRead';svg.appendChild(t3);
+}
+function canard(x,y,ang,color){
+  const g=el('g',{transform:`translate(${x},${y}) rotate(${ang})`});
+  g.appendChild(el('rect',{x:-6,y:-34,width:12,height:34,rx:3,fill:color,opacity:.9}));
+  return g;
+}
+let spinning=true;
+function toggleSpin(){spinning=!spinning;document.getElementById('spinLbl').textContent=spinning?'Pause body spin':'Resume body spin';}
+let prevTs=null;
+function kitLoop(ts){
+  if(prevTs==null)prevTs=ts;
+  const dt=Math.min(.05,(ts-prevTs)/1000);prevTs=ts;
+  if(spinning)spinAngle=(spinAngle+dt*160)%360;
+  document.getElementById('gBody').setAttribute('transform',`rotate(${spinAngle} ${CX} ${CY})`);
+  const th=thgkDeg*Math.PI/180;
+  document.getElementById('gRot').setAttribute('transform',`rotate(${thgkDeg} ${CX} ${CY})`);
+  const dyn=document.getElementById('gDyn');dyn.innerHTML='';
+  const defs=el('defs',{});defs.innerHTML='<marker id="karr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker>';dyn.appendChild(defs);
+  function arrow(x1,y1,x2,y2,color,w){const g=el('g',{});g.appendChild(el('line',{x1,y1,x2,y2,stroke:color,'stroke-width':w||3}));const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L,s=9;g.appendChild(el('path',{d:`M${x2-ux*s-uy*s*.45} ${y2-uy*s+ux*s*.45} L${x2} ${y2} L${x2-ux*s+uy*s*.45} ${y2-uy*s-ux*s*.45}`,fill:'none',stroke:color,'stroke-width':w||3}));return g;}
+  const pos=[0,180,90,270],cols=['#facc15','#facc15','#f87171','#f87171'];
+  pos.forEach((p,i)=>{
+    const a=th+p*Math.PI/180;
+    const cx=CX+Math.cos(a)*R_ROTOR,cy=CY+Math.sin(a)*R_ROTOR;
+    dyn.appendChild(canard(cx,cy,p,cols[i]));
+  });
+  const fR=118;
+  dyn.appendChild(arrow(CX,CY,CX+Math.cos(th)*fR,CY+Math.sin(th)*fR,'#facc15',4.5));
+  [0,180].forEach(p=>{
+    const a=th+p*Math.PI/180;
+    const bx=CX+Math.cos(a)*(R_ROTOR+28),by=CY+Math.sin(a)*(R_ROTOR+28);
+    dyn.appendChild(arrow(bx,by,bx+Math.cos(th)*44,by+Math.sin(th)*44,'#fde68a',2));
+  });
+  [90,270].forEach((p,k)=>{
+    const a=th+p*Math.PI/180;
+    const bx=CX+Math.cos(a)*(R_ROTOR+28),by=CY+Math.sin(a)*(R_ROTOR+28);
+    const dir=k===0?-1:1;
+    dyn.appendChild(arrow(bx,by,bx+Math.cos(a)*dir*44,by+Math.sin(a)*dir*44,'#f87171',2));
+  });
+  dyn.appendChild(el('path',{d:`M ${CX-52} ${CY-104} A 115 115 0 0 1 ${CX+52} ${CY-104}`,fill:'none',stroke:'#f87171','stroke-width':2}));
+  dyn.appendChild(el('path',{d:`M ${CX+52-10} ${CY-104+4} L ${CX+52+2} ${CY-104} L ${CX+52-10} ${CY-104-4}`,fill:'none',stroke:'#f87171','stroke-width':2}));
+  const tl=el('text',{x:CX,y:CY-120,'text-anchor':'middle','font-size':'11.5',fill:'#f87171'});tl.textContent='Tₐₑᵣₒ — torque against the spin';dyn.appendChild(tl);
+  const fl=el('text',{x:CX+Math.cos(th)*fR+8,y:CY+Math.sin(th)*fR+4,'font-size':'11.5',fill:'#facc15'});fl.textContent='net guidance force';dyn.appendChild(fl);
+  document.getElementById('thRead').textContent=`θ_gk = ${Math.round(thgkDeg)}° — the net force always points where the rotor points`;
+  requestAnimationFrame(kitLoop);
+}
+buildKit();
+document.getElementById('thgk').addEventListener('input',e=>{thgkDeg=+e.target.value;});
+requestAnimationFrame(kitLoop);
+
+/* ---------- Torque tug-of-war ---------- */
+const Kt=0.716,Tf=0.1;
+function tugUpdate(){
+  const ta=+document.getElementById('taeroS').value, il=+document.getElementById('iloadS').value;
+  document.getElementById('taV').textContent=ta.toFixed(2);
+  document.getElementById('ilV').textContent=il.toFixed(2);
+  const Talt=Kt*il;
+  const Tpos=Talt+Tf-ta, Tneg=ta-Talt-Tf;
+  const sym=ta<=(Talt+Tf)/2;
+  let v=`<table class="num"><tr><th>Direction</th><th class="num">Net torque (N·m)</th><th>Verdict</th></tr>`;
+  v+=`<tr><td>+X — with the spin (load alternator)</td><td class="num mono">${Tpos.toFixed(2)}</td><td>${Tpos>0?'<span class="tag tag-green">can turn</span>':'<span class="tag tag-red">stalls</span>'}</td></tr>`;
+  v+=`<tr><td>−X — against the spin (wind must win)</td><td class="num mono">${Tneg.toFixed(2)}</td><td>${Tneg>0?'<span class="tag tag-green">can turn</span>':'<span class="tag tag-red">stalls</span>'}</td></tr></table>`;
+  v+=`<p class="small" style="margin:8px 0 0">At any setting only one direction has authority — that one-sidedness <i>is</i> the kit’s fundamental asymmetry (Eq. 5.1–5.2). Symmetric-response test (Eq. 6.1): |T<sub>aero</sub>| ≤ (T<sub>alt@I</sub> + T<sub>f</sub>)/2 → ${ta.toFixed(2)} vs ${((Talt+Tf)/2).toFixed(2)} → ${sym?'<span class="tag tag-green">balanced authority</span>':'<span class="tag tag-amber">asymmetric</span>'} &nbsp;·&nbsp; Thesis envelope at 8 A: 0.1 ≤ |T<sub>aero</sub>| ≤ 2.93 N·m.</p>`;
+  document.getElementById('tugOut').innerHTML=v;
+}
+['taeroS','iloadS'].forEach(id=>document.getElementById(id).addEventListener('input',tugUpdate));
+tugUpdate();
+
+/* ---------- Pole map ---------- */
+(function(){
+  const s=document.getElementById('poleSvg'),W=460,H=190;
+  const cx=W*0.62,cy=H/2,sc=0.108; // px per rad/s for fast pair
+  function ax(){
+    const l=el('line',{x1:14,y1:cy,x2:W-8,y2:cy,stroke:'#cbd5e1','stroke-width':1});s.appendChild(l);
+    const v=el('line',{x1:cx,y1:10,x2:cx,y2:H-10,stroke:'#cbd5e1','stroke-width':1});s.appendChild(v);
+    const t=el('text',{x:W-70,y:cy-6,'font-size':'10.5',fill:'#64748b'});t.textContent='Re (s)';s.appendChild(t);
+    const t2=el('text',{x:cx+6,y:18,'font-size':'10.5',fill:'#64748b'});t2.textContent='Im (s)';s.appendChild(t2);
+  }
+  ax();
+  const px1=cx+(-352.28)*sc, py1=cy-(1483.2)*sc, py2=cy+(1483.2)*sc;
+  s.appendChild(el('circle',{cx:px1,cy:py1,r:6,fill:'none',stroke:'#f472b6','stroke-width':2.5}));
+  s.appendChild(el('line',{x1:px1-4,y1:py1-4,x2:px1+4,y2:py1+4,stroke:'#f472b6','stroke-width':2.5}));
+  s.appendChild(el('line',{x1:px1-4,y1:py1+4,x2:px1+4,y2:py1-4,stroke:'#f472b6','stroke-width':2.5}));
+  s.appendChild(el('circle',{cx:px1,cy:py2,r:6,fill:'none',stroke:'#f472b6','stroke-width':2.5}));
+  s.appendChild(el('line',{x1:px1-4,y1:py2-4,x2:px1+4,y2:py2+4,stroke:'#f472b6','stroke-width':2.5}));
+  s.appendChild(el('line',{x1:px1-4,y1:py2+4,x2:px1+4,y2:py2-4,stroke:'#f472b6','stroke-width':2.5}));
+  const t1=el('text',{x:px1+10,y:py1-6,'font-size':'11',fill:'#f472b6'});t1.textContent='−352 ± 1483i — electrical R-L-C';s.appendChild(t1);
+  // inset for slow pole
+  s.appendChild(el('rect',{x:16,y:106,width:150,height:66,rx:8,fill:'#0f172a',opacity:.92}));
+  s.appendChild(el('line',{x1:26,y1:139,x2:158,y2:139,stroke:'#475569','stroke-width':1}));
+  s.appendChild(el('circle',{cx:26+ (40-1.04)/80*132,cy:139,r:5,fill:'none',stroke:'#facc15','stroke-width':2.5}));
+  s.appendChild(el('line',{x1:26+(40-1.04)/80*132-3.5,y1:139-3.5,x2:26+(40-1.04)/80*132+3.5,y2:139+3.5,stroke:'#facc15','stroke-width':2.5}));
+  s.appendChild(el('line',{x1:26+(40-1.04)/80*132-3.5,y1:139+3.5,x2:26+(40-1.04)/80*132+3.5,y2:139-3.5,stroke:'#facc15','stroke-width':2.5}));
+  const ti=el('text',{x:24,y:122,'font-size':'10.5',fill:'#facc15'});ti.textContent='slow pole −1.04 rad/s';s.appendChild(ti);
+  const ti2=el('text',{x:24,y:163,'font-size':'9.5',fill:'#94a3b8'});ti2.textContent='zoom: [−40, 0] — sets the bandwidth';s.appendChild(ti2);
+})();
+
+/* ---------- Interactive closed-loop sim ---------- */
+const Jgk=1.11659e-3,b=1.19e-3,KtC=0.716,Kv=0.749,La=8.8e-3,Ra=6.2,Cf=50e-6;
+const KP_POS=29.7,KPV=0.29,KIV=7.82,PGK_LIM=20.9,IMAX=1.9,PBODY=83.8;
+const wrap=a=>{a=(a+Math.PI)%(2*Math.PI);if(a<0)a+=2*Math.PI;return a-Math.PI;};
+function simulate(thetaRef,taeroMag,aw,T){
+  const dt=5e-5,sub=20,ctrlDt=sub*dt,n=Math.round(T/dt);
+  let pgk=0,VCf=Kv*PBODY,ILa=0.9,integ=0,theta=0,I=0; // ILa near holding equilibrium
+  const taero=-taeroMag;
+  const data=[];let mp=0,ts=T,peakV=0,maxI=0,escaped=false;
+  for(let i=0;i<n;i++){
+    if(i%sub===0){
+      const e=wrap(thetaRef-theta);
+      let vref=KP_POS*e; vref=Math.max(-PGK_LIM,Math.min(PGK_LIM,vref));
+      const verr=vref-pgk;
+      integ+=KIV*verr*ctrlDt;
+      let u=KPV*verr+integ;
+      const sat=Math.max(0,Math.min(IMAX,u));
+      if(aw && ((u>IMAX&&verr>0)||(u<0&&verr<0))) integ-=KIV*verr*ctrlDt;
+      I=sat;maxI=Math.max(maxI,I);
+    }
+    const dpgk=(-b*pgk+KtC*ILa+b*PBODY+taero)/Jgk;
+    const dVCf=(ILa-I)/Cf;
+    const dILa=(-Kv*pgk-VCf-Ra*ILa+Kv*PBODY)/La;
+    pgk+=dpgk*dt;VCf+=dVCf*dt;ILa+=dILa*dt;theta+=pgk*dt;
+    if(i%100===0) data.push([i*dt,theta,pgk,I]);
+    if(Math.abs(pgk)>60){escaped=true;break;} // kit spun away — linear model no longer meaningful
+  }
+  // metrics vs target (wrap-aware: err is the circular position error)
+  const tgt=thetaRef;
+  if(Math.abs(tgt)>1e-6){
+    let crossed=false;
+    for(const [t,th] of data){
+      const err=wrap(tgt-th);
+      if(!crossed){
+        if(Math.sign(err)!==Math.sign(tgt)||Math.abs(err)<0.02*Math.abs(tgt)) crossed=true;
+      }else{
+        mp=Math.max(mp,Math.abs(err)/Math.abs(tgt));
+      }
+      if(Math.abs(err)>0.05*Math.abs(tgt)) ts=t;
+    }
+  }
+  return {data,mp:mp*100,ts,maxI,endTh:data[data.length-1][1],escaped,endT:data[data.length-1][0]};
+}
+function drawSim(res,thetaRef){
+  const c=document.getElementById('simCanvas'),x=c.getContext('2d');
+  const W=c.width,H=c.height,padL=52,padR=52,padT=18,padB=34;
+  x.fillStyle='#0f172a';x.fillRect(0,0,W,H);
+  x.strokeStyle='rgba(255,255,255,.08)';x.lineWidth=1;
+  for(let i=0;i<=5;i++){const yy=padT+i*(H-padT-padB)/5;x.beginPath();x.moveTo(padL,yy);x.lineTo(W-padR,yy);x.stroke();}
+  for(let i=0;i<=8;i++){const xx=padL+i*(W-padL-padR)/8;x.beginPath();x.moveTo(xx,padT);x.lineTo(xx,H-padB);x.stroke();}
+  const T=res.data[res.data.length-1][0];
+  const thetas=res.data.map(d=>d[1]);
+  let lo=Math.min(0,...thetas,thetaRef),hi=Math.max(0,...thetas,thetaRef);
+  if(hi-lo<0.4){hi+=0.2;lo-=0.2;}
+  const X=t=>padL+t/T*(W-padL-padR);
+  const Y=v=>H-padB-(v-lo)/(hi-lo)*(H-padT-padB);
+  x.font='10.5px JetBrains Mono';
+  // ref line
+  x.strokeStyle='#facc15';x.setLineDash([6,5]);x.lineWidth=1.6;
+  x.beginPath();x.moveTo(padL,Y(thetaRef));x.lineTo(W-padR,Y(thetaRef));x.stroke();x.setLineDash([]);
+  x.fillStyle='#facc15';x.fillText('ref',W-padR-26,Y(thetaRef)-6);
+  // theta trace
+  x.strokeStyle='#38bdf8';x.lineWidth=2.4;x.beginPath();
+  res.data.forEach((d,i)=>{const xx=X(d[0]),yy=Y(d[1]);i?x.lineTo(xx,yy):x.moveTo(xx,yy);});
+  x.stroke();
+  // velocity trace (scaled into same box)
+  const vMax=Math.max(21,...res.data.map(d=>Math.abs(d[2])));
+  x.strokeStyle='rgba(167,139,250,.75)';x.lineWidth=1.4;x.beginPath();
+  res.data.forEach((d,i)=>{const vv=d[2]/vMax*(hi-lo)/2+( (hi+lo)/2 - lo );const yy=H-padB-vv/(hi-lo)*(H-padT-padB);i?x.lineTo(X(d[0]),yy):x.moveTo(X(d[0]),yy);});
+  x.stroke();
+  // current on right axis
+  const iMax=2.0;
+  x.strokeStyle='rgba(248,113,113,.85)';x.lineWidth=1.6;x.beginPath();
+  res.data.forEach((d,i)=>{const yy=H-padB-d[3]/iMax*(H-padT-padB);i?x.lineTo(X(d[0]),yy):x.moveTo(X(d[0]),yy);});
+  x.stroke();
+  // axes labels
+  x.fillStyle='#94a3b8';
+  x.fillText('t = '+T.toFixed(1)+' s',W/2-20,H-10);
+  for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4;x.fillText((v*180/Math.PI).toFixed(0)+'°',6,Y(v)+3);}
+  for(let i=0;i<=2;i++){const v=iMax*i/2;x.fillText(v.toFixed(1)+'A',W-padR+6,H-padB-(v/iMax)*(H-padT-padB)+3);}
+  x.fillStyle='rgba(167,139,250,.9)';x.fillText('p_gk ±'+vMax.toFixed(0)+' rad/s (band, purple)',padL+6,H-padB-8);
+  x.fillStyle='rgba(248,113,113,.9)';x.fillText('I_load',W-padR+6,padT+12);
+}
+function runSim(){
+  const degRef=+document.getElementById('stepS').value;
+  const ta=+document.getElementById('windS').value;
+  const aw=document.getElementById('awChk').checked;
+  const res=simulate(degRef*Math.PI/180,ta,aw,2.5);
+  drawSim(res,degRef*Math.PI/180);
+  const authority=KtC*IMAX+b*PBODY;
+  const held=ta<=authority;
+  const deg=Math.abs(degRef)<1e-6?null:degRef;
+  document.getElementById('simMetrics').innerHTML=`
+    <div class="stat" style="background:${held?'#f0fdf4':'#fef2f2'};border-color:${held?'#bbf7d0':'#fecaca'}">
+      <b>Metrics</b><div class="small" style="margin-top:6px">
+      Target ${(degRef).toFixed(0)}° · wind ${ta.toFixed(2)} N·m · anti-windup ${aw?'ON':'OFF'}<br/>
+      ${deg!==null?`Overshoot: <b class="mono">${res.mp.toFixed(1)}%</b> · last time outside ±5% band: <b class="mono">${res.ts.toFixed(2)} s</b> · peak I: <b class="mono">${res.maxI.toFixed(2)} A</b><br/>`:`<b>Kit spun away after ${res.endT.toFixed(2)} s</b> — with wind ${ta.toFixed(2)} N·m and I pinned at ${res.maxI.toFixed(2)} A, nothing can hold it. Peak I: <b class="mono">${res.maxI.toFixed(2)} A</b><br/>`}
+      ${held?`Wind ${ta.toFixed(2)} ≤ hold-authority ${authority.toFixed(2)} N·m (K<sub>t</sub>·1.9A + friction) → position can be held.`:`Wind ${ta.toFixed(2)} > hold-authority ${authority.toFixed(2)} N·m → the kit slips away regardless of gains — Chapter 6’s lost authority.`}
+      </div>
+    </div>`;
+}
+function presetWindup(){
+  document.getElementById('stepS').value=-150;document.getElementById('windS').value=0.3;document.getElementById('awChk').checked=false;
+  runSim();
+}
+function presetLost(){
+  document.getElementById('stepS').value=0;document.getElementById('windS').value=1.6;document.getElementById('awChk').checked=true;
+  runSim();
+}
+document.getElementById('stepS').addEventListener('input',e=>{document.getElementById('stepVal').textContent=e.target.value+'°';});
+document.getElementById('windS').addEventListener('input',e=>{document.getElementById('windVal').textContent=(+e.target.value).toFixed(2);});
+runSim();
+
+/* ---------- Flight profile (stylized from Figs. 6.1–6.2) ---------- */
+(function(){
+  const c=document.getElementById('flightCanvas'),x=c.getContext('2d');
+  const W=c.width,H=c.height,padL=46,padR=14,padT=16,padB=30;
+  x.fillStyle='#0f172a';x.fillRect(0,0,W,H);
+  const T=70;
+  const aero=t=>2.6*Math.exp(-Math.pow(t/9,2))+0.12+2.35*Math.exp(-Math.pow((t-62)/11,2));
+  const body=t=>83.7-38*(1-Math.exp(-t/26));
+  const alt=t=>1-Math.exp(-Math.pow(t/23,2.1))+ -0.9*Math.pow(Math.max(0,(t-40)/30),2.4);
+  const X=t=>padL+t/T*(W-padL-padR);
+  const Y=(v,lo,hi)=>H-padB-(v-lo)/(hi-lo)*(H-padT-padB);
+  // authority shading where aero < 0.2
+  x.fillStyle='rgba(248,113,113,.16)';
+  for(let t=0;t<=T;t+=0.25){ if(aero(t)<0.2){ x.fillRect(X(t),padT,X(t+0.25)-X(t),H-padT-padB);} }
+  x.strokeStyle='rgba(255,255,255,.08)';
+  for(let i=0;i<=4;i++){const yy=padT+i*(H-padT-padB)/4;x.beginPath();x.moveTo(padL,yy);x.lineTo(W-padR,yy);x.stroke();}
+  // aero trace
+  x.strokeStyle='#f87171';x.lineWidth=2.4;x.beginPath();
+  for(let t=0;t<=T;t+=0.25){const yy=Y(aero(t),0,3.2);t===0?x.moveTo(X(t),yy):x.lineTo(X(t),yy);}x.stroke();
+  // body trace (right scale 40-90)
+  x.strokeStyle='#38bdf8';x.lineWidth=2;x.beginPath();
+  for(let t=0;t<=T;t+=0.25){const yy=Y(body(t),40,90);t===0?x.moveTo(X(t),yy):x.lineTo(X(t),yy);}x.stroke();
+  // altitude (dashed, normalized 0-1)
+  x.strokeStyle='rgba(250,204,21,.8)';x.setLineDash([5,4]);x.lineWidth=1.5;x.beginPath();
+  for(let t=0;t<=T;t+=0.25){const yy=Y(Math.max(0,alt(t)),0,1.15);t===0?x.moveTo(X(t),yy):x.lineTo(X(t),yy);}x.stroke();x.setLineDash([]);
+  // labels
+  x.font='10.5px JetBrains Mono';x.fillStyle='#f87171';x.fillText('|T_aero| N·m',padL+4,padT+12);
+  x.fillStyle='#38bdf8';x.fillText('p_body rad/s (scaled ×21.6)',padL+150,padT+12);
+  x.fillStyle='rgba(250,204,21,.9)';x.fillText('altitude (norm.)',padL+340,padT+12);
+  x.fillStyle='#fca5a5';x.fillText('authority gap (aero < 0.2)',X(27),H-padB-6);
+  x.fillStyle='#94a3b8';x.fillText('t = 0 → 70 s (stylized)',W/2-52,H-8);
+  const ap=el2(x,'apogee ≈ 35 s',X(35),padT+26,'center');
+  function el2(ctx,txt,xx,yy,align){ctx.fillStyle='#e2e8f0';ctx.textAlign=align||'left';ctx.fillText(txt,xx,yy);ctx.textAlign='left';}
+})();
+</script>
+</body>
+</html>
