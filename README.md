@@ -21,6 +21,26 @@
 
 **Universal prompt to share:** `research/templates/UNIVERSAL_ONBOARDING_PROMPT.md:1` — paste as first message to any AI, tell it your `git branch --show-current`, it assigns your PS deliverable and co-works.
 
+## Latest Progress — 2026-09-01
+
+The repository has moved from a CAD-only concept baseline to a traceable, simulation-backed GNC and electronics baseline. Completed work is separated from the next engineering rungs below:
+
+| Area | Current progress | Evidence |
+|------|------------------|----------|
+| **GNC** | Rev E terminal-accuracy gate closed at the 3DOF rung: **CEP50 21.5 m** vs the ≤30 m PS M2 requirement, **9.9×** improvement vs unguided, 250/250 runs in guide/degraded modes, 0 denied. | `cleansheet/out_sim/RESULTS_GNC.md` |
+| **Flight software** | Deterministic Python reference FSW mirrors the STM32G474 task rates and interfaces. Paired co-simulation proves RNG-stream and miss parity; the FSW L0 gate is **CEP50 21.5 m**. The repository test suite is **33/33 green**. | `cleansheet/flight_sw/` · `cleansheet/out_sim/RESULTS_FSW.md` |
+| **Sensors** | Five sensors are selected and datasheet-flowed: u-blox NEO-F10N, TDK ICM-45686, MPS MA732, ADXL1004 setback signature, and RFbeam K-LD7. Baseline, selected, and worst-case profiles all pass the PS M2 gate (**21.5 / 21.7 / 21.1 m CEP50**, 100% guide/degraded, 0 denied). | `cleansheet/05_SENSOR_SELECTION.md` · `cleansheet/out_sim/RESULTS_SENSORS.md` |
+| **Electronics** | Dual-domain split is locked: shell-frame A6/G431 owns the 15 kHz motor FOC and drive power; dome-frame G474 owns GNC and sensors. The C3 slip ring carries `+5 V | GND | UART`; pin/ISR maps and the C header contract are parity-checked. | `cleansheet/06_ELECTRONICS_ARCHITECTURE.md` · `electronics/` |
+| **Schematic validation** | Deterministic KiCad schematic skeleton is committed with 34 components / 170 nodes; the checked-in ERC report records **0 errors and 0 warnings**. | `electronics/gnc_board.kicad_pro` · `electronics/erc.rpt` |
+| **System and cost** | Design of record is Rev 1.7 and BOM is Rev 1.4: approximately **1.88 kg**, ₹1,60,750 prototype roll-up / ₹30,800 at 1k quantities. | `cleansheet/03_DESIGN_REPORT.md` · `cleansheet/02_BOM_MANUFACTURING_ASSEMBLY.md` |
+
+### Next engineering rungs
+
+- Upgrade the truth model to 6DOF with Magnus effects and spin decay, then run Monte Carlo at ≥1,000 shots.
+- Complete the Ø62 dome PCB layout/stackup, add the A6 drive-domain schematic, and execute bench bring-up stages B1–B4.
+- Port the reference FSW to embedded C, close the 15 kHz motor-FOC timing budget, and add watchdog/deadline validation.
+- Resolve remaining physical and procurement gates: retention lip/shear-pin geometry, RF re-verification, unlimited-dynamics GNSS path, and selected-sensor devkits.
+
 ---
 
 ## Repo Map
