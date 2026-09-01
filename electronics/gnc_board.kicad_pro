@@ -1,0 +1,53 @@
+{
+  "board": {
+    "design_settings": {},
+    "layer_presets": [],
+    "viewports": []
+  },
+  "boards": [],
+  "cvpcb": {
+    "equivalence_files": []
+  },
+  "libraries": {
+    "pinned_footprint_libs": [],
+    "pinned_symbol_libs": []
+  },
+  "meta": {
+    "filename": "gnc_board.kicad_pro",
+    "version": 3
+  },
+  "net_settings": {
+    "classes": []
+  },
+  "pcbnew": {
+    "page_layout_descr_file": ""
+  },
+  "schematic": {
+    "annotate_start_num": 0,
+    "legacy_lib_dir": "",
+    "legacy_lib_list": []
+  },
+  "sheets": [
+    [
+      "e07d240d-20dd-5603-801e-23db4fd3138d",
+      "Root"
+    ],
+    [
+      "13bea4c4-7f3a-5491-b252-22620ebd1770",
+      "Power"
+    ],
+    [
+      "f390509b-491e-5634-bdc9-d2ae76a69930",
+      "MCU+buses"
+    ],
+    [
+      "421ef555-c6bf-5c9b-a44a-2e840e966bf2",
+      "Sensors"
+    ],
+    [
+      "33a75fff-f33d-5704-ac3f-2e16e21ac84e",
+      "Comms+slip"
+    ]
+  ],
+  "text_variables": {}
+}

@@ -1,6 +1,8 @@
 # SIH26098 Clean-Sheet PGK — Detailed BOM, Manufacturing, Costing & Assembly
-**Doc:** `cleansheet/02_BOM_MANUFACTURING_ASSEMBLY.md` | **Rev:** 1.2 | **Basis:** `PGK_CleanSheet.FCStd` (as-built dimensions) | **Currency:** INR
+**Doc:** `cleansheet/02_BOM_MANUFACTURING_ASSEMBLY.md` | **Rev:** 1.4 | **Basis:** `PGK_CleanSheet.FCStd` (as-built dimensions) | **Currency:** INR
 **Rev 1.2 change:** simulation-informed spec deltas (§G) — de-spin re-specced 15 s @ ≤40 A with boost stage, cold-rating QA added, mass/cost rollups updated.
+**Rev 1.3 change:** sensor selection (§H) — GNC board IMU firmed to ICM-45686; **new line items D3b (angle sensor, MA732) and D3c (setback: armer interface + ADXL1004 signature)**; D4 firmed to NEO-F10N (NavIC L5 + GPS); D5 candidate PN K-LD7. Rollup +₹3,250 proto / +₹1,300 @1k. Evidence: `05_SENSOR_SELECTION.md` + `out_sim/RESULTS_SENSORS.md`.
+**Rev 1.4 change:** electronics architecture (§I) — dual-domain split (decision 23, `06_ELECTRONICS_ARCHITECTURE.md`): **drive domain ICs added to A6** (G431 MCU, DRV8329 gate driver, 6× NVMFS5C460NL bridge set, 3× INA240A2 + 2 mΩ shunts, LDO/TVS), **D3 firmed** (STM32G474RET6 + W25Q128JVSIQ + rails TPS62933/TLV75730P/TLV7031), **D3b MA732 relocated** dome → collar-face (drive side; cost unchanged — the FOC commutation angle belongs to the drive MCU; GNC consumes the roll *estimate*, not the sensor). New-IC selections sourced in `research/06_electronics-embedded-power/entry_20260831_*.md` (8 entries); KiCad skeleton `electronics/gnc_board.kicad_pro` ERC-clean. Rollup +₹3,285 proto / +₹2,385 @1k; mass ≈ 1.88 kg.
 
 ---
 
@@ -31,9 +33,11 @@ PGK MODULE (screws into 155mm shell fuze well)
 │   ├── C3  Slip Ring, 3-contact axial (dome power)
 │   ├── D1  Radome (translucent in CAD = GFRP part)
 │   ├── D2  Dome Base Ring
-│   ├── D3  GNC Board (MCU+IMU+mems)
-│   ├── D4  GNSS/NavIC patch + module
-│   ├── D5  Proximity head (FMCW)
+│   │   ├── D3  GNC Board (MCU + IMU ICM-45686 + mems)
+│   │   ├── D3b Angle sensor (MA732 + Ø6 magnet on bell)   [Rev 1.3 — new]
+│   │   ├── D3c Setback sensor (armer interface + ADXL1004) [Rev 1.3 — new]
+│   ├── D4  GNSS/NavIC patch + NEO-F10N module
+│   ├── D5  Proximity head (FMCW, K-LD7 class)
 │   └── D6  Magnet Ring (on bell)  +  Bell/rotor yoke  +  Hall sensors ×3 (stator)
 ```
 
@@ -57,6 +61,11 @@ PGK MODULE (screws into 155mm shell fuze well)
 | A6 | Power board | 1 | FR4-TG170, 4-layer | Ø62 round + **de-spin boost stage 3.7→5 V / 55 A_out** | 38 g | SMT 0402+ | AOI, ICT | ₹6,300 | ₹1,700 |
 | A7 | Supercap 15 F / 10 V | 1 | — | Ø13.5 × 12 (×2 ∥) | 22 g | Buy | ESR <30 mΩ; role: transient bridge + regen buffer (NOT the de-spin energy source — Rev 1.2) | ₹900 | ₹350 |
 | A7b | De-spin brake chopper + dump resistor | 1 | FR4 + 15 Ω/50 W wirewound (collar-mounted) | — | 40 g | SMT + ME fit | thermal survey at 40 A/15 s | ₹1,400 | ₹400 |
+| A6a | Drive MCU (Rev 1.4) | 1 | STM32G431CBT6 (LQFP48, 128K/32K) | 15 kHz FOC current loop on TIM1, MA732 SPI, chopper PWM | 1 g | Buy | — | ₹500 | ₹350 |
+| A6b | 3-φ gate driver (Rev 1.4) | 1 | TI DRV8329AREER (36-WQFN) | 4.5–60 V — only mainstream smart driver regulating at the 5 V bus; bootstrap + trickle CP; HW-config | 1 g | Buy | — | ₹400 | ₹280 |
+| A6c | Bridge FET set (Rev 1.4) | 6 | onsemi NVMFS5C460NL (40 V / 78 A / 4.5 mΩ, DFN5×6 wettable flank) | 2∥ per switch; conduction ≈5.4 W over the 15 s pulse (81 J) — QA thermal survey | 6 g | Buy | **thermal survey at 40 A/15 s (06 §4)** | ₹900 | ₹650 |
+| A6d | Current sense (Rev 1.4) | 3+3 | TI INA240A2D + Vishay WSL2512 2 mΩ shunts | in-line per-phase, 20 V/V PWM-rejection CSA; 40 A → ~1.6 V span | 2 g | Buy | — | ₹550 | ₹490 |
+| A6e | Drive logic rail + prot. (Rev 1.4) | — | LDO 5→3.3 V (TLV757P class) + SMAJ5.0A + USBLC6-2 | G431/INA240/MA732/DRV8329 logic; slip UART ESD both ends | 2 g | Buy | — | ₹150 | ₹95 |
 | A8 | Pilot stub shaft | 1 | 440C, 52 HRC | Ø20.4 g6 × 12 | 12 g | Turn/grind | Ra0.2 | ₹1,400 | ₹380 |
 | A9 | Hall sensors ×3 | 3 | SS461C class | SOT-89 | 2 g | Buy | — | ₹150 | ₹45 |
 | A10 | Fasteners, potting, threadlocker | — | — | — | 25 g | — | pot: Araldite CT200/HT9517 | ₹1,800 | ₹500 |
@@ -80,9 +89,11 @@ PGK MODULE (screws into 155mm shell fuze well)
 |---|------|-----|----------|----------------|------|-------------|-----------|-----------|----------|
 | D1 | Radome | 1 | Glass-epoxy (GFRP E-glass) | semi-ellipsoid Ø84 × 49.6, wall 2 | 44 g | Hand-layup/wet filament wound on mandrel, CNC trim | RF transmission ≥85%, boil test | ₹8,000 | ₹2,200 |
 | D2 | Dome base ring | 1 | 6061-T6 | Ø76–84 × 1.7 | 10 g | Turn | — | ₹600 | ₹150 |
-| D3 | GNC board | 1 | FR4 4-layer Ø62 | STM32G474 + ICM-42688 + flash | 35 g | SMT | ICT + functional | ₹9,500 | ₹3,200 |
-| D4 | GNSS patch + module | 1 | ceramic patch + L1/L5 M9N-class | Ø25 patch | 15 g | Buy | C/N₀ test; **cold-start to first fix ≤5 s post-despin** (lock modeled at 45 s, Rev 1.2) | ₹5,200 | ₹2,600 |
-| D5 | Proximity head | 1 | FMCW 24 GHz module + patch | Ø30 × 8 | 25 g | Buy + integ | HOB bench 6/12/18 m | ₹4,800 | ₹1,900 |
+| D3 | GNC board | 1 | FR4 4-layer Ø62 | **STM32G474RET6** (GNC FSW — decision 23: dome owns EKF/IPP/ctrl only) + **ICM-45686** (±4000 dps gyro, 20k g shock) + **W25Q128JVSIQ** flash + rails (**TPS62933** buck / **TLV75730P** LDO / **TLV7031** comparator) | 35 g | SMT | ICT + functional | ₹9,500 | ₹3,200 |
+| D3b | Angle sensor (Rev 1.3; **Rev 1.4 relocated to drive domain**) | 1 | MA732GQ-Z + Ø6 diametral NdFeB magnet | 14-bit absolute, 60,000 rpm, SPI 25 MHz — **IC now on the collar-face (A6 side), wired to G431 SPI1** (FOC commutation needs the angle local to the drive MCU; GNC receives angle/rate telemetry per 06 §5) | 3 g | Buy + pot to collar face | magnet-alignment fixture QA; **soft-potted (15k g)** | ₹600 | ₹350 |
+| D3c | Setback sensor (Rev 1.3) | 1 | setback-armer interface (inert; flight = partner ESAF) + ADXL1004 ±500 g signature | threshold between manhandling and setback mean (~5 k g) | 12 g | Buy + threshold circuit | **soft-mount QA (ADXL1004 immunity 10k g < 15k g peak)** | ₹2,500 | ₹800 |
+| D4 | GNSS patch + module | 1 | ceramic patch + **NEO-F10N-00B** (NavIC L5 + GPS L1/L5) | Ø25 patch | 15 g | Buy | C/N₀ test; **hot-start ≤ 5 s post-despin** (receiver tracks from boot, solution enabled at 45 s); flight: unlimited-dynamics factory variant | ₹5,200 | ₹2,600 |
+| D5 | Proximity head | 1 | FMCW 24 GHz (**K-LD7-RFB-00H-01** candidate) + patch | Ø30 × 8 | 25 g | Buy + integ | HOB bench 6/12/18 m (K-LD7-EVAL); RFbeam AN03 radome practice | ₹4,800 | ₹1,900 |
 
 ### Ground support (non-airborne, shared)
 
@@ -112,9 +123,13 @@ All parts are conventional CNC (turn, turn-mill, 5-axis mill, SMT, winding) — 
 
 | Build | Material+parts | Labor/overhead | ESAF partner | Ex-works |
 |---|---|---|---|---|
-| Engineering prototype (1) | ₹1,54,200 | ₹55,000 | — | **~₹2.1 L** |
-| Pilot lot (25) | ₹58,600 | ₹22,000 | — | **~₹0.8 L** |
-| Production (1,000) | ₹27,100 | ₹14,000 | ₹30,000 | **~₹0.7–0.9 L** |
+| Engineering prototype (1) | ₹1,60,750 | ₹55,000 | — | **~₹2.2 L** |
+| Pilot lot (25) | ₹62,300 | ₹22,000 | — | **~₹0.84 L** |
+| Production (1,000) | ₹30,800 | ₹14,000 | ₹30,000 | **~₹0.7–0.9 L** |
+
+(Rev 1.4: +₹3,285 proto / +₹2,385 @1k per §I — drive-domain ICs on A6 and dome rail/flash
+fill. Rev 1.3 was +₹3,250/+₹1,300 per §H. The pilot-lot delta takes the new COTS lines at
+their @1k pricing.)
 
 **vs PS ceiling ₹8–11 L/kit → production ex-works lands at 8–12% of ceiling.** Headroom funds qualification, margin, and price aggression vs imports (M1156 ≈ ₹9–10 L).
 
@@ -164,11 +179,11 @@ All parts are conventional CNC (turn, turn-mill, 5-axis mill, SMT, winding) — 
 
 | Group | Mass |
 |---|---|
-| Core + battery + power (shell frame) | 414 g (was 344 g; +A7b chopper/resistor 40 g, +boost stage 8 g, +fitting ~22 g) |
+| Core + battery + power (shell frame) | 426 g (was 414 g; Rev 1.4: +A6a–A6e drive-domain ICs ≈ 12 g) |
 | Bearing (rings + balls + cage) | 515 g |
 | Actuator (stator + windings + magnets + shaft + bearing) | 470 g |
-| Canard shell + dome + electronics | 445 g |
-| **Module total** | **≈ 1.84 kg** (hard limit 2.0 kg ✓; optimization note: A1 thin-wall + C4 Al-yoke-with-steel-sleeve saves ~280 g → **≈1.56 kg**; ≤1.5 kg target now a stretch — see §G) |
+| Canard shell + dome + electronics | 464 g (Rev 1.3: +D3b angle 3 g, +D3c setback 12 g; Rev 1.4: +dome rails/protection/passives ≈ 4 g) |
+| **Module total** | **≈ 1.88 kg** (hard limit 2.0 kg ✓; optimization note: A1 thin-wall + C4 Al-yoke-with-steel-sleeve saves ~280 g → **≈1.6 kg**; ≤1.5 kg target now a stretch — see §G) |
 | Module length | 606→776 mm station span; protrusion above ogive ≈ 80 mm; total in-well+above ≈ 260 mm |
 
 ---
@@ -196,4 +211,56 @@ regen return is opportunistic (0–0.2 Wh), not budget-critical. See design repo
 
 ---
 
-*Open/parked items carried in BOM as REQ: A2, B3, C4 flight yoke, D6 pole change, slip-ring size, ESAF partner. **Rev 1.2 deltas: §G.***
+## H. Rev 1.3 — sensor-selection deltas (2026-08-31)
+
+Source: `05_SENSOR_SELECTION.md` + `research/D_sensors/entry_20260831_*.md` (datasheet-backed,
+URLs + access dates) + `out_sim/RESULTS_SENSORS.md` (paired-MC validation of the selected
+parts' sigmas). Every GNC sensor constant in `flight_sw/fsw/config.py` now maps to a cited
+datasheet parameter with stated margin; the terminal-accuracy gate re-validated with the
+selected parts' sigmas via runtime sensor profiles (no sim/config file edits).
+
+| # | Finding / requirement | Spec change (Rev 1.3) |
+|---|---|---|
+| H1 | "M9N-class" on D4 was vague and the M9 platform has **no NavIC** (datasheet-verified); the only COTS standard-precision NavIC module meeting the apogee ceiling is u-blox NEO-F10N | D4 firmed to **NEO-F10N-00B** + Ø25 patch (cost envelope unchanged). First-fix spec reworded: **hot-start ≤ 5 s post-despin** (receiver tracks from boot; solution enabled at 45 s). Flight procurement: **unlimited-dynamics factory variant** required (500 m/s ITAR limit on standard COTS) |
+| H2 | ICM-42688-P (named on D3) tops at **±2,000 dps** — the sim's 4,000 °/s saturation constant would not have mapped to it; ICM-45686 offers ±4,000 dps exactly, plus ±0.3 °/s ZRO, ±32 g accel, 20,000 g unpowered shock (≥ 15,000 g setback, 1.33×) | D3 IMU firmed to **ICM-45686** (+≈₹150) |
+| H3 | The collar↔bell angle sensor (report §4.3/§4.5: FOC commutation, de-spin monitor, S&A spin signature) had **no BOM line item** | **New D3b: MA732GQ-Z + Ø6 magnet** — 14-bit (> 12-bit gate), 60,000 rpm (4× the 15,000 rpm braking transient), 25 MHz SPI, ₹600/₹350 (≤ ₹1.5k gate) |
+| H4 | The setback sensor (S&A signature 1) had **no part and no spec** | **New D3c: mechanical setback-armer interface (flight = partner ESAF, STANAG 4187 path) + ADXL1004 electronic launch signature**, threshold between manhandling and the ~5,000 g kinematic mean; soft-mount QA (ADXL1004 immunity 10,000 g < 15,000 g design peak). Live S&A remains outside this project's boundary |
+| H5 | D5 "FMCW 24 GHz module" had no part number | D5 candidate PN noted: **K-LD7-RFB-00H-01** (digital distance + speed + angle; AN03 radome practice; HOB gates bench-verified on K-LD7-EVAL). Cost unchanged |
+| H6 | Cost/mass rollups | +₹3,250 proto / +₹1,300 @1k (§D); +15 g dome-electronics (§F) — ex-works still 8–12 % of the PS ceiling; module ≈ 1.86 kg vs 2.0 kg hard limit |
+
+**Deliberately unchanged** (selection is analysis-level; structure/mechanism untouched):
+materials (100Cr6/440C, 7075-T6, N42SH, M350-50A, GFRP E-glass, NMC cell), bearing/motor/
+steering design, de-spin spec (§G), battery/power architecture. The K-LD7 adds ≈0.2 W-class
+dome load — slip-ring and energy budget unchanged (0.9 Wh worst vs 16.7 Wh). Baro remains
+rejected above Mach 2 (LShang teardown); magnetometer remains rejected (motor magnet ring
+swamps Earth field — report §8 decision 12).
+
+---
+
+## I. Rev 1.4 — electronics-architecture deltas (2026-08-31)
+
+Source: `06_ELECTRONICS_ARCHITECTURE.md` (Rev 1.0) + `research/06_electronics-embedded-power/entry_20260831_*.md`
+(8 sourced entries, URLs + access dates) + `electronics/gnc_board.kicad_pro` (ERC-clean
+schematic skeleton of the dome board) + `flight_sw/board/board_config.h` (the C header
+contract, parity-tested against `fsw/config.py` rates).
+
+| # | Change | Rows | Cost impact (proto / @1k) |
+|---|---|---|---|
+| I1 | **Dual-domain split** (decision 23): drive stage (3-φ bridge + gate driver + FOC current loop + MA732 + Hall + A7b tie-in) moves onto the shell-frame **A6 power board** under a dedicated **STM32G431CBT6**; the dome **D3** becomes GNC-only (STM32G474RET6 runs the whole `flight_sw/` stack). The 40 A braking current never crosses the frames; the existing 3-contact slip ring C3 (`+5 V \| GND \| UART`, 115.2 kBd HD) carries ≤ 0.5 W power + telemetry/commands with a 100 ms loss→safe-state rule (F6) | **new A6a–A6e** (G431 ₹500/₹350 · DRV8329 ₹400/₹280 · 6× NVMFS5C460NL ₹900/₹650 · 3× INA240A2D + 2 mΩ shunts ₹550/₹490 · LDO+TVS ₹150/₹95) | **+₹2,500 / +₹1,865** |
+| I2 | **D3 firmed**: MCU variant → STM32G474RET6 (LQFP64, 512K/128K — methodology §7 RAM gate), flash → W25Q128JVSIQ, rails → TPS62933 + TLV75730P + TLV7031 | D3 note (no new row; flash/rails carried in D3 board line + passives) | **+₹785 / +₹520** |
+| I3 | **D3b MA732 relocated** dome → collar-face (drive side): FOC commutation at the 3 kHz electrical frequency needs the angle local to the G431; the GNC ctrl task consumes the drag-ref roll **estimate** (report §4.5), not the sensor. Physical mount unchanged; GNC board SPI2 freed | D3b note (cost **unchanged**, ownership moves dome → shell) | ±0 / ±0 |
+| I4 | Cost/mass rollups | §D, §F | **+₹3,285 proto / +₹2,385 @1k; +16 g → ≈ 1.88 kg** (still 8–12 % of ceiling; 2.0 kg hard limit ✓) |
+
+**Deliberately unchanged:** materials, bearing/motor/steering design, de-spin spec (§G),
+sensor selections (§H — all five GNC sensors keep their PNs), battery/boost architecture.
+Energy ledger: dome electronics ≈ 0.49 W × 90 s ≈ 0.012 Wh — inside the existing 0.025 Wh
+electronics line; **0.9 Wh worst-case unchanged** (06 §2). Slip-ring allocation: 0.49 W vs
+1.5 W → 3.1× margin (≥ 2× gate ✓).
+
+**Open/parked:** PCB layout + stackup (next rung); A6 drive-domain schematic is block-level
+only (06 §4); motor FOC firmware + drive-side code (header contract defines the interface);
+the A6c bridge **thermal survey QA** and the D3c soft-mount QA carry into the build QA plan.
+
+---
+
+*Open/parked items carried in BOM as REQ: A2, B3, C4 flight yoke, D6 pole change, slip-ring size, ESAF partner. **Rev 1.2 deltas: §G. Rev 1.3 deltas: §H (sensor selection). Rev 1.4 deltas: §I (electronics architecture — dual-domain, decision 23).***

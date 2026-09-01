@@ -47,6 +47,7 @@ outputs/
 # Local tooling (not for repo)
 .commandcode/
 opencode.json
+*.kicad_prl
 
 # Keep out_sim results (do not ignore)
 !cleansheet/out_sim/

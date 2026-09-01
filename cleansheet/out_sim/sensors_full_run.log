@@ -1,0 +1,137 @@
+/home/jagath-srujan/Documents/smart india hackathon/cleansheet/flight_sw/cosim/run_cosim.py:387: RuntimeWarning: All-NaN slice encountered
+  e50 = float(np.nanmedian(psi_err[k])) if psi_err[k] else float("nan")
+Cd=0.2115 nom 30000 m TOF 89.6 s apo 9.9 km
+
+########## profile: baseline ##########
+[sensor profile: baseline] pos 5.0 m, vel 0.3 m/s, lat 100 ms, gyro bias 0.5 deg/s, gyro/sample 0.2 deg/s, acc/sample 0.08 m/s2, acc bias 0.25 m/s2
+  pair nominal              draws sim=  4895 fsw=  4895 miss sim=  12.46 fsw=  12.46 counts OK
+  pair mount bias 5deg      draws sim=  4937 fsw=  4937 miss sim=  32.89 fsw=  32.89 counts OK
+  pair crosswind 6          draws sim=  5137 fsw=  5137 miss sim=  24.75 fsw=  24.75 counts OK
+  pair headwind 6           draws sim=  5180 fsw=  5180 miss sim=  23.14 fsw=  23.14 counts OK
+  pair Cd +5%               draws sim=  6404 fsw=  6404 miss sim= 104.29 fsw= 104.29 counts OK
+  pair BLIND (no roll ref)  draws sim=  4989 fsw=  4989 miss sim=  89.66 fsw=  89.66 counts OK
+  nominal              fsw=  12.5 (-0.3% vs Rev E) mode=guide    psiErr= 5.33 dutyMean=0.14 s_cd=1.008 wy=0.0
+  mount bias 5deg      fsw=  18.1 (+0.0% vs Rev E) mode=guide    psiErr=10.98 dutyMean=0.16 s_cd=1.003 wy=0.0
+  crosswind 6          fsw=   9.4 (-0.4% vs Rev E) mode=guide    psiErr= 1.39 dutyMean=0.27 s_cd=0.983 wy=0.0
+  headwind 6           fsw=  13.7 (-0.1% vs Rev E) mode=guide    psiErr= 1.05 dutyMean=0.43 s_cd=1.034 wy=3.6
+  Cd +5%               fsw= 104.5 (+0.0% vs Rev E) mode=guide    psiErr= 0.57 dutyMean=0.92 s_cd=1.021 wy=2.5
+  BLIND (no roll ref)  fsw=  91.4 (-0.0% vs Rev E) mode=degraded psiErr=  nan dutyMean=0.24 s_cd=0.992 wy=0.0
+
+=== Monte Carlo 250 primary + 80x4 secondary (seed 20260901, paired dispersions) ===
+  ...25/250 primary (11 s)
+  ...50/250 primary (21 s)
+  ...75/250 primary (32 s)
+  ...100/250 primary (43 s)
+  ...125/250 primary (53 s)
+  ...150/250 primary (64 s)
+  ...175/250 primary (75 s)
+  ...200/250 primary (85 s)
+  ...225/250 primary (96 s)
+  ...250/250 primary (107 s)
+  ...20/80 secondary
+  ...40/80 secondary
+  ...60/80 secondary
+  ...80/80 secondary
+
+=== Results (radial miss, m) ===
+config             CEP50    mean     p90     max dutyPk50 psiErr50
+unguided           212.3   239.0   450.5   735.5     0.00      nan
+legacy               8.9    12.1    23.5    68.8     1.00      nan
+fsw_l0              21.5    22.1    33.1   149.5     0.71     5.74
+fsw_neverlock      209.7   240.7   456.0   728.5     0.00      nan
+fsw_zem             23.0    25.4    44.0    72.8     0.90     1.25
+fsw_outage          19.5    20.3    33.4    86.1     0.71     4.76
+fsw_blind          105.9   113.2   176.0   202.2     0.82      nan
+modes: {'fsw_l0': {'guide': 233, 'degraded': 17}, 'fsw_neverlock': {'ballistic': 250}, 'fsw_outage': {'guide': 76, 'degraded': 4}}
+Unguided/fsw_l0: 9.9x   legacy/fsw_l0: 0.41x
+  [profile baseline wall 175 s]
+
+########## profile: selected ##########
+[sensor profile: selected] pos 1.2 m, vel 0.1 m/s, lat 100 ms, gyro bias 0.18 deg/s, gyro/sample 0.2 deg/s, acc/sample 0.0108 m/s2, acc bias 0.08 m/s2
+  pair nominal              draws sim=  5015 fsw=  5015 miss sim=  30.34 fsw=  30.34 counts OK
+  pair mount bias 5deg      draws sim=  5011 fsw=  5011 miss sim=  21.88 fsw=  21.88 counts OK
+  pair crosswind 6          draws sim=  5391 fsw=  5391 miss sim=   6.15 fsw=   6.15 counts OK
+  pair headwind 6           draws sim=  5076 fsw=  5076 miss sim=  21.36 fsw=  21.36 counts OK
+  pair Cd +5%               draws sim=  6360 fsw=  6360 miss sim= 104.33 fsw= 104.33 counts OK
+  pair BLIND (no roll ref)  draws sim=  5089 fsw=  5089 miss sim= 108.54 fsw= 108.54 counts OK
+  nominal              fsw=  30.3 (+142.7% vs Rev E) mode=guide    psiErr= 0.42 dutyMean=0.18 s_cd=1.008 wy=-2.7
+  mount bias 5deg      fsw=  29.1 (+60.9% vs Rev E) mode=guide    psiErr= 1.70 dutyMean=0.18 s_cd=0.992 wy=-4.3
+  crosswind 6          fsw=   4.9 (-47.5% vs Rev E) mode=guide    psiErr= 0.02 dutyMean=0.28 s_cd=0.980 wy=0.0
+  headwind 6           fsw=  20.3 (+48.2% vs Rev E) mode=guide    psiErr= 4.56 dutyMean=0.43 s_cd=1.035 wy=0.0
+  Cd +5%               fsw= 103.8 (-0.6% vs Rev E) mode=guide    psiErr= 0.88 dutyMean=0.92 s_cd=1.021 wy=2.6
+  BLIND (no roll ref)  fsw= 111.9 (+22.5% vs Rev E) mode=guide    psiErr=  nan dutyMean=0.24 s_cd=0.994 wy=0.0
+
+=== Monte Carlo 250 primary + 80x4 secondary (seed 20260901, paired dispersions) ===
+  ...25/250 primary (11 s)
+  ...50/250 primary (21 s)
+  ...75/250 primary (32 s)
+  ...100/250 primary (43 s)
+  ...125/250 primary (53 s)
+  ...150/250 primary (64 s)
+  ...175/250 primary (75 s)
+  ...200/250 primary (85 s)
+  ...225/250 primary (96 s)
+  ...250/250 primary (106 s)
+  ...20/80 secondary
+  ...40/80 secondary
+  ...60/80 secondary
+  ...80/80 secondary
+
+=== Results (radial miss, m) ===
+config             CEP50    mean     p90     max dutyPk50 psiErr50
+unguided           222.6   232.6   395.1   651.4     0.00      nan
+legacy               7.4     9.4    17.1    51.9     1.00      nan
+fsw_l0              21.7    21.6    32.9    45.8     0.73     2.29
+fsw_neverlock      217.8   233.6   400.7   644.6     0.00      nan
+fsw_zem             22.0    24.3    38.8    57.9     0.91     1.48
+fsw_outage          20.6    20.8    30.1    46.7     0.74     3.10
+fsw_blind          111.1   114.5   177.8   204.2     0.96      nan
+modes: {'fsw_l0': {'guide': 236, 'degraded': 14}, 'fsw_neverlock': {'ballistic': 250}, 'fsw_outage': {'guide': 73, 'degraded': 7}}
+Unguided/fsw_l0: 10.2x   legacy/fsw_l0: 0.34x
+  [profile selected wall 174 s]
+
+########## profile: worstcase ##########
+[sensor profile: worstcase] pos 5.0 m, vel 0.3 m/s, lat 100 ms, gyro bias 0.36 deg/s, gyro/sample 0.2 deg/s, acc/sample 0.08 m/s2, acc bias 0.1 m/s2
+  pair nominal              draws sim=  5107 fsw=  5107 miss sim=  17.91 fsw=  17.91 counts OK
+  pair mount bias 5deg      draws sim=  5241 fsw=  5241 miss sim=  13.62 fsw=  13.62 counts OK
+  pair crosswind 6          draws sim=  5413 fsw=  5413 miss sim=  13.13 fsw=  13.13 counts OK
+  pair headwind 6           draws sim=  5162 fsw=  5162 miss sim=  16.80 fsw=  16.80 counts OK
+  pair Cd +5%               draws sim=  6404 fsw=  6404 miss sim= 104.25 fsw= 104.25 counts OK
+  pair BLIND (no roll ref)  draws sim=  4985 fsw=  4985 miss sim=  83.08 fsw=  83.08 counts OK
+  nominal              fsw=  17.9 (+43.3% vs Rev E) mode=guide    psiErr= 0.93 dutyMean=0.14 s_cd=1.003 wy=0.6
+  mount bias 5deg      fsw=  18.1 (+0.0% vs Rev E) mode=guide    psiErr= 3.23 dutyMean=0.14 s_cd=1.001 wy=-1.6
+  crosswind 6          fsw=   6.8 (-27.7% vs Rev E) mode=guide    psiErr= 0.76 dutyMean=0.31 s_cd=0.980 wy=0.0
+  headwind 6           fsw=  20.0 (+46.1% vs Rev E) mode=guide    psiErr=23.68 dutyMean=0.46 s_cd=1.028 wy=0.0
+  Cd +5%               fsw= 105.2 (+0.7% vs Rev E) mode=guide    psiErr= 0.58 dutyMean=0.92 s_cd=1.017 wy=0.7
+  BLIND (no roll ref)  fsw=  95.2 (+4.1% vs Rev E) mode=degraded psiErr=  nan dutyMean=0.26 s_cd=0.992 wy=0.0
+
+=== Monte Carlo 250 primary + 80x4 secondary (seed 20260901, paired dispersions) ===
+  ...25/250 primary (11 s)
+  ...50/250 primary (21 s)
+  ...75/250 primary (32 s)
+  ...100/250 primary (43 s)
+  ...125/250 primary (53 s)
+  ...150/250 primary (64 s)
+  ...175/250 primary (75 s)
+  ...200/250 primary (85 s)
+  ...225/250 primary (96 s)
+  ...250/250 primary (107 s)
+  ...20/80 secondary
+  ...40/80 secondary
+  ...60/80 secondary
+  ...80/80 secondary
+
+=== Results (radial miss, m) ===
+config             CEP50    mean     p90     max dutyPk50 psiErr50
+unguided           223.1   240.8   404.9   818.9     0.00      nan
+legacy               9.2    11.5    18.1   131.5     1.00      nan
+fsw_l0              21.1    21.1    32.3    53.4     0.71     3.64
+fsw_neverlock      222.1   242.5   413.9   811.9     0.00      nan
+fsw_zem             24.0    25.7    43.7    54.4     0.88     1.62
+fsw_outage          17.8    18.3    28.0    41.9     0.71     4.49
+fsw_blind          113.1   119.2   187.1   218.3     0.82      nan
+modes: {'fsw_l0': {'guide': 249, 'degraded': 1}, 'fsw_neverlock': {'ballistic': 250}, 'fsw_outage': {'guide': 79, 'degraded': 1}}
+Unguided/fsw_l0: 10.6x   legacy/fsw_l0: 0.44x
+  [profile worstcase wall 175 s]
+
+Wrote /home/jagath-srujan/Documents/smart india hackathon/cleansheet/out_sim/RESULTS_SENSORS.md

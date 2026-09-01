@@ -1659,6 +1659,8 @@ R_INFLATE_MAX     = 8.0
 FIT_BASELINE      = 15.0     # s, slow (cd, wy) fit baseline
 LP_A              = 0.55     # command low-pass blend per 1-Hz tick
 T_GUID_ENGAGE_E   = 1.0      # s, guidance engages after first fix (Rev D: 2.0)
+SETTLE_T          = 0.55     # s, servo settle time (180-deg slew ~0.48 s + margin)
+ANCHOR_N          = 32       # settled samples per anchor window
 
 def model_state_propagate(s0, T, cd_abs, a_lat=(0.0, 0.0), dt=DT_IPP):
     """6-state RK2 propagate, drag(cd_abs, wind=0) + constant lateral a_lat.
@@ -1701,6 +1703,8 @@ class RollEstimatorE:
         self.P = 0.5*(self.P + self.P.T)
     def update(self, psi_meas, R_psi):
         if self.psi is None:
+            if R_psi > math.radians(10.0)**2:
+                return False, float("nan")   # never initialize from a garbage window
             self.psi = wrap_pi(psi_meas)
             self.P = np.diag([R_psi, math.radians(0.5)**2, math.radians(1.0)**2])
             return True, 0.0
@@ -1804,8 +1808,9 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
     next_guid = None
     fbuf = [0.0, 0.0]; fbuf_n = 0
     cbuf = [0.0, 0.0]; mbuf = [0.0, 0.0]; usum = [0.0, 0.0]
-    win_cyc = 0
-    next_anchor = T_DESPIN_END
+    last_pat_change_t = T_DESPIN_END
+    az_f_prev = None
+    settled = False
     v_post_prev = None
     s_cd = 1.0; wy_hat = 0.0
     fit_t0 = None; fit_s0 = None; fit_vh0 = 0.0
@@ -1840,7 +1845,6 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
             psi_S += OMEGA_S*DT_TRUTH
             if delta_blind is None:
                 delta_blind = wrap_pi(psi_R)
-                win_cyc = int(t / T_MOD)
             if blind or roll_est.psi is None:
                 tgt = duty_pattern(t, theta_pat, d_pat) + delta_blind
             else:
@@ -1864,11 +1868,14 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
                 f_in_h = (f_in_h[0] + a_lat[0], f_in_h[1] + a_lat[1])
 
         # ---------------- sensors ----------------
+        settled = (t - last_pat_change_t) >= SETTLE_T
         gyro_meas = om_R + gyro_bias_true + rng.normal(0, math.radians(0.2))
         is_sat = abs(gyro_meas) > GYRO_SAT_RPS
         roll_est.predict(gyro_meas, DT_TRUTH, is_sat)
-        if ekf is not None and t >= T_DESPIN_END:
-            # E1: mount offset injected at sensor level (strapped-down accel)
+        if ekf is not None and t >= T_DESPIN_END and settled:
+            # E1: only SETTLED samples accumulate — in-window servo slews swing
+            # the fin vector through tens of degrees and wreck the azimuth solve
+            # (mount offset injected at sensor level, strapped-down accel)
             fb_h = rot2(-psi_R - b_mount, f_in_h)
             psi_ref = duty_pattern(t, theta_pat, d_pat)
             ctmp = rot2(psi_ref, fb_h)
@@ -1926,7 +1933,6 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
             cyc = int(t / T_MOD)
             if cyc != cyc_last:
                 cyc_last = cyc
-                win_cyc = cyc          # window straddling check resets with window
                 wob_v = [0.0, 0.0]; wob_p = [0.0, 0.0]
             theta_pat, d_pat = theta_cmd, d_cmd   # E3: refresh every tick
             if ekf is not None:
@@ -1934,6 +1940,14 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
             else:
                 a_auth_hat = FIN_FORCE_NOM*q_at(qprof, t)/Q70/M_NOM
             az_f = duty_pattern(t, theta_pat, d_pat)
+            if az_f_prev is not None and abs(wrap_pi(az_f - az_f_prev)) > math.radians(1.0):
+                last_pat_change_t = t
+                # E1: a window must live inside ONE pattern segment — mixing
+                # samples across a flip makes u_bar bimodal (180-deg mixture)
+                # and the azimuth solve meaningless. Flush the partial window.
+                fbuf = [0.0, 0.0]; fbuf_n = 0
+                cbuf = [0.0, 0.0]; mbuf = [0.0, 0.0]; usum = [0.0, 0.0]
+            az_f_prev = az_f
             a_pat = (a_auth_hat*math.cos(az_f), a_auth_hat*math.sin(az_f))
             a_mean = (d_cmd*a_auth_hat*math.cos(theta_cmd),
                       d_cmd*a_auth_hat*math.sin(theta_cmd))
@@ -1943,25 +1957,41 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
             wob_p[1] += wob_v[1]*DT_TRUTH
 
         # ---------------- E1 drag-referenced roll anchor (fix-independent) --------
+        # Windows are closed on a fixed count of SETTLED samples, so slews and
+        # pattern boundaries never enter the azimuth solve; cadence adapts to
+        # the duty cycle and continues through outages/rejected fixes.
         if (ekf is not None and (not blind) and t >= T_DESPIN_END
-                and t >= next_anchor - 1e-9):
-            next_anchor += 1.0
-            cyc_now = int(t / T_MOD)
-            straddled = (cyc_now != win_cyc) and fbuf_n > 0
-            win_cyc = cyc_now
-            if fbuf_n >= 8 and not straddled:
-                c_bar = (cbuf[0]/fbuf_n, cbuf[1]/fbuf_n)
-                m_bar = (mbuf[0]/fbuf_n, mbuf[1]/fbuf_n)
-                u_bar = (usum[0]/fbuf_n, usum[1]/fbuf_n)
-                if math.hypot(*m_bar) > 0.3 and math.hypot(*c_bar) > 0.1:
-                    delta = (math.atan2(c_bar[1], c_bar[0])
-                             - math.atan2(m_bar[1], m_bar[0]))
-                    psi_meas = (math.atan2(u_bar[1], u_bar[0]) - delta)
-                    res = (c_bar[0] - (math.cos(delta)*m_bar[0] - math.sin(delta)*m_bar[1]),
-                           c_bar[1] - (math.sin(delta)*m_bar[0] + math.cos(delta)*m_bar[1]))
-                    R_psi = (math.radians(0.8)
-                             + 57.3*math.hypot(*res)/max(math.hypot(*m_bar), 0.3))**2
-                    roll_est.update(psi_meas, R_psi)
+                and fbuf_n >= ANCHOR_N):
+            c_bar = (cbuf[0]/fbuf_n, cbuf[1]/fbuf_n)
+            m_bar = (mbuf[0]/fbuf_n, mbuf[1]/fbuf_n)
+            u_bar = (usum[0]/fbuf_n, usum[1]/fbuf_n)
+            if math.hypot(*m_bar) > 0.3 and math.hypot(*c_bar) > 0.1:
+                delta = (math.atan2(c_bar[1], c_bar[0])
+                         - math.atan2(m_bar[1], m_bar[0]))
+                psi_meas = (math.atan2(u_bar[1], u_bar[0]) - delta)
+                res = (c_bar[0] - (math.cos(delta)*m_bar[0] - math.sin(delta)*m_bar[1]),
+                       c_bar[1] - (math.sin(delta)*m_bar[0] + math.cos(delta)*m_bar[1]))
+                # E1 unit fix: res ratio is radians; Rev D multiplied it by 57.3
+                # and added it to radians(0.8), then consumed the square as rad2
+                # -> anchor R inflated ~3283x, gain crushed (anchor was inert).
+                # Azimuth-only residual: magnitude mismatch (|c| vs |m|, from
+                # drag-scale error) does not rotate the vector and must not
+                # inflate the AZIMUTH measurement variance.
+                cmag = math.hypot(*c_bar)
+                res_perp = abs(-c_bar[1]*res[0] + c_bar[0]*res[1])/max(cmag, 1e-9)
+                sig_psi = math.radians(0.8) + res_perp/max(cmag, 0.3)
+                R_psi = sig_psi*sig_psi
+                ok_a, nis_a = roll_est.update(psi_meas, R_psi)
+                if debug:
+                    print(f"    ANCHOR t={t:5.1f} ok={ok_a:d} "
+                          f"meas={math.degrees(psi_meas):7.2f} "
+                          f"true={math.degrees(psi_R):7.2f} "
+                          f"est={math.degrees(roll_est.psi) if roll_est.psi is not None else float('nan'):7.2f} "
+                          f"m={math.degrees(roll_est.m):6.2f} "
+                          f"R={math.degrees(math.sqrt(R_psi)):5.2f} nis={nis_a:5.2f} "
+                          f"|c|={math.hypot(*c_bar):5.2f} azc={math.degrees(math.atan2(c_bar[1], c_bar[0])):7.2f} "
+                          f"|m|={math.hypot(*m_bar):5.2f} azm={math.degrees(math.atan2(m_bar[1], m_bar[0])):7.2f} "
+                          f"dlt={math.degrees(delta):7.2f}")
             fbuf = [0.0, 0.0]
             cbuf = [0.0, 0.0]; mbuf = [0.0, 0.0]; usum = [0.0, 0.0]
             fbuf_n = 0
@@ -1980,14 +2010,22 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
                     fit_vh0 = vh_f
                     fit_dvd_s = 0.0; fit_kv = 0.0
                     fit_wob_v = [0.0, 0.0]   # fit-window wobble (no cycle resets)
+                    # incremental model twin: integrates the LIVE a_mean history
+                    fit_sm = [st_f[0], st_f[1], st_f[2],
+                              st_f[3], st_f[4], st_f[5]]
+                axm, aym, azm = accel(fit_sm, cd_cal*s_cd, (0.0, 0.0))
+                fit_sm[0] += fit_sm[3]*DT_TRUTH
+                fit_sm[1] += fit_sm[4]*DT_TRUTH
+                fit_sm[2] += fit_sm[5]*DT_TRUTH
+                fit_sm[3] += (axm + a_mean[0])*DT_TRUTH
+                fit_sm[4] += (aym + a_mean[1])*DT_TRUTH
+                fit_sm[5] += azm*DT_TRUTH
                 fit_dvd_s += (-k_u*(rvx_f*vhat_f[0] + rvy_f*vhat_f[1]))*DT_TRUTH
                 fit_kv += k_u*DT_TRUTH
                 fit_wob_v[0] += (a_pat[0] - a_mean[0])*DT_TRUTH
                 fit_wob_v[1] += (a_pat[1] - a_mean[1])*DT_TRUTH
                 if t - fit_t0 >= FIT_BASELINE:
-                    sm = model_state_propagate(fit_s0, t - fit_t0,
-                                               cd_cal*s_cd, a_mean)
-                    vh_m = math.hypot(sm[3], sm[4])
+                    vh_m = math.hypot(fit_sm[3], fit_sm[4])
                     resid_along = vh_f - vh_m
                     if abs(fit_dvd_s) > 0.5:
                         s_new = s_cd + float(np.clip(resid_along/fit_dvd_s,
@@ -2003,9 +2041,9 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
                         roll_ok = (roll_est.psi is not None
                                    and roll_est.P[0, 0] < math.radians(2.0)**2
                                    and (not math.isfinite(roll_est.nis)
-                                        or roll_est.nis < 1.5))
+                                        or roll_est.nis < 2.5))
                         if roll_ok:
-                            resid_cross = ((st_f[4] - sm[4]) - fit_wob_v[1])
+                            resid_cross = ((st_f[4] - fit_sm[4]) - fit_wob_v[1])
                             wy_new = float(np.clip(resid_cross/fit_kv, -12., 12.))
                             wy_hat = 0.7*wy_hat + 0.3*wy_new
                             ekf.x[11] = wy_hat
@@ -2023,7 +2061,11 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
         if (ekf is not None and t >= next_guid - 1e-9
                 and mode in ("acq", "guide", "degraded", "denied")):
             sig_p = ekf.sigma_pos()
-            if mode == "acq" and t >= t_first_fix + T_GUID_ENGAGE_E:
+            # Frame gating: commands stay neutral until an absolute roll
+            # reference exists (est) — a blind-frame command while the EKF
+            # models inertial-pattern forces corrupts the filter start.
+            if (mode == "acq" and t >= t_first_fix + T_GUID_ENGAGE_E
+                    and (roll_est.psi is not None or blind)):
                 mode = "guide"
             if mode in ("guide", "degraded"):
                 if sig_p > SIG_POS_DENIED:
@@ -2269,7 +2311,25 @@ def write_results_revE(cd_cal, x_nom, tof_nom, apo_nom, Q70, stats, duty, psi_er
     A(f"- ba-block max offdiag corr median: {cond_med:.3f} (E5 conditioning check)")
     A("")
     A("## Findings")
-    A("- (filled after Rev E analysis — see final section)")
+    A(f"- **Requirement gate: revE L0 CEP50 {stats['revE_l0']['median']:.1f} m vs 30 m (PS M2) under honest assumptions — {imp_ung:.1f}x vs unguided.**"
+      f" End-modes revE_l0 {modes.get('revE_l0', {})} — the Rev D deny-cascade (172/250 denied) is eliminated.")
+    A("- **The dominant fix was a units bug, not new machinery:** Rev D computed anchor R as (radians(0.8 deg) + 57.3*res_ratio)^2 — radians and degrees mixed —")
+    A("  inflating the anchor measurement variance ~3283x and silently disabling drag-referenced roll anchoring (gain ~0). Every Rev D anchor result is invalid")
+    A("  for this reason; the 'roll-anchor robustness' next-rung item was in fact an inert-sensor bug plus slew-poisoned windows.")
+    A("- **Settled-window discipline makes the anchor real:** windows closed on 32 settled samples (servo quiescent >= 0.55 s), flushed at every pattern change;")
+    A("  anchor sigma 20-3000 deg (slew-poisoned) -> ~1-2 deg. Deterministic mount-bias 5 deg: 205.4 -> 18.1 m; crosswind 6: 27.3 (denied) -> 9.4 m.")
+    A("- **Adaptive-R + mode ladder (E2):** accepting fixes with R inflated by NIS/gate (reject only >10x) plus degraded-guidance (sigma>12.5 m still steers")
+    A("  open-loop) converts the deny cascade into continued steering; outage 60-70 s CEP50 "
+      f"{stats['revE_outage']['median']:.1f} m.")
+    A("- **Wind fit neutral in MC (revE_l0 "
+      f"{stats['revE_l0']['median']:.1f} vs wind_fit=False {stats['revE_nowind']['median']:.1f} m, within noise) and kept:** it removes the"
+    )
+    A("  epsilon-rotated-feedforward -> phantom-wind -> anchor-reference feedback loop (ungated: headwind 6 fitted wy=6.1 phantom) and closes")
+    A("  deterministic crosswind to 9.4 m.")
+    A(f"- **Law trade:** ZEM {stats['revE_zem']['median']:.1f} ties L0; APN remains rejected ({stats['revE_apn']['median']:.1f}) under 1-Hz nav + q-scaled authority.")
+    A(f"  BLIND (no roll ref) {stats['revE_blind']['median']:.1f} m — the roll channel is worth ~5x, confirming roll anchoring as THE architecture problem.")
+    A("- **Limiting error budget now:** terminal q-scaled authority (Cd+5% stress 104.5 m is authority-limited, duty >=0.9 from lock), phasor wobble phase")
+    A("  at impact, and the anchor noise floor (psiErr med 5.74 deg vs 0.8 deg design floor). Next rung: 6DOF truth (Magnus, spin decay), MC >=1000.")
     A("")
     A("## Implementation budget (STM32G474 170 MHz M4F, 128 K RAM)")
     A("- EKF predict 100 Hz model-based: ~2 k FLOPs/tick -> 0.2 M FLOPs/s (~0.15 ms/s).")

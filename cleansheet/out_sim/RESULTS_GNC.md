@@ -1,6 +1,6 @@
 # GNC methodology verification — PGK clean-sheet (Rev E)
 
-Runs: 8 primary + 4x5 secondary MC (seed 20260901), paired dispersions.
+Runs: 250 primary + 80x5 secondary MC (seed 20260901), paired dispersions.
 Truth: 3DOF RK4 dt=0.025, exp atmo, Cd=0.2115 -> nom 30000 m-range TOF90s apo9.9km.
 Authority: F(t) = 60 N * q(t)/q(70s) (q70=41392 Pa) — q-scaled fin force (F8, unchanged).
 Sensor: NavIC pos 5 m / vel 0.3 m/s 1 Hz, latency 100 ms time-tagged (F6);
@@ -22,35 +22,41 @@ Sensor: NavIC pos 5 m / vel 0.3 m/s 1 Hz, latency 100 ms time-tagged (F6);
 ## Deterministic (Rev E)
 | Case | Unguided | Rev E L0 | mode | psi err (deg) |
 |---|---|---|---|---|
-| nominal | — | 14.0 | guide | 7.56 |
-| mount bias 5deg | — | 49.8 | degraded | 55.30 |
-| crosswind 6 | — | 30.7 | guide | 23.32 |
-| headwind 6 | — | 59.7 | guide | 26.53 |
-| Cd +5% | — | 152.3 | guide | 0.60 |
-| BLIND (no roll ref) | — | 81.6 | degraded | nan |
+| nominal | — | 12.5 | guide | 5.33 |
+| mount bias 5deg | — | 18.1 | guide | 10.98 |
+| crosswind 6 | — | 9.4 | guide | 1.39 |
+| headwind 6 | — | 13.7 | guide | 1.05 |
+| Cd +5% | — | 104.5 | guide | 0.57 |
+| BLIND (no roll ref) | — | 91.4 | degraded | nan |
 
 ## Monte Carlo (disp V0 s0.15% aim 0.6 mrad wind s3 m/axis Cd s0.8% mass s0.6%)
 
 | Config | CEP50 | mean | p90 | max | dutyPk med | psiErr med (deg) |
 |---|---|---|---|---|---|---|
-| Unguided | 183.4 | 220.6 | 408.8 | 427.0 | 0.00 | nan |
-| Legacy windowed (lock45, idealized actuator) | 7.9 | 8.6 | 14.6 | 16.0 | 1.00 | nan |
-| Rev E EKF+dragref L0 | 38.4 | 47.0 | 88.2 | 97.0 | 0.79 | 10.90 |
-| Rev E ZEM 6dp/tgo2 | 23.0 | 25.9 | 23.5 | 40.3 | 0.72 | 12.15 |
-| Rev E APN clean N=3 | 157.0 | 236.0 | 182.3 | 523.6 | 0.31 | 15.07 |
-| Rev E L0 outage 60-70s | 16.1 | 23.2 | 18.3 | 48.3 | 0.77 | 11.63 |
-| Rev E BLIND (no roll ref) | 101.3 | 103.5 | 132.0 | 156.7 | 0.86 | nan |
-| Rev E L0 wind_fit=False | 21.1 | 24.6 | 21.4 | 39.9 | 0.79 | 7.21 |
-| Rev E never-lock (fail-safe) | 184.2 | 216.6 | 397.5 | 415.6 | 0.00 | nan |
+| Unguided | 212.3 | 239.0 | 450.5 | 735.5 | 0.00 | nan |
+| Legacy windowed (lock45, idealized actuator) | 8.9 | 12.1 | 23.5 | 68.8 | 1.00 | nan |
+| Rev E EKF+dragref L0 | 21.5 | 22.1 | 33.1 | 149.5 | 0.71 | 5.74 |
+| Rev E ZEM 6dp/tgo2 | 21.5 | 24.1 | 41.6 | 73.8 | 0.93 | 1.64 |
+| Rev E APN clean N=3 | 148.6 | 194.8 | 356.9 | 712.6 | 0.36 | 1.43 |
+| Rev E L0 outage 60-70s | 17.6 | 19.2 | 32.1 | 52.3 | 0.71 | 5.55 |
+| Rev E BLIND (no roll ref) | 115.2 | 114.2 | 165.1 | 206.7 | 0.87 | nan |
+| Rev E L0 wind_fit=False | 20.8 | 21.3 | 38.6 | 67.3 | 0.72 | 4.41 |
+| Rev E never-lock (fail-safe) | 209.7 | 240.7 | 456.0 | 728.5 | 0.00 | nan |
 
-**Improvement vs unguided: revE L0 4.8x (legacy idealized-actuator reference: 0.21x).**
-- end-modes revE_l0: {'guide': 8}
-- end-modes revE_neverlock: {'ballistic': 8}
-- end-modes revE_outage: {'guide': 3, 'degraded': 1}
-- ba-block max offdiag corr median: 0.006 (E5 conditioning check)
+**Improvement vs unguided: revE L0 9.9x (legacy idealized-actuator reference: 0.41x).**
+- end-modes revE_l0: {'guide': 233, 'degraded': 17}
+- end-modes revE_neverlock: {'ballistic': 250}
+- end-modes revE_outage: {'guide': 78, 'degraded': 2}
+- ba-block max offdiag corr median: 0.013 (E5 conditioning check)
 
 ## Findings
-- (filled after Rev E analysis — see final section)
+- **Requirement gate closed: revE L0 CEP50 21.5 m <= 30 m (PS M2) under honest assumptions — 9.9x vs unguided.** All 250 runs end in guidance (233 guide + 17 degraded, 0 denied, 0 ballistic); the Rev D deny-cascade (172/250 denied) is eliminated.
+- **The dominant fix was a units bug, not new machinery:** Rev D computed anchor R as (radians(0.8 deg) + 57.3*res_ratio)^2 — radians and degrees mixed — inflating the anchor measurement variance ~3283x and silently disabling drag-referenced roll anchoring (gain ~0). Every Rev D anchor result is invalid for this reason; the "roll-anchor robustness" next-rung item was in fact an inert-sensor bug plus slew-poisoned windows.
+- **Settled-window discipline is what makes the anchor real:** closing windows on 32 settled samples (servo quiescent >= 0.55 s) and flushing at every pattern change took anchor sigma from 20-3000 deg (slew-poisoned) to ~1-2 deg; deterministic mount-bias 5 deg: 205.4 -> 18.1 m; crosswind 6: 27.3(denied) -> 9.4 m.
+- **Adaptive-R + mode ladder (E2):** accepting fixes with R inflated by NIS/gate (reject only >10x) plus a degraded-guidance mode (sigma>12.5 m still steers open-loop) converts the Rev D denied cascade into continued steering; outage 60-70 s: CEP50 17.6 m.
+- **Wind fit is neutral in MC (21.5 with vs 20.8 without, within noise) and kept:** it removes the epsilon-rotated-feedforward -> phantom-wind -> anchor-reference feedback loop (ungated: headwind 6 fitted wy=6.1 phantom) and closes deterministic crosswind to 9.4 m.
+- **Law trade:** ZEM ties L0 (21.5); APN remains rejected (148.6) under 1-Hz nav + q-scaled authority. Blind (no roll ref) 115.2 m — the roll channel is worth ~5x, confirming roll anchoring as THE architecture problem.
+- **Limiting error budget now:** terminal q-scaled authority (Cd+5% stress case 104.5 m is authority-limited, duty >=0.9 from lock), phasor wobble phase at impact, and anchor noise floor (psiErr med 5.74 deg vs 0.8 deg design floor). Next rung: 6DOF truth (Magnus, spin decay), MC >=1000.
 
 ## Implementation budget (STM32G474 170 MHz M4F, 128 K RAM)
 - EKF predict 100 Hz model-based: ~2 k FLOPs/tick -> 0.2 M FLOPs/s (~0.15 ms/s).

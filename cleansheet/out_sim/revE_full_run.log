@@ -1,0 +1,44 @@
+Cd=0.2115 nom 30000 m TOF 89.6 s apo 9.9 km
+q(t=70s) = 41392 Pa (60 N reference condition)
+
+=== Deterministic (Rev E) ===
+  nominal              ung=   0.0 revE=  12.5 mode=guide    psiErr= 5.33 deg dutyMean=0.14 s_cd=1.008 wy=0.0
+  mount bias 5deg      ung=   0.0 revE=  18.1 mode=guide    psiErr=10.98 deg dutyMean=0.16 s_cd=1.003 wy=0.0
+  crosswind 6          ung= 224.6 revE=   9.4 mode=guide    psiErr= 1.39 deg dutyMean=0.27 s_cd=0.983 wy=0.0
+  headwind 6           ung= 346.4 revE=  13.7 mode=guide    psiErr= 1.05 deg dutyMean=0.43 s_cd=1.034 wy=3.6
+  Cd +5%               ung= 908.9 revE= 104.5 mode=guide    psiErr= 0.57 deg dutyMean=0.92 s_cd=1.021 wy=2.5
+  BLIND (no roll ref)  ung=   0.0 revE=  91.4 mode=degraded psiErr=  nan deg dutyMean=0.24 s_cd=0.992 wy=0.0
+
+=== Monte Carlo 250 primary + 80x5 secondary (lock 45s) ===
+  ...25/250 primary
+  ...50/250 primary
+  ...75/250 primary
+  ...100/250 primary
+  ...125/250 primary
+  ...150/250 primary
+  ...175/250 primary
+  ...200/250 primary
+  ...225/250 primary
+  ...250/250 primary
+  ...20/80 secondary
+  ...40/80 secondary
+  ...60/80 secondary
+  ...80/80 secondary
+
+=== Results (radial miss, m) ===
+config             CEP50    mean     p90     max dutyPk50 psiErr50
+unguided           212.3   239.0   450.5   735.5     0.00      nan
+legacy               8.9    12.1    23.5    68.8     1.00      nan
+revE_l0             21.5    22.1    33.1   149.5     0.71     5.74
+revE_neverlock     209.7   240.7   456.0   728.5     0.00      nan
+revE_zem            21.5    24.1    41.6    73.8     0.93     1.64
+revE_apn           148.6   194.8   356.9   712.6     0.36     1.43
+revE_outage         17.6    19.2    32.1    52.3     0.71     5.55
+revE_blind         115.2   114.2   165.1   206.7     0.87      nan
+revE_nowind         20.8    21.3    38.6    67.3     0.72     4.41
+modes: {'revE_l0': {'guide': 233, 'degraded': 17}, 'revE_neverlock': {'ballistic': 250}, 'revE_outage': {'guide': 78, 'degraded': 2}}
+ba-block max offdiag corr median (revE_l0): 0.013
+Unguided/revE_l0: 9.9x   legacy/revE_l0: 0.41x
+
+Wrote /home/jagath-srujan/Documents/smart india hackathon/cleansheet/out_sim/RESULTS_GNC.md
+Wrote /home/jagath-srujan/Documents/smart india hackathon/cleansheet/out_sim/steering_gnc_revE.png
