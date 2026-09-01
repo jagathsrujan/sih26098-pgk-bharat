@@ -1,11 +1,14 @@
 # legacy/ — archived history
 
 **Rule: new work never goes here.** Everything in `legacy/` is superseded or history-only,
-kept readable for provenance. The current design of record lives in `cleansheet/` (Rev 1.7)
-+ `electronics/` (KiCad architecture) + the 6 active `research/01–06` team folders.
+kept readable for provenance. **The current design of record lives in `cad_models/`**
+(`PGK_SPEC_SHEET.md` + `PGK_Motor_Assembly.FCStd` — single time-share machine).
+`cleansheet/` (Rev 1.7) and `electronics/` are **superseded references** (see root `AGENTS.md`).
 
 | Item | What it is | Why archived (2026-08-31) |
 |---|---|---|
+| `SIH26098_COLDGAS_PGK.md` | Cold-gas thruster PGK concept | **Rejected by calculation** (2026-09-01): insufficient correction impulse for the available volume; replaced by fin actuation on the single time-share machine |
+| `SIH26098_COLDGAS_PHYSICS_EVAL.md` | The physics evaluation that killed cold gas | Kept as the documented rationale — cite it when asked why there are no thrusters |
 | `old_two_motor_design/` | Superseded two-motor CAD + output | Replaced by the common-carrier bench demonstrator (`cad_models/`) and then by `cleansheet/` |
 | `attachments/` | Frozen pre-cleansheet baseline backups (`.FCBak` of `PGK_155mm`, COTS library) | `cleansheet/PGK_CleanSheet.FCStd` supersedes `PGK_155mm` (see `cleansheet/HANDOFF.md`) |
 | `docs/` | PS dumps (aerospace/software-filtered) + HTML viewers + Excalidraw VALID copy | Reference-only dumps; the official PS is `SIH2026_Hardware_PS.*` at root |

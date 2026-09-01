@@ -1,0 +1,45 @@
+Cd=0.2115 nom 30000 m TOF 89.6 s apo 9.9 km
+Kicker: F=115 N Isp=170 s prop=353 g -> dv budget 12.79 m/s; arm t_go<=12 s, trigger miss>25 m, settle 0.35 s
+
+=== Deterministic (per-case paired seeds) ===
+  nominal              base=  12.5 kick=  12.5 fired=False dv= 0.00 m/s burn=0.00 s mode=guide
+  mount bias 5deg      base=  24.6 kick=  24.6 fired=False dv= 0.00 m/s burn=0.00 s mode=guide
+  crosswind 6          base=  60.2 kick=  60.2 fired=False dv= 0.00 m/s burn=0.00 s mode=degraded
+  headwind 6           base=   9.7 kick=   9.7 fired=False dv= 0.00 m/s burn=0.00 s mode=guide
+  Cd +5% (stress)      base= 104.6 kick=  11.2 fired=True  dv=12.74 m/s burn=5.08 s mode=guide
+  outage 60-70s        base=  28.0 kick=  28.0 fired=False dv= 0.00 m/s burn=0.00 s mode=guide
+  BLIND (no roll ref)  base=  97.6 kick=  97.6 fired=False dv= 0.00 m/s burn=0.00 s mode=degraded
+
+=== Monte Carlo: 250 paired primary + 80 paired outage + 100 paired stressed (Cd +3.5%) ===
+  ...25/250
+  ...50/250
+  ...75/250
+  ...100/250
+  ...125/250
+  ...150/250
+  ...175/250
+  ...200/250
+  ...225/250
+  ...250/250
+  ...25/80
+  ...50/80
+  ...75/80
+  ...25/100
+  ...50/100
+  ...75/100
+  ...100/100
+
+=== Results (radial miss, m) ===
+config                   CEP50    mean     p90     max  fired  dvMed  dvMax
+primary.base              19.9    21.8    35.6    86.9      0    nan    nan
+primary.kick              19.9    21.8    35.6    86.9      0    nan    nan
+outage.base               17.3    19.2    31.3    79.0      0    nan    nan
+outage.kick               17.3    19.2    31.3    79.0      0    nan    nan
+stressed.base             16.0    52.7   148.9   527.6      0    nan    nan
+stressed.kick             14.8    30.0    46.4   422.3     34  12.74  12.85
+primary: kicker fired 0/250 (no run met the last-resort trigger); delta idle: max 0.000
+outage: kicker fired 0/80 (no run met the last-resort trigger); delta idle: max 0.000
+stressed: kicker fired 34/100; delta(miss) fired: med -98.0 worst +39.5 best -110.1; delta idle: med +0.00 max +0.00
+
+Wrote /home/jagath-srujan/Documents/smart india hackathon/cleansheet/out_sim/RESULTS_KICKER.md
+Wrote /home/jagath-srujan/Documents/smart india hackathon/cleansheet/out_sim/steering_kicker.png

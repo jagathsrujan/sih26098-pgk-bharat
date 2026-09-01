@@ -26,6 +26,17 @@ Thumbs.db
 # Allow clean-sheet design of record (tracked via git, ~9 MB)
 !cleansheet/PGK_CleanSheet.FCStd
 
+# Current/reference CAD archives (the canonical assembly links to parts)
+!cad_models/PGK_155mm_Envelope.FCStd
+!cad_models/PGK_Full_Assembly.FCStd
+!cad_models/PGK_Motor_Assembly.FCStd
+!cad_models/PGK_Motor_Assembly_DUAL_reference.FCStd
+!cad_models/parts/*.FCStd
+
+# FreeCAD unpacked archive directories (generated extraction state)
+cad_models/PGK_Motor_Single_Assembly/
+cad_models/parts/S10_fuze_stack/
+
 # Simulation outputs
 *.csv
 !SIH2026_*.csv

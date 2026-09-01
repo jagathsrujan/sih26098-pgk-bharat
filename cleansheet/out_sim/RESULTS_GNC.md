@@ -50,13 +50,21 @@ Sensor: NavIC pos 5 m / vel 0.3 m/s 1 Hz, latency 100 ms time-tagged (F6);
 - ba-block max offdiag corr median: 0.013 (E5 conditioning check)
 
 ## Findings
-- **Requirement gate closed: revE L0 CEP50 21.5 m <= 30 m (PS M2) under honest assumptions — 9.9x vs unguided.** All 250 runs end in guidance (233 guide + 17 degraded, 0 denied, 0 ballistic); the Rev D deny-cascade (172/250 denied) is eliminated.
-- **The dominant fix was a units bug, not new machinery:** Rev D computed anchor R as (radians(0.8 deg) + 57.3*res_ratio)^2 — radians and degrees mixed — inflating the anchor measurement variance ~3283x and silently disabling drag-referenced roll anchoring (gain ~0). Every Rev D anchor result is invalid for this reason; the "roll-anchor robustness" next-rung item was in fact an inert-sensor bug plus slew-poisoned windows.
-- **Settled-window discipline is what makes the anchor real:** closing windows on 32 settled samples (servo quiescent >= 0.55 s) and flushing at every pattern change took anchor sigma from 20-3000 deg (slew-poisoned) to ~1-2 deg; deterministic mount-bias 5 deg: 205.4 -> 18.1 m; crosswind 6: 27.3(denied) -> 9.4 m.
-- **Adaptive-R + mode ladder (E2):** accepting fixes with R inflated by NIS/gate (reject only >10x) plus a degraded-guidance mode (sigma>12.5 m still steers open-loop) converts the Rev D denied cascade into continued steering; outage 60-70 s: CEP50 17.6 m.
-- **Wind fit is neutral in MC (21.5 with vs 20.8 without, within noise) and kept:** it removes the epsilon-rotated-feedforward -> phantom-wind -> anchor-reference feedback loop (ungated: headwind 6 fitted wy=6.1 phantom) and closes deterministic crosswind to 9.4 m.
-- **Law trade:** ZEM ties L0 (21.5); APN remains rejected (148.6) under 1-Hz nav + q-scaled authority. Blind (no roll ref) 115.2 m — the roll channel is worth ~5x, confirming roll anchoring as THE architecture problem.
-- **Limiting error budget now:** terminal q-scaled authority (Cd+5% stress case 104.5 m is authority-limited, duty >=0.9 from lock), phasor wobble phase at impact, and anchor noise floor (psiErr med 5.74 deg vs 0.8 deg design floor). Next rung: 6DOF truth (Magnus, spin decay), MC >=1000.
+- **Requirement gate: revE L0 CEP50 21.5 m vs 30 m (PS M2) under honest assumptions — 9.9x vs unguided.** End-modes revE_l0 {'guide': 233, 'degraded': 17} — the Rev D deny-cascade (172/250 denied) is eliminated.
+- **The dominant fix was a units bug, not new machinery:** Rev D computed anchor R as (radians(0.8 deg) + 57.3*res_ratio)^2 — radians and degrees mixed —
+  inflating the anchor measurement variance ~3283x and silently disabling drag-referenced roll anchoring (gain ~0). Every Rev D anchor result is invalid
+  for this reason; the 'roll-anchor robustness' next-rung item was in fact an inert-sensor bug plus slew-poisoned windows.
+- **Settled-window discipline makes the anchor real:** windows closed on 32 settled samples (servo quiescent >= 0.55 s), flushed at every pattern change;
+  anchor sigma 20-3000 deg (slew-poisoned) -> ~1-2 deg. Deterministic mount-bias 5 deg: 205.4 -> 18.1 m; crosswind 6: 27.3 (denied) -> 9.4 m.
+- **Adaptive-R + mode ladder (E2):** accepting fixes with R inflated by NIS/gate (reject only >10x) plus degraded-guidance (sigma>12.5 m still steers
+  open-loop) converts the deny cascade into continued steering; outage 60-70 s CEP50 17.6 m.
+- **Wind fit neutral in MC (revE_l0 21.5 vs wind_fit=False 20.8 m, within noise) and kept:** it removes the
+  epsilon-rotated-feedforward -> phantom-wind -> anchor-reference feedback loop (ungated: headwind 6 fitted wy=6.1 phantom) and closes
+  deterministic crosswind to 9.4 m.
+- **Law trade:** ZEM 21.5 ties L0; APN remains rejected (148.6) under 1-Hz nav + q-scaled authority.
+  BLIND (no roll ref) 115.2 m — the roll channel is worth ~5x, confirming roll anchoring as THE architecture problem.
+- **Limiting error budget now:** terminal q-scaled authority (Cd+5% stress 104.5 m is authority-limited, duty >=0.9 from lock), phasor wobble phase
+  at impact, and the anchor noise floor (psiErr med 5.74 deg vs 0.8 deg design floor). Next rung: 6DOF truth (Magnus, spin decay), MC >=1000.
 
 ## Implementation budget (STM32G474 170 MHz M4F, 128 K RAM)
 - EKF predict 100 Hz model-based: ~2 k FLOPs/tick -> 0.2 M FLOPs/s (~0.15 ms/s).

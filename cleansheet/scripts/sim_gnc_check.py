@@ -1781,7 +1781,7 @@ class NavEKF_E(NavEKF_D):
 # ---------------------------------------------------------------- Rev E guided sim
 def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
                  never_lock=False, mount_bias_deg=None, qprof=None,
-                 wind_fit=True, debug=False):
+                 wind_fit=True, debug=False, kicker=False):
     """Rev E guided shot. Returns (xi, yi, stats, timeline)."""
     m_true = p["mass"]
     b_body = (rng.normal(0, 0.01), rng.normal(0, 0.01))
@@ -1828,6 +1828,13 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
     timeline = []
     next_dbg = T_DESPIN_END
     ipp_miss = t_go_last = float("nan")
+    # Kicker state (only when enabled; no rng draws -> default path untouched)
+    kick = None
+    if kicker:
+        kick = {"k": None, "committed": False, "burning": False, "done": False,
+                "t_commit": None, "t_start": None, "miss0": None,
+                "tgo0": None, "az_req": None, "dv_plan": 0.0, "dv_used": 0.0,
+                "prop_left": KICK_PROP, "burn_t": 0.0, "ak": (0.0, 0.0)}
 
     s = initial_state(p["v0"], p["elev"], p["azim"])
     t = 0.0
@@ -1866,6 +1873,33 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
                 F_true = FIN_FORCE_NOM * q_dyn(s)/Q70
                 a_lat = (F_true/m_true*math.cos(psi_R), F_true/m_true*math.sin(psi_R))
                 f_in_h = (f_in_h[0] + a_lat[0], f_in_h[1] + a_lat[1])
+                if kick is not None:
+                    if (kick["committed"] and not kick["burning"]
+                            and t >= kick["t_start"]):
+                        kick["burning"] = True
+                    if kick["burning"]:
+                        if (kick["prop_left"] <= 0.0
+                                or kick["dv_used"] >= 0.995*kick["dv_plan"]):
+                            kick["burning"] = False
+                            kick["done"] = True
+                            kick["ak"] = (0.0, 0.0)
+                        else:
+                            # thrust rides the de-spun frame: azimuth = frame
+                            # angle + selected spoke (worst-case quantization
+                            # error <= 22.5 deg for 8 faces, held for the burn)
+                            az_k = psi_R + kick["k"]*(2.0*math.pi/KICK_FACES)
+                            dm = min(KICK_THRUST/(KICK_ISP*G)*DT_TRUTH,
+                                     kick["prop_left"])
+                            kick["dv_used"] += KICK_ISP*G*math.log(
+                                m_true/(m_true - dm))
+                            m_true -= dm
+                            kick["prop_left"] -= dm
+                            kick["burn_t"] += DT_TRUTH
+                            ak = (KICK_THRUST/m_true*math.cos(az_k),
+                                  KICK_THRUST/m_true*math.sin(az_k))
+                            kick["ak"] = ak
+                            a_lat = (a_lat[0] + ak[0], a_lat[1] + ak[1])
+                            f_in_h = (f_in_h[0] + ak[0], f_in_h[1] + ak[1])
 
         # ---------------- sensors ----------------
         settled = (t - last_pat_change_t) >= SETTLE_T
@@ -1882,8 +1916,9 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
             cbuf[0] += ctmp[0] + b_body[0] + rng.normal(0, ACC_AVG_SIG)
             cbuf[1] += ctmp[1] + b_body[1] + rng.normal(0, ACC_AVG_SIG)
             _, cd_abs_m, k_m, rvx_m, rvy_m, _, _ = ekf.drag_parts((0.0, 0.0))
-            mbuf[0] += (-k_m*rvx_m + a_pat[0])
-            mbuf[1] += (-k_m*rvy_m + a_pat[1])
+            ak_m = kick["ak"] if kick is not None else (0.0, 0.0)
+            mbuf[0] += (-k_m*rvx_m + a_pat[0] + ak_m[0])
+            mbuf[1] += (-k_m*rvy_m + a_pat[1] + ak_m[1])
             usum[0] += math.cos(psi_ref); usum[1] += math.sin(psi_ref)
             fbuf_n += 1
 
@@ -1934,7 +1969,8 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
             if cyc != cyc_last:
                 cyc_last = cyc
                 wob_v = [0.0, 0.0]; wob_p = [0.0, 0.0]
-            theta_pat, d_pat = theta_cmd, d_cmd   # E3: refresh every tick
+            if not (kick is not None and kick["committed"] and not kick["done"]):
+                theta_pat, d_pat = theta_cmd, d_cmd   # E3: refresh every tick
             if ekf is not None:
                 a_auth_hat = FIN_FORCE_NOM*q_dyn(ekf.state_tuple())/Q70/M_NOM
             else:
@@ -1949,6 +1985,12 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
                 cbuf = [0.0, 0.0]; mbuf = [0.0, 0.0]; usum = [0.0, 0.0]
             az_f_prev = az_f
             a_pat = (a_auth_hat*math.cos(az_f), a_auth_hat*math.sin(az_f))
+            if kick is not None and kick["committed"] and not kick["done"]:
+                # kicker freeze: fin phasor parks full-duty on the burn
+                # azimuth (the thrusters ride this frame) — the wobble/mean
+                # model below must describe the FROZEN pattern, not the law
+                theta_cmd = kick["az_req"]
+                d_cmd = 1.0
             a_mean = (d_cmd*a_auth_hat*math.cos(theta_cmd),
                       d_cmd*a_auth_hat*math.sin(theta_cmd))
             wob_v[0] += (a_pat[0] - a_mean[0])*DT_TRUTH
@@ -2051,7 +2093,8 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
 
         # ---------------- EKF predict (force at commanded azimuth) ----------------
         if ekf is not None:
-            ekf.predict(DT_TRUTH, a_pat)
+            ak_p = kick["ak"] if kick is not None else (0.0, 0.0)
+            ekf.predict(DT_TRUTH, (a_pat[0] + ak_p[0], a_pat[1] + ak_p[1]))
 
         # ---------------- lock deadline (fail-safe) ----------------
         if mode == "pre" and t >= T_LOCK_DEADLINE_E:
@@ -2089,6 +2132,34 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
                 t_go = t_imp
                 mx, my = RANGE_TARGET - xi_i, 0.0 - yi_i
                 ipp_miss = math.hypot(mx, my); t_go_last = t_go
+                # ---------------- kicker commit (1 Hz, one-shot) --------------
+                if (kick is not None and not kick["committed"]
+                        and mode in ("guide", "degraded")
+                        and not blind and roll_est.psi is not None
+                        and d_cmd >= KICK_DUTY_TRIG
+                        and t_go <= KICK_ARM_TGO
+                        and ipp_miss > KICK_MISS_TRIG):
+                    # last-resort allocation with burn-leverage correction:
+                    # a dv applied at t_go - tau shifts impact ~dv*(t_go-tau),
+                    # so solve dv*(t_go - settle - burn/2)*q_eff = miss
+                    # (fixed point, 2 passes), capped at the prop budget.
+                    q_eff = math.cos(math.pi/KICK_FACES)
+                    dv = ipp_miss/(t_go*q_eff)
+                    for _ in range(2):
+                        t_burn = dv*m_true/KICK_THRUST
+                        dv = ipp_miss/max(t_go - KICK_SETTLE - 0.5*t_burn,
+                                          1.0)/q_eff
+                    dv_req = min(dv, KICK_ISP*G*KICK_PROP/m_true)
+                    az_req = math.atan2(my, mx)
+                    k_sel = round(wrap_pi(az_req - psi_R)
+                                  / (2.0*math.pi/KICK_FACES))
+                    # freeze the phasor ON the burn azimuth now: the frame
+                    # slews there during the settle window (d=1 parks the
+                    # pattern at base), refresh resumes at burnout
+                    theta_pat, d_pat = az_req, 1.0
+                    kick.update(k=k_sel, committed=True, t_commit=t,
+                                t_start=t + KICK_SETTLE, az_req=az_req,
+                                miss0=ipp_miss, tgo0=t_go, dv_plan=dv_req)
                 if t_go < 2.0 or ipp_miss < DEADBAND:
                     a_raw = (0.0, 0.0)
                 else:
@@ -2143,6 +2214,12 @@ def sim_gnc_revE(p, cd_cal, Q70, law="l0", blind=False, outage=None,
                      "psi_err_deg": roll_est.err_vs(psi_R),
                      "ba_cond": ekf.ba_cond() if ekf is not None else float("nan"),
                      "s_cd": s_cd, "wy_hat": wy_hat}
+            if kick is not None:
+                stats.update(kick_fired=kick["committed"],
+                             kick_dv=kick["dv_used"],
+                             kick_t=kick["t_commit"],
+                             kick_miss0=kick["miss0"],
+                             kick_burn_t=kick["burn_t"])
             return xi, yi, stats, (timeline if debug else None)
     raise RuntimeError("no impact")
 
@@ -2387,11 +2464,279 @@ def plot_revE(pts, radii, stats):
     fig.savefig(p, dpi=130, bbox_inches="tight")
     print(f"Wrote {p}")
 
+# ============================================================
+# ========== TERMINAL KICKER VARIANT (2026-09-01) ============
+# ============================================================
+# Solid-propellant RCS "terminal kicker" integrated into the printed canard
+# shell + canards (integral structural propellant). Fired ONLY as a last
+# resort: fin loop saturated, nav healthy (guide/degraded), roll reference
+# valid, predicted miss still above the requirement inside the terminal
+# window. Mechanism: 8 one-shot grain chambers (one per canard face), each
+# feeding that face's printed nozzles; the ring motor slews the de-spun
+# frame so the selected face aligns with the required correction azimuth
+# (8 spokes -> worst-case 22.5 deg quantization, cos = 0.924); bang-bang
+# burn follows the committed dv plan; fin phasor frozen full-duty on the
+# burn azimuth for the burn. No metering disk, no roll phase-locking:
+# chamber selection IS the valve, the de-spun frame IS the pointer.
+KICK_ARM_TGO   = 12.0     # s, arm window: consider firing when t_go <= this
+KICK_MISS_TRIG = 25.0     # m, commit only if predicted miss above this
+KICK_DUTY_TRIG = 0.9      # fin duty saturation co-condition (last-resort gate)
+KICK_THRUST    = 115.0    # N, continuous-equivalent (one face ~150 N derated
+                         # ~20% for inter-face slew dead time)
+KICK_ISP       = 170.0    # s, small printed chamber (conservative 150-200 band)
+KICK_PROP      = 0.353    # kg, 208 cm3 grain @ 1.7 g/cm3 (shell + canard cavities)
+KICK_DV_BUDGET = KICK_ISP*G*KICK_PROP/M_NOM
+KICK_FACES     = 8        # nozzle-pair spokes on the frame (45 deg spacing)
+KICK_SETTLE    = 0.35     # s, face-select slew (<=180 deg @ 6.28 rad/s) + ignition
+
+def main_kicker():
+    global rng
+    smoke = os.environ.get("GNC_SMOKE") == "1"
+    n_pri = 8 if smoke else 250
+    n_sec = 4 if smoke else 80
+    n_str = 4 if smoke else 100
+    cd_cal, x_nom, tof_nom, apo_nom = calibrate_cd()
+    Q70 = q70_ref(cd_cal)
+    print(f"Cd={cd_cal:.4f} nom {x_nom:.0f} m TOF {tof_nom:.1f} s apo {apo_nom/1000:.1f} km")
+    print(f"Kicker: F={KICK_THRUST:.0f} N Isp={KICK_ISP:.0f} s prop={KICK_PROP*1e3:.0f} g "
+          f"-> dv budget {KICK_DV_BUDGET:.2f} m/s; arm t_go<={KICK_ARM_TGO:.0f} s, "
+          f"trigger miss>{KICK_MISS_TRIG:.0f} m, settle {KICK_SETTLE:.2f} s")
+
+    print("\n=== Deterministic (per-case paired seeds) ===")
+    det = [("nominal", dict()),
+           ("mount bias 5deg", dict(mount_bias_deg=5.0)),
+           ("crosswind 6", dict(wind=(0., 6.))),
+           ("headwind 6", dict(wind=(-6., 0.))),
+           ("Cd +5% (stress)", dict(cd_scale=1.05)),
+           ("outage 60-70s", dict(outage=(60.0, 70.0))),
+           ("BLIND (no roll ref)", dict(blind=True))]
+    det_rows = []
+    for j, (name, kw) in enumerate(det):
+        p = dict(v0=V0_NOM, elev=ELEV0, azim=0., mass=M_NOM,
+                 wind=(0., 0.), cd_scale=1.)
+        p.update({k: v for k, v in kw.items() if k in ("wind", "cd_scale")})
+        row = {"name": name}
+        for tag, kwx in (("base", {}), ("kick", {"kicker": True})):
+            rng = np.random.default_rng(20260901 + 7919*j)   # paired noise
+            gx, gy, st, _ = sim_gnc_revE(
+                p, cd_cal, Q70, law="l0", blind=kw.get("blind", False),
+                mount_bias_deg=kw.get("mount_bias_deg"),
+                outage=kw.get("outage"), **kwx)
+            row[tag] = (math.hypot(gx - RANGE_TARGET, gy), st)
+        det_rows.append(row)
+        m0, s0 = row["base"]; m1, s1 = row["kick"]
+        print(f"  {name:20s} base={m0:6.1f} kick={m1:6.1f} "
+              f"fired={str(s1.get('kick_fired', False)):5s} "
+              f"dv={s1.get('kick_dv', 0.0):5.2f} m/s "
+              f"burn={s1.get('kick_burn_t', 0.0):4.2f} s mode={s1['mode']}")
+
+    print(f"\n=== Monte Carlo: {n_pri} paired primary + {n_sec} paired outage "
+          f"+ {n_str} paired stressed (Cd +3.5%) ===")
+    SEED0 = 20260902
+    outage = (60.0, 70.0)
+    rng = np.random.default_rng(SEED0)
+    ps_pri = [draw_params() for _ in range(n_pri)]
+    rng = np.random.default_rng(SEED0 + 2_000_000)
+    ps_out = [draw_params() for _ in range(n_sec)]
+    rng = np.random.default_rng(SEED0 + 4_000_000)
+    ps_str = []
+    for _ in range(n_str):
+        q = draw_params()
+        q["cd_scale"] = q["cd_scale"]*1.035   # systematic drag shift (off-nominal round)
+        ps_str.append(q)
+    def run_paired(ps, tag_kw, label):
+        global rng
+        out = {t: [] for t in ("base", "kick")}
+        for i, p in enumerate(ps):
+            for tag, kw in tag_kw:
+                rng = np.random.default_rng(SEED0 + label + i)  # paired noise
+                gx, gy, st, _ = sim_gnc_revE(p, cd_cal, Q70, law="l0", **kw)
+                out[tag].append((gx, gy, st))
+            if (i + 1) % 25 == 0:
+                print(f"  ...{i+1}/{len(ps)}")
+        return out
+    pri = run_paired(ps_pri, (("base", {}), ("kick", {"kicker": True})), 1_000_000)
+    outs = run_paired(ps_out, (("base", {"outage": outage}),
+                               ("kick", {"kicker": True, "outage": outage})),
+                      3_000_000)
+    strs = run_paired(ps_str, (("base", {}), ("kick", {"kicker": True})), 5_000_000)
+
+    def summarize(runs):
+        radii = [math.hypot(x - RANGE_TARGET, y) for x, y, _ in runs]
+        fired = [s for _, _, s in runs if s.get("kick_fired")]
+        dvs = [s["kick_dv"] for s in fired]
+        return (cep(radii), len(fired),
+                (float(np.median(dvs)) if dvs else float("nan")),
+                (float(np.max(dvs)) if dvs else float("nan")))
+    print("\n=== Results (radial miss, m) ===")
+    print(f"{'config':22s} {'CEP50':>7s} {'mean':>7s} {'p90':>7s} {'max':>7s} "
+          f"{'fired':>6s} {'dvMed':>6s} {'dvMax':>6s}")
+    summary = {}
+    for label, res in (("primary", pri), ("outage", outs), ("stressed", strs)):
+        for tag in ("base", "kick"):
+            sst, nf, dvm, dvx = summarize(res[tag])
+            summary[(label, tag)] = (sst, nf, dvm, dvx)
+            print(f"{label + '.' + tag:22s} {sst['median']:7.1f} {sst['mean']:7.1f} "
+                  f"{sst['p90']:7.1f} {sst['max']:7.1f} {nf:6d} {dvm:6.2f} {dvx:6.2f}")
+    # paired per-run deltas
+    for label, res in (("primary", pri), ("outage", outs), ("stressed", strs)):
+        deltas = []
+        for (x0, y0, s0), (x1, y1, s1) in zip(res["base"], res["kick"]):
+            r0 = math.hypot(x0 - RANGE_TARGET, y0)
+            r1 = math.hypot(x1 - RANGE_TARGET, y1)
+            deltas.append((r1 - r0, s1.get("kick_fired", False)))
+        d_fired = [d for d, f in deltas if f]
+        d_idle = [d for d, f in deltas if not f]
+        if d_fired:
+            print(f"{label}: kicker fired {len(d_fired)}/{len(deltas)}; "
+                  f"delta(miss) fired: med {float(np.median(d_fired)):+.1f} "
+                  f"worst {max(d_fired):+.1f} best {min(d_fired):+.1f}; "
+                  f"delta idle: med {float(np.median(d_idle)):+.2f} "
+                  f"max {max(d_idle, default=0.0):+.2f}")
+        else:
+            print(f"{label}: kicker fired 0/{len(deltas)} "
+                  f"(no run met the last-resort trigger); "
+                  f"delta idle: max {max((abs(d) for d in d_idle), default=0.0):.3f}")
+
+    write_results_kicker(cd_cal, Q70, det_rows, summary, pri, outs, strs,
+                         n_pri, n_sec, n_str)
+    plot_kicker(pri, outs, strs, summary)
+
+def write_results_kicker(cd_cal, Q70, det_rows, summary, pri, outs, strs,
+                         n_pri, n_sec, n_str):
+    lines = []; A = lines.append
+    A("# Terminal-kicker verification — solid RCS on the printed canard structure")
+    A("")
+    A(f"Runs: {n_pri} paired primary + {n_sec} paired outage (60-70 s) + {n_str} paired")
+    A(f"stressed (Cd systematic +3.5 %) MC; per-run re-seeded streams (base vs kicker")
+    A(f"see IDENTICAL dispersions and sensor noise — the delta is purely the kicker).")
+    A(f"Truth: 3DOF RK4 dt={DT_TRUTH}, Cd={cd_cal:.4f}, q70={Q70:.0f} Pa; Rev E GNC (L0) unchanged.")
+    A("")
+    A("## Kicker model (physics-sized)")
+    A("| Parameter | Value | Basis |")
+    A("|---|---|---|")
+    A(f"| Thrust (continuous-equiv) | {KICK_THRUST:.0f} N | one face ~150 N derated ~20% for inter-face slew dead time |")
+    A(f"| Isp | {KICK_ISP:.0f} s | small printed chamber, conservative band 150-200 s |")
+    A(f"| Propellant | {KICK_PROP*1e3:.0f} g ({KICK_PROP/1.7*1e3:.0f} cm3) | AP/HTPB-class @ 1.7 g/cm3 in shell + canard cavities |")
+    A(f"| dv budget | {KICK_DV_BUDGET:.2f} m/s | Isp*g*ln(m0/(m0-mp)), m0 46 kg |")
+    A(f"| Faces | {KICK_FACES} spokes @ 45 deg | one chamber per canard face, face = valve |")
+    A(f"| Arm window / trigger | t_go <= {KICK_ARM_TGO:.0f} s, miss > {KICK_MISS_TRIG:.0f} m, fin duty >= {KICK_DUTY_TRIG:.2f} | last-resort: fins saturated, nav healthy |")
+    A(f"| Settle (slew + ignition) | {KICK_SETTLE:.2f} s | <=180 deg @ 6.28 rad/s + ignition delay |")
+    A(f"| Pointing quantization | <= 22.5 deg (cos 0.924) | nearest spoke of {KICK_FACES}; worst-case held for the whole burn |")
+    A("")
+    A("## Control methodology (as simulated)")
+    A("- **Trigger (1 Hz nav tick):** commit iff mode in (guide, degraded), roll reference valid,")
+    A(f"  fin duty >= {KICK_DUTY_TRIG:.2f} (saturation co-condition: fires only when the fins cannot close it),")
+    A(f"  t_go <= {KICK_ARM_TGO:.0f} s and IPP predicted miss > {KICK_MISS_TRIG:.0f} m. One-shot, irreversible (S&A).")
+    A("- **Allocation (burn-leverage corrected):** solve dv*(t_go - settle - burn/2)*cos(22.5 deg) = miss")
+    A("  (2-pass fixed point, since a dv at tau before impact shifts impact ~dv*(t_go-tau)), capped at the")
+    A("  prop budget; directed along the miss vector. Partial correction when the tail exceeds budget.")
+    A("- **Pointing:** phasor frozen full-duty ON the required azimuth at commit (frame slews there during")
+    A("  the settle window); thrust = nearest of 8 spokes; worst-case 22.5 deg error held for the whole burn.")
+    A("- **Burn:** bang-bang full throttle at truth rate; stops at the committed dv plan (asymptote-checked)")
+    A("  or prop exhaustion; fin phasor refresh resumes at burnout.")
+    A("- **Filter consistency:** commanded thrust is fed to the EKF predict model AND the drag-anchor model")
+    A("  (D7 discipline — no unmodeled force).")
+    A("- **Fail-safe:** never fires without a roll reference (BLIND), nor in denied/acq/ballistic modes;")
+    A("  never-lock -> ballistic preserved.")
+    A("")
+    A("## Deterministic (paired seeds)")
+    A("| Case | Rev E baseline | Rev E + kicker | fired | dv used | burn |")
+    A("|---|---|---|---|---|---|")
+    for row in det_rows:
+        m0, s0 = row["base"]; m1, s1 = row["kick"]
+        A(f"| {row['name']} | {m0:.1f} | {m1:.1f} | {str(s1.get('kick_fired', False))} | "
+          f"{s1.get('kick_dv', 0.0):.2f} m/s | {s1.get('kick_burn_t', 0.0):.2f} s |")
+    A("")
+    A("## Monte Carlo")
+    A("| Config | CEP50 | mean | p90 | max | fired | dv med | dv max |")
+    A("|---|---|---|---|---|---|---|---|")
+    for (label, tag), (sst, nf, dvm, dvx) in summary.items():
+        A(f"| {label}.{tag} | {sst['median']:.1f} | {sst['mean']:.1f} | {sst['p90']:.1f} | "
+          f"{sst['max']:.1f} | {nf} | {dvm:.2f} | {dvx:.2f} |")
+    A("")
+    # findings (generated numbers)
+    def breaches(runs):
+        return sum(1 for x, y, _ in runs if math.hypot(x - RANGE_TARGET, y) > 30.0)
+    for label, res in (("primary", pri), ("outage 60-70s", outs),
+                       ("stressed Cd+3.5%", strs)):
+        nb, nk = breaches(res["base"]), breaches(res["kick"])
+        n = len(res["base"])
+        A(f"- **{label}:** requirement breaches (>30 m) {nb}/{n} -> {nk}/{n} with kicker"
+          + (f" ({100.0*(nb-nk)/max(nb,1):.0f}% of breaches erased)." if nb else "."))
+        fired = [(s0, s1) for (_, _, s0), (_, _, s1) in zip(res["base"], res["kick"])
+                 if s1.get("kick_fired")]
+        if fired:
+            d_f = [math.hypot(x1 - RANGE_TARGET, y1) - math.hypot(x0 - RANGE_TARGET, y0)
+                   for (x0, y0, s0), (x1, y1, s1) in zip(res["base"], res["kick"])
+                   if s1.get("kick_fired")]
+            dvs = [s1["kick_dv"] for _, s1 in fired]
+            A(f"  fired {len(fired)}/{n} (dv med {float(np.median(dvs)):.2f} of "
+              f"{KICK_DV_BUDGET:.2f} m/s budget); paired miss delta: "
+              f"med {float(np.median(d_f)):+.1f} m, worst {max(d_f):+.1f}, best {min(d_f):+.1f}.")
+        else:
+            idle = [abs(math.hypot(x1 - RANGE_TARGET, y1) - math.hypot(x0 - RANGE_TARGET, y0))
+                    for (x0, y0, s0), (x1, y1, s1) in zip(res["base"], res["kick"])]
+            A(f"  kicker never fired — silent-run paired delta max {max(idle):.3f} m (integration noise only).")
+    blind = [r for r in det_rows if r["name"].startswith("BLIND")]
+    if blind and not blind[0]["kick"][1].get("kick_fired", False):
+        A("- Fail-safe verified: the BLIND (no roll reference) case never fires; "
+          "never-lock -> ballistic is preserved (kicker gated to guide/degraded modes).")
+    stress = [r for r in det_rows if "stress" in r["name"]]
+    if stress:
+        m0, s0 = stress[0]["base"]; m1, s1 = stress[0]["kick"]
+        A(f"- Authority-limited stress case (Cd+5%): {m0:.1f} -> {m1:.1f} m "
+          f"(fired={s1.get('kick_fired', False)}, dv {s1.get('kick_dv', 0.0):.2f} m/s, "
+          f"burn {s1.get('kick_burn_t', 0.0):.2f} s) — the tail case the kicker exists for.")
+    A("")
+    os.makedirs(OUT_DIR, exist_ok=True)
+    with open(os.path.join(OUT_DIR, "RESULTS_KICKER.md"), "w") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"\nWrote {os.path.join(OUT_DIR, 'RESULTS_KICKER.md')}")
+
+def plot_kicker(pri, outs, strs, summary):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    fig, axes = plt.subplots(1, 2, figsize=(15, 7))
+    ax = axes[0]
+    for tag, color, lbl, mk in (("base", "#dc2626", "Rev E baseline", "o"),
+                                ("kick", "#2563eb", "Rev E + kicker", "^")):
+        xs = [x - RANGE_TARGET for x, y, _ in strs[tag]]
+        ys = [y for x, y, _ in strs[tag]]
+        sst = summary[("stressed", tag)][0]
+        ax.scatter(xs, ys, s=16, alpha=0.55, color=color, marker=mk,
+                   label=f"{lbl} CEP {sst['median']:.1f} m")
+    ax.scatter([0], [0], marker="*", s=350, color="black", zorder=5)
+    ax.add_patch(plt.Circle((0, 0), 30, fill=False, color="#059669", ls="--", lw=1.2))
+    ax.set_xlabel("downrange error (m)"); ax.set_ylabel("crossrange (m)")
+    ax.set_title("Paired stressed MC (Cd +3.5%): baseline vs kicker")
+    ax.legend(fontsize=9); ax.grid(alpha=0.25); ax.set_aspect("equal")
+    ax = axes[1]
+    for tag, color in (("base", "#dc2626"), ("kick", "#2563eb")):
+        for res, ls, lab in ((pri, "-", ""), (outs, "--", " outage"),
+                             (strs, "-.", " stressed")):
+            rs = np.sort([math.hypot(x - RANGE_TARGET, y) for x, y, _ in res[tag]])
+            ax.plot(rs, np.linspace(0, 1, len(rs)), ls, color=color, lw=1.5,
+                    label=f"{'baseline' if tag == 'base' else 'kicker'}{lab}")
+    ax.axvline(30.0, color="#059669", ls=":", lw=1.5, label="30 m requirement")
+    ax.set_xscale("log")
+    ax.set_xlabel("radial miss (m, log)"); ax.set_ylabel("CDF")
+    ax.set_title("Miss distributions (solid=primary, dashed=outage, dashdot=stressed)")
+    ax.legend(fontsize=8); ax.grid(alpha=0.25, which="both")
+    fig.suptitle("Terminal-kicker trade — solid RCS last-resort impulse", fontsize=11)
+    fig.tight_layout()
+    p = os.path.join(OUT_DIR, "steering_kicker.png")
+    fig.savefig(p, dpi=130, bbox_inches="tight")
+    print(f"Wrote {p}")
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1 and sys.argv[1] == "revC":
         main()
     elif len(sys.argv) > 1 and sys.argv[1] == "revE":
         main_revE()
+    elif len(sys.argv) > 1 and sys.argv[1] == "kicker":
+        main_kicker()
     else:
         main_revD()

@@ -2,44 +2,75 @@
 
 **PS:** `SIH26098` | **Org:** Yantra India / MoD | **Guns:** ATAGS/Dhanush/K9/M777 (39/45/52 cal) | **Deadline:** 20 Sep 2026 | **Target:** CEP ≤30m, ₹8–11L/kit
 
-> Screw-in guidance kit replacing the standard fuze. 3-frame architecture: shell spins (250 rev/s), rotor is de-spun & roll-aimed, fin pair steers. Inert exhibition design — flight performance is simulation only.
+> Screw-in guidance kit replacing the standard fuze. **Single time-share machine:** one ring
+> PMSM acts as spin-windmill alternator during ascent, then as the fin-actuator servo during
+> terminal correction. Supercapacitor energy, no battery, no cold gas. Inert exhibition design —
+> flight performance is simulation only.
 
 ---
 
-## TL;DR for Teammates & Agents
+## ⭐ Read This First — Design of Record (2026-09-01)
 
 | What | Where | Status |
 |------|-------|--------|
-| **Design of record** — CAD + docs + sim | `cleansheet/` | **Rev 1.7** (Aug 31) — Assembly + GNC sim + flight software + electronics architecture |
-| **Electronics architecture** — dual-domain, ERC-clean KiCad | `cleansheet/06_ELECTRONICS_ARCHITECTURE.md` + `electronics/` | Rev 1.0 (Aug 31) — pin maps verified, C header contract |
-| **Bench demonstrator** — inert, low-speed | `cad_models/` | Separate exhibition artifact, not the design |
-| **Research board** — 108 ideas | `research/` + `SIH26098_LIVEBOARD.md` | Push → auto-updates |
+| **MAIN SPEC** — mission, motor, energy, sensors, loads, standing process | **`cad_models/PGK_SPEC_SHEET.md`** | Living main document — every design item extends it |
+| **MAIN CAD** — canonical assembly (single time-share machine) | **`cad_models/PGK_Motor_Assembly.FCStd`** | FreeCAD 1.1.3, verified: 0 clashes, bore clear, Ø108 in envelope |
+| **CAD conventions + file inventory** | `cad_models/README.md` | One Body per part, global coords, datum z=125, Ø30 through-bore reserved |
+| **Part files** | `cad_models/parts/` | S-series = current; M01/M04/M09/M10 shared; M02/M03/M05–M08 = dual-rotor reference |
 
-**Read first:** `SIH26098_TEAM_BRIEFING.md` (PS + artillery 101 + roles) → `cleansheet/03_DESIGN_REPORT.md` (design, Rev 1.7) → `cleansheet/06_ELECTRONICS_ARCHITECTURE.md` (electronics) → `cleansheet/PGK_CleanSheet.FCStd` (CAD).
+**Agents:** read `AGENTS.md` first — it declares the main design, the reference hierarchy, the
+standing process, and the FreeCAD scripting gotchas we already paid for.
 
-**Team = 6 (3 Mech + 1 EEE + 2 ECE → 2 teams):** `research/01_mech-CAA/` … `03_mech-system/` (MECH) and `research/04_electronics-GNC/` … `06_electronics-embedded-power/` (ELECTRONICS). Branch name tells the AI your PS task.
+**Humans:** read `cad_models/PGK_SPEC_SHEET.md` → `cad_models/README.md` → `AGENTS.md`.
 
-**Universal prompt to share:** `research/templates/UNIVERSAL_ONBOARDING_PROMPT.md:1` — paste as first message to any AI, tell it your `git branch --show-current`, it assigns your PS deliverable and co-works.
+**Design in one line:** the shell spins (15,480 rpm) — a windmill pair spins the machine's
+rotor, which generates and charges an annular supercap (875 J) during ascent; at apogee the
+machine regen-brakes, mode-switches, and becomes a torque servo that roll-phases four
+mirror-pitched fins (±12°, reverse + parallel pairs) for terminal course correction. No battery.
+No thrusters. The Ø30 through-bore leaves the shell's explosive train untouched.
+
+---
+
+## Design hierarchy (what is current vs reference vs legacy)
+
+1. **Main design — `cad_models/`**: `PGK_SPEC_SHEET.md` (living spec) + `PGK_Motor_Assembly.FCStd`
+   (canonical single-machine assembly) + `parts/` + `PGK_155mm_Envelope.FCStd` (zones).
+   `PGK_Motor_Assembly_DUAL_reference.FCStd` = dual-rotor trade-study reference.
+2. **Superseded reference — `cleansheet/` (Rev 1.7) + `electronics/`**: prior architecture
+   (de-spin motor + slip ring + NMC battery + Ø138 one-piece canard). **Superseded as design of
+   record** by the single-machine design — but its GNC methodology (CEP50 21.5 m sims),
+   sensor-selection error budgets, flight-software structure, KiCad skeleton and costing work
+   remain valuable engineering references. Do not extend its architecture.
+3. **Living research — `research/` + `SIH26098_LIVEBOARD.md`**: 6 team folders, evidence entries.
+4. **Archive — `legacy/`**: superseded designs and dead concepts (incl. cold-gas, rejected by
+   calculation — see `legacy/README.md`). New work never goes here.
+
+---
 
 ## Latest Progress — 2026-09-01
 
-The repository has moved from a CAD-only concept baseline to a traceable, simulation-backed GNC and electronics baseline. Completed work is separated from the next engineering rungs below:
+### Current design (cad_models — single time-share machine)
 
-| Area | Current progress | Evidence |
-|------|------------------|----------|
-| **GNC** | Rev E terminal-accuracy gate closed at the 3DOF rung: **CEP50 21.5 m** vs the ≤30 m PS M2 requirement, **9.9×** improvement vs unguided, 250/250 runs in guide/degraded modes, 0 denied. | `cleansheet/out_sim/RESULTS_GNC.md` |
-| **Flight software** | Deterministic Python reference FSW mirrors the STM32G474 task rates and interfaces. Paired co-simulation proves RNG-stream and miss parity; the FSW L0 gate is **CEP50 21.5 m**. The repository test suite is **33/33 green**. | `cleansheet/flight_sw/` · `cleansheet/out_sim/RESULTS_FSW.md` |
-| **Sensors** | Five sensors are selected and datasheet-flowed: u-blox NEO-F10N, TDK ICM-45686, MPS MA732, ADXL1004 setback signature, and RFbeam K-LD7. Baseline, selected, and worst-case profiles all pass the PS M2 gate (**21.5 / 21.7 / 21.1 m CEP50**, 100% guide/degraded, 0 denied). | `cleansheet/05_SENSOR_SELECTION.md` · `cleansheet/out_sim/RESULTS_SENSORS.md` |
-| **Electronics** | Dual-domain split is locked: shell-frame A6/G431 owns the 15 kHz motor FOC and drive power; dome-frame G474 owns GNC and sensors. The C3 slip ring carries `+5 V | GND | UART`; pin/ISR maps and the C header contract are parity-checked. | `cleansheet/06_ELECTRONICS_ARCHITECTURE.md` · `electronics/` |
-| **Schematic validation** | Deterministic KiCad schematic skeleton is committed with 34 components / 170 nodes; the checked-in ERC report records **0 errors and 0 warnings**. | `electronics/gnc_board.kicad_pro` · `electronics/erc.rpt` |
-| **System and cost** | Design of record is Rev 1.7 and BOM is Rev 1.4: approximately **1.88 kg**, ₹1,60,750 prototype roll-up / ₹30,800 at 1k quantities. | `cleansheet/03_DESIGN_REPORT.md` · `cleansheet/02_BOM_MANUFACTURING_ASSEMBLY.md` |
+| Area | Status | Evidence |
+|------|--------|----------|
+| Motor CAD | Dual→single variant modeled, assembled in envelope, verified: 0 clashes at all rotor phases, Ø30 bore clear z0→173, Ø108.1 max external | `cad_models/PGK_Motor_Assembly.FCStd` · `out/single_motor_*.png` |
+| Main spec sheet | Mission timeline (Phase 0 pre-fire + flight), motor/electrical spec, energy ledger, canard loads, sensor stack, standing process | `cad_models/PGK_SPEC_SHEET.md` |
+| Actuation concept | Cold gas rejected by calculation; fin actuation via magnetic ring motor adopted; fin scheme corrected to reference (reverse-differential + parallel pairs, ±12°) | `legacy/SIH26098_COLDGAS_PHYSICS_EVAL.md` · `research/SIH26098_leadingpgk_site_articles_extract.md` |
+| Sensors | Military-grade stack selected: SiIMU02-class gun-hard IMU, SAC NavASIC V3 (NavIC+GPS), RM3100-class roll sensing, C2000-class dual-core, FRAM | spec sheet §9 |
 
-### Next engineering rungs
+### Prior lineage (cleansheet Rev 1.7 — superseded as architecture, methods remain reference)
 
-- Upgrade the truth model to 6DOF with Magnus effects and spin decay, then run Monte Carlo at ≥1,000 shots.
-- Complete the Ø62 dome PCB layout/stackup, add the A6 drive-domain schematic, and execute bench bring-up stages B1–B4.
-- Port the reference FSW to embedded C, close the 15 kHz motor-FOC timing budget, and add watchdog/deadline validation.
-- Resolve remaining physical and procurement gates: retention lip/shear-pin geometry, RF re-verification, unlimited-dynamics GNSS path, and selected-sensor devkits.
+| Area | Achievement | Evidence |
+|------|-------------|----------|
+| **GNC** | Rev E terminal-accuracy gate closed at the 3DOF rung: **CEP50 21.5 m** vs ≤30 m PS M2, **9.9×** vs unguided, 250/250 runs | `cleansheet/out_sim/RESULTS_GNC.md` |
+| **Flight software** | Deterministic Python reference FSW; paired co-sim parity; 33/33 tests green | `cleansheet/flight_sw/` · `out_sim/RESULTS_FSW.md` |
+| **Sensors (error budget)** | Five sensors datasheet-flowed; baseline/selected/worst-case all pass (21.5/21.7/21.1 m) | `cleansheet/05_SENSOR_SELECTION.md` |
+| **Electronics** | Dual-domain split locked; KiCad skeleton ERC-clean (34 comps/170 nodes) | `cleansheet/06_ELECTRONICS_ARCHITECTURE.md` · `electronics/` |
+| **System & cost** | Rev 1.7 BOM: ~1.88 kg, ₹30,800 @1k | `cleansheet/03_DESIGN_REPORT.md` · `02_BOM...md` |
+
+> **Note:** the lineage above was built around a de-spin motor, slip ring and NMC battery.
+> Those architectural elements are superseded; the analysis methods, sims and error budgets
+> carry over as references and should be re-run against the single-machine design.
 
 ---
 
@@ -47,38 +78,33 @@ The repository has moved from a CAD-only concept baseline to a traceable, simula
 
 ```
 .
-├── cleansheet/                  # ★ Design of record (Rev 1.7)
-│   ├── PGK_CleanSheet.FCStd     # FreeCAD 1.1.3 — 24 links, 23 joints, 122-frame Simulation
-│   ├── 03_DESIGN_REPORT.md      # Master report (Rev 1.7 — §4 subsystems, §8 decisions 1–23)
-│   ├── 02_BOM_MANUFACTURING_ASSEMBLY.md  # BOM + fits + costing (Rev 1.4, §I electronics deltas)
-│   ├── 04_GNC_METHODOLOGY.md    # GNC Rev E methodology (CEP50 21.5 m)
-│   ├── 05_SENSOR_SELECTION.md   # Five GNC sensors, error-budget validated
-│   ├── 06_ELECTRONICS_ARCHITECTURE.md  # Dual-domain electronics (decision 23)
-│   ├── flight_sw/               # Deterministic Python reference FSW + C header contract
-│   │   └── board/board_config.h # ← the embedded hardware contract (parity-tested)
-│   ├── 00_REQUIREMENTS.md       # PS-derived requirements (M/L/P/F/S)
-│   ├── HANDOFF.md               # Build provenance + how to play simulation
-│   ├── out_sim/                 # Sim results + plots (RESULTS_GNC.md, RESULTS_FSW.md, RESULTS_SENSORS.md)
-│   └── scripts/                 # FreecadCmd + trajectory sims (gated, headless)
-├── electronics/                 # KiCad GNC-board schematic skeleton (ERC clean) + generator
-│   ├── gnc_board.kicad_pro      # 4 sheets: power / MCU+buses / sensors / comms+slip
-│   ├── gen_gnc_schematic.py     # Deterministic schematic generator (rerun == identical)
-│   └── gnc_board.net            # Exported netlist (34 comps / 170 nodes)
-├── research/                    # 2 teams × 3 roles = 6 PS-driven folders (+ D_sensors evidence)
-│   ├── 01_mech-CAA/ ... 03_mech-system/      # TEAM MECH (3 mech)
-│   ├── 04_electronics-GNC/ ... 06_electronics-embedded-power/  # TEAM ELECTRONICS (1 EEE + 2 ECE)
-│   ├── D_sensors/               # Sensor-selection evidence (cited by cleansheet/05)
-│   ├── templates/               # entry_template, agent_prompt, UNIVERSAL_ONBOARDING_PROMPT
-│   └── merge.py                 # → SIH26098_LIVEBOARD.md (run on push)
-├── cad_models/                  # Bench demonstrator (not design of record)
-├── legacy/                      # Archived history — see legacy/README.md (new work never goes here)
-│   ├── attachments/ docs/ output/ research-A-J/
-│   ├── SIH26098_LShang_Video_Teardown_Gap_Analysis.md
-│   └── SIH26098_Excalidraw.excalidraw
+├── AGENTS.md                      # ★ Start here for any agent — main-design declaration
+├── cad_models/                    # ★ MAIN DESIGN
+│   ├── PGK_SPEC_SHEET.md          #   living system spec (standing process = §11)
+│   ├── README.md                  #   CAD conventions + file inventory
+│   ├── PGK_Motor_Assembly.FCStd   #   canonical single-machine assembly (FreeCAD 1.1.3)
+│   ├── PGK_155mm_Envelope.FCStd   #   design envelope zones + datum z=125
+│   ├── parts/                     #   S-series (current) + M-series (current/shared/reference)
+│   ├── PGK_Motor_Assembly_DUAL_reference.FCStd   # dual-rotor trade study (reference)
+│   ├── PGK_155MM_ASSEMBLY.md · out_pgk/ · render_pgk_155mm.py · simulate_trajectory_155.py
+│   │                              #   earlier 155mm exhibition model (reference only)
+│   └── out/                       #   renders + verification shots
+├── cleansheet/                    # Superseded reference lineage (Rev 1.7) — sims, methods, BOM
+│   ├── PGK_CleanSheet.FCStd · 03_DESIGN_REPORT.md · 05_SENSOR_SELECTION.md
+│   ├── 04_GNC_METHODOLOGY.md · 06_ELECTRONICS_ARCHITECTURE.md · 00_REQUIREMENTS.md
+│   ├── flight_sw/ · out_sim/ · scripts/ · HANDOFF.md
+├── electronics/                   # KiCad GNC-board skeleton from the lineage (ERC clean)
+├── research/                      # 6 team folders + D_sensors + templates + merge.py → LIVEBOARD
+├── legacy/                        # Archive (cold gas, old CAD lineages) — never add work here
 ├── .github/workflows/research-sync.yml
-├── SIH2026_Hardware_PS.*        # Official PS (csv/json/md)
-├── SIH26098_Exhaustive_Ideas_Catalog.md  # 108 ideas, A–J (Ideas_Database.json + CSV alongside)
-└── SIH26098_TEAM_BRIEFING.md    # PS breakdown, glossary, 3-week plan
+├── SIH2026_Hardware_PS.*          # Official PS (csv/json/md)
+├── SIH26098_COTS_BOM.* · SIH26098_FLIGHT_KIT_BOM.*   # BOMs from the prior design — resync before reuse
+├── SIH26098_Exhaustive_Ideas_Catalog.md · SIH26098_Ideas_Database.json (+csv)
+├── SIH26098_LIVEBOARD.md          # Auto-generated research board
+├── SIH26098_TEAM_BRIEFING.md · TEAM_STRUCTURE.md · UNIVERSAL_PROMPT.md
+├── SIH26098_TERMINAL_KICKER_EVAL.md            # trade study (reference)
+├── GuidanceKit_Thesis_Explainer.html · pgk_3d_viewer.html · SIH26098_PS_Infographic.html
+└── briefing-*.png · thesis_images/ · 10463953.pdf
 ```
 
 ---
@@ -88,17 +114,14 @@ The repository has moved from a CAD-only concept baseline to a traceable, simula
 ```bash
 git clone https://github.com/jagathsrujan/sih26098-pgk-bharat.git
 cd sih26098-pgk-bharat
-# 1. Read briefing + design
+# 1. Main design
+cat cad_models/PGK_SPEC_SHEET.md
+open cad_models/PGK_Motor_Assembly.FCStd      # FreeCAD 1.1.3
+# 2. Team briefing + research process
 cat SIH26098_TEAM_BRIEFING.md
-cat cleansheet/03_DESIGN_REPORT.md | head -100
-# 2. Open CAD
-open cleansheet/PGK_CleanSheet.FCStd  # FreeCAD 1.1.3 → Assembly → double-click Simulation → Play
-# 3. Run sims + tests
-python3 cleansheet/scripts/sim_guidance_check.py   # 250-run MC → out_sim/RESULTS.md
-python3 cleansheet/scripts/sim_gnc_check.py revE   # Rev E estimator-in-loop → out_sim/RESULTS_GNC.md
-python3 "cleansheet/flight_sw/cosim/run_cosim.py"  # FSW co-sim → out_sim/RESULTS_FSW.md
-python3 -m pytest cleansheet/flight_sw/tests/ -q   # 33 golden/parity tests (run from flight_sw/)
-~/.local/bin/kicad-cli sch erc electronics/gnc_board.kicad_sch   # electronics ERC (0 violations)
+# 3. Reference lineage sims/tests (methods — architecture superseded)
+python3 cleansheet/scripts/sim_guidance_check.py
+python3 -m pytest cleansheet/flight_sw/tests/ -q
 ```
 
 **Your team → Your PS deliverables (branch tells the agent your role):**
@@ -108,7 +131,7 @@ python3 -m pytest cleansheet/flight_sw/tests/ -q   # 33 golden/parity tests (run
 |---|------|--------|----------------|-------|
 | 1 | MECH-CAA | `research/01_mech-CAA/` | Canard Actuation Assembly + CAD of CAA | 4-fin mechanism, deployment, aero, bearing joint |
 | 2 | MECH-Structure | `research/02_mech-structure/` | Environmental + SWaP-C + Manufacturability | 15,000g, STANAG fit, mass, YIL forging, cost |
-| 3 | MECH-System | `research/03_mech-system/` | System Architecture + Prototype + Validation | Assembly (24 links), 6DOF/Monte Carlo, CEP ≤30m |
+| 3 | MECH-System | `research/03_mech-system/` | System Architecture + Prototype + Validation | Assembly, 6DOF/Monte Carlo, CEP ≤30m |
 
 **TEAM ELECTRONICS — 3 members (1 EEE + 2 ECE)**
 | # | Role | Folder | PS Deliverable | Focus |
@@ -118,76 +141,71 @@ python3 -m pytest cleansheet/flight_sw/tests/ -q   # 33 golden/parity tests (run
 | 6 | ELECTRONICS-Embedded | `research/06_electronics-embedded-power/` | Embedded + Power + Comms | Real-time HW/SW, power high-g, programming interface, block diagram |
 
 ```bash
-# Your branch decides your role — create it:
-git checkout -b research/01_mech-CAA-<github-username>   # or mech/CAA-<username> / electronics/GNC-<username>
+git checkout -b research/01_mech-CAA-<github-username>
 cp research/templates/entry_template.md research/01_mech-CAA/entry_20260831_<topic>.md
-# fill URL (mandatory), TRL, Cost, Indian Path (YIL/BEL/ARDE/ISRO)
-python3 research/merge.py   # preview
+python3 research/merge.py
 git add . && git commit -m "feat(01-CAA): fin hinge trade" && git push  # → LIVEBOARD auto
 ```
 
-## Quick Start — AI Agents (2-Team, Branch-Based)
+## Quick Start — AI Agents
 
 **Share this ONE prompt with teammates — branch tells the agent the PS task:**
-
-**Copy-paste this as your first message:**
 
 ```
 You are my SIH26098 Onboarding Agent. Repo: https://github.com/jagathsrujan/sih26098-pgk-bharat
 Run: git branch --show-current → tell me your branch. If on main, tell me which of 6 roles you want (01_mech-CAA ... 06_electronics-embedded-power).
-Read: README.md → SIH26098_TEAM_BRIEFING.md → research/<your-role>/README.md (your PS tasks) → cleansheet/03_DESIGN_REPORT.md (Rev 1.7) → SIH26098_LIVEBOARD.md
+Read: AGENTS.md (main-design declaration) → cad_models/PGK_SPEC_SHEET.md (main spec) → cad_models/README.md (CAD conventions) → research/<your-role>/README.md (your PS tasks) → SIH26098_LIVEBOARD.md
 Ask 7 questions (name/github/branch/skills/interest/hours/ownership/prior), then assign ONE of 6 PS roles based on branch + skills, create branch if on main, and make welcome entry.
-Rules: URL mandatory, TRL justified, Indian Path (YIL/BEL/ARDE) required, never invent URLs.
+Rules: URL mandatory, TRL justified, Indian Path (YIL/BEL/ARDE) required, never invent URLs. Design answers must follow the main design in AGENTS.md.
 ```
-
-**Universal prompt (full 4-phase, branch-based, PS-driven):** `research/templates/UNIVERSAL_ONBOARDING_PROMPT.md:1` — just paste the whole file.
-
-**How it works:** Teammate clones → `git checkout -b research/01_mech-CAA-john` (or tells agent "I'm on 04_GNC") → agent reads `research/<role>/README.md` with 3 PS questions → co-works on that deliverable (CAD/GNC/fuze/power etc.) → pushes to that folder.
 
 **Agent rules:**
 - Quote paths with spaces: `"/home/.../smart india hackathon"`
+- Main design first: `AGENTS.md` → `cad_models/PGK_SPEC_SHEET.md` → `cad_models/README.md`
 - One `entry_YYYYMMDD_topic.md` per finding, with real URL + accessed date
 - Run `research/merge.py` before push, check `SIH26098_LIVEBOARD.md`
-- Keep `cleansheet/` as source of truth — don't edit CAD via GUI booleans (use `freecadcmd` gated scripts, see `HANDOFF.md`)
+- `cleansheet/` + `electronics/` are superseded references — cite methods, don't extend architecture
+- FreeCAD: see the gotchas in `AGENTS.md` (LinkPlacement, rotated revolutions, remove-by-name…)
 
 ---
 
-## Design of Record — Rev 1.7 (2026-08-31)
+## Design of Record — Single Time-Share Machine (2026-09-01)
 
-**CAD:** `cleansheet/PGK_CleanSheet.FCStd` — FreeCAD 1.1.3 Assembly (24 `App::Link`, 21 Fixed + 2 Revolute `J_MotorRotor`/`J_RollDecouple` + Ground) + 122-frame Simulation (30 fps). Solver rc=0.
+**CAD:** `cad_models/PGK_Motor_Assembly.FCStd` — FreeCAD 1.1.3; parts: S01 stator (12s/10p,
+Ø58.5, 25 mm zone), S02 coils, S04 rotor (Ø70 ring, 10 N42SH arcs), S05/S06 fins (±12°,
+Ø76–108), M01 shaft tube (Ø40/Ø30), M04 PCB, M09 bearings ×2, M10 endbells, S09 supercap
+stack (annular, 0.6 F @ 54 V, 875 J, fuze-well zone). Verified: 0 clashes at all rotor phases,
+Ø30 through-bore clear, Ø108.1 max external, ~725 g motor module + 67 g caps.
 
-**Three frames:**
+**Mission:** Phase 0 pre-fire programming (inductive setter: BIT, IMU bias, NavIC/GPS
+ephemeris → FRAM) → launch → windmill generation 10–15 W charging the stack → apogee mode
+switch (regen brake) → FOC roll-phase hover of the fin pairs → terminal correction → impact.
 
-| Frame | Rotation | Members |
-|-------|----------|---------|
-| S — Shell | 250–267 rev/s | body, outer ring (2-12UN full-depth well), cartridge, stator, battery, **A6 drive board** |
-| R — Rotor | ψ-aimed | bell + magnet ring, 1-pc canard (4 fins tip Ø138, pair ±3° mirrored), radome + GNC + GNSS + prox |
-| Balls Ø3×160 | de-spin joint | between S and R |
+**Specs:** `cad_models/PGK_SPEC_SHEET.md` — Kt ≈ 0.095 N·m/A, hold 0.2–0.25 N·m, peak 1.5 N·m,
+canard loads 4–6 N nominal / 13 N peak / 1.3 kN centrifugal per fin, energy ledger 450 J
+generated vs 344 J consumed (28% margin), sensors per §9 (SiIMU02-class IMU, SAC NavASIC V3,
+RM3100-class roll sensor, C2000-class dual-core).
 
-**Steering:** roll-aimed fin-pair lift (mirrored ±3° → pure radial, zero side force). Motor = de-spin (15 s @ ≤40 A boost) + steer + harvest.
-
-**Current specs (post-Rev 1.7):** Mass ≈1.88 kg (→1.6 kg optimized, ≤2.0 kg hard) | Power 1×26500 NMC 16.7 Wh (≤0.9 Wh worst, ≥18× margin) | Cost ₹30.8k @1k parts (8–12% of ceiling) | GNC: **CEP50 21.5 m ≤ 30 m (PS M2), 9.9× vs unguided, 250/250 MC guided** (`out_sim/RESULTS_GNC.md`) — FSW co-sim + selected-sensor profiles re-close the same gate (`RESULTS_FSW.md`, `RESULTS_SENSORS.md`) | Electronics: dual-domain split (decision 23) — drive on A6/shell, GNC on dome, slip-ring `+5 V | GND | UART`.
-
-**Docs:** `00_REQUIREMENTS.md:1` (M/L/P/F/S) · `02_BOM...md:1` (Rev 1.4, §I deltas) · `03_DESIGN_REPORT.md:1` (Rev 1.7) · `04_GNC_METHODOLOGY.md:1` (Rev E) · `05_SENSOR_SELECTION.md:1` · `06_ELECTRONICS_ARCHITECTURE.md:1` · `flight_sw/FLIGHT_SOFTWARE.md:1` · `HANDOFF.md:1` (how to play sim + crash lessons).
+**Prior architecture (reference):** cleansheet Rev 1.7 — de-spin motor + slip ring + NMC
+battery + one-piece Ø138 canard; GNC CEP50 21.5 m; 1.88 kg; ₹30.8k @1k. Superseded; methods
+reused, architecture retired.
 
 ---
 
 ## Deliverables (from PS)
 
-**PS Expected Outcome → Our files:**
-
-| PS Deliverable | Owner (Team) | File | Status |
+| PS Deliverable | Owner (Team) | Main file | Reference inputs |
 |---|---|---|---|
-| System architecture | MECH-System (03) | `cleansheet/03_DESIGN_REPORT.md:1` + `cleansheet/HANDOFF.md:1` | [x] Rev 1.7 |
-| CAD of CAA | MECH-CAA (01) | `cleansheet/PGK_CleanSheet.FCStd` + `cad_models/PGK_DEMO_ASSEMBLY.md:1` | [x] Assembly+Sim |
-| Electronics block diagram | ELECTRONICS-Embedded (06) | `cleansheet/06_ELECTRONICS_ARCHITECTURE.md:1` + `electronics/gnc_board.kicad_pro` | [x] Rev 1.0, ERC clean |
-| GNC algorithm | ELECTRONICS-GNC (04) | `cleansheet/scripts/sim_gnc_check.py:1` + `cleansheet/flight_sw/` | [x] Rev E, CEP50 21.5 m |
-| Trajectory-correction sim | ELECTRONICS-GNC (04) + MECH-System (03) | `out_sim/RESULTS_GNC.md:1` + `RESULTS_FSW.md:1` | [x] 250 MC paired |
-| Prototype / PoC | MECH-CAA+Structure (01+02) | `cad_models/` + `cleansheet/` bench (guarded) | [x] Inert + sim frames |
-| Performance CEP ≤30m | ELECTRONICS-GNC (04) + MECH-System (03) | `out_sim/RESULTS*.md` + Monte Carlo ≥1000 | [ ] 6DOF next (roadmap §10) |
-| Fuze (Prox/Time/Impact) | ELECTRONICS-Fuze (05) | `cleansheet/03_DESIGN_REPORT.md:4.6` | [x] FMCW + S&A design |
-| Power + Comms + Embedded | ELECTRONICS-Embedded (06) | `03_DESIGN_REPORT.md:5` + `06_ELECTRONICS_ARCHITECTURE.md:1` | [x] Dual-domain, 16.7 Wh |
-| Manufacturability & Cost | MECH-Structure (02) | `02_BOM:1` §D–I | [x] ₹0.7–0.9L @1k, NRE ₹4.2Cr |
+| System architecture | MECH-System (03) | `cad_models/PGK_SPEC_SHEET.md` | `cleansheet/03_DESIGN_REPORT.md` (methods) |
+| CAD of CAA | MECH-CAA (01) | `cad_models/PGK_Motor_Assembly.FCStd` + `parts/` | `cleansheet/PGK_CleanSheet.FCStd` (joint patterns) |
+| Electronics block diagram | ELECTRONICS-Embedded (06) | spec sheet §2.3/§9 | `cleansheet/06_ELECTRONICS_ARCHITECTURE.md` + `electronics/` |
+| GNC algorithm | ELECTRONICS-GNC (04) | spec sheet §3 + `cleansheet/scripts/sim_gnc_check.py` | `cleansheet/04_GNC_METHODOLOGY.md` |
+| Trajectory-correction sim | ELECTRONICS-GNC (04) + MECH-System (03) | re-run against single-machine model | `cleansheet/out_sim/RESULTS_GNC.md` |
+| Prototype / PoC | MECH-CAA+Structure (01+02) | `cad_models/` | bench demonstrator lineage |
+| Performance CEP ≤30m | ELECTRONICS-GNC (04) + MECH-System (03) | Monte Carlo ≥1000 on new model | `cleansheet/out_sim/RESULTS*.md` |
+| Fuze (Prox/Time/Impact) | ELECTRONICS-Fuze (05) | spec sheet §9 (to extend) | `cleansheet/03_DESIGN_REPORT.md:4.6` |
+| Power + Comms + Embedded | ELECTRONICS-Embedded (06) | spec sheet §2.3/§5 | `cleansheet/06_ELECTRONICS_ARCHITECTURE.md` |
+| Manufacturability & Cost | MECH-Structure (02) | BOM resync pending vs S-series | `cleansheet/02_BOM...md` (costing method) |
 
 ---
 
@@ -195,26 +213,20 @@ Rules: URL mandatory, TRL justified, Indian Path (YIL/BEL/ARDE) required, never 
 
 | Doc | Purpose |
 |-----|---------|
-| `TEAM_STRUCTURE.md:1` | 2 teams × 6 roles — branch → PS deliverable mapping |
-| `UNIVERSAL_PROMPT.md:1` | Shareable 1-prompt onboarding (also `research/templates/UNIVERSAL_...md:1`) |
-| `SIH26098_TEAM_BRIEFING.md:1` | PS breakdown, glossary, 3-week plan |
-| `SIH26098_Exhaustive_Ideas_Catalog.md:1` | 108 ideas, 30+ sources (A–J) |
-| `cleansheet/03_DESIGN_REPORT.md:1` | Master design (Rev 1.7) |
-| `cleansheet/02_BOM...md:1` | BOM, fits, costing, §G–§I deltas |
-| `cleansheet/04_GNC_METHODOLOGY.md:1` | GNC Rev E methodology |
-| `cleansheet/05_SENSOR_SELECTION.md:1` | Sensor selection + error budget |
-| `cleansheet/06_ELECTRONICS_ARCHITECTURE.md:1` | Dual-domain electronics architecture |
-| `cleansheet/flight_sw/board/board_config.h:1` | Embedded hardware contract (C port) |
-| `research/templates/entry_template.md:1` | Research entry format |
-| `SIH26098_LIVEBOARD.md:1` | Auto-generated board |
-| `research/01_mech-CAA/README.md:1` … `06_electronics-.../README.md:1` | Per-role PS tasks + 3 starter questions |
+| `AGENTS.md` | Main-design declaration + rules for any agent |
+| `cad_models/PGK_SPEC_SHEET.md` | **Main living spec** (mission, motor, energy, sensors, process) |
+| `cad_models/README.md` | CAD conventions + file inventory |
+| `TEAM_STRUCTURE.md` / `UNIVERSAL_PROMPT.md` / `SIH26098_TEAM_BRIEFING.md` | Team + PS onboarding |
+| `research/templates/entry_template.md` | Research entry format |
+| `SIH26098_LIVEBOARD.md` | Auto-generated research board |
+| `cleansheet/03_DESIGN_REPORT.md` · `04_GNC_METHODOLOGY.md` · `05_SENSOR_SELECTION.md` · `06_ELECTRONICS_ARCHITECTURE.md` | Superseded-architecture references (methods still cited) |
+| `SIH26098_Exhaustive_Ideas_Catalog.md` | 108 ideas, 30+ sources |
 
 ---
 
 ## References
 
-- PS: `SIH2026_Hardware_PS.json:349`, `SIH2026_Hardware_PS.md:647`
-- Bench: `cad_models/PGK_DEMO_ASSEMBLY.md:1`
-- Archive: `legacy/` (see `legacy/README.md:1` — docs dumps, research A–J round, superseded designs)
+- PS: `SIH2026_Hardware_PS.json`, `SIH2026_Hardware_PS.md`
+- Archive: `legacy/` (see `legacy/README.md` — cold gas, old CAD lineages, docs dumps)
 
 > **Boundary:** Inert exhibition design only — no energetics, no live S&A. Flight performance via simulation.

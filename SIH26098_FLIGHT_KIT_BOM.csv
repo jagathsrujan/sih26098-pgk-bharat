@@ -1,26 +1,28 @@
 Section,Line,Item,Spec class,Make/Buy,Source (India),Qty per kit,INR @10 pilot,INR @1000 prod,Notes / controlled flag
-GNC,2.1,GNSS receiver module,Multi-constellation + NavIC; robust processing for jamming margin; gun-hard,Buy,Astra Microwave / DCB / Alpha Design; alt u-blox ZED-F9T,1,150000,80000,Indigenous preferred; no SAASM/M-code; demo instance = NEO-M9N
-GNC,2.2,GNSS patch antenna,dia 25 mm ceramic patch; RF dome window at apex,Buy,Indigenous RF houses,1,15000,8000,
-GNC,2.3,Tactical MEMS IMU,Gyro bias <=10 deg/h; UNPOWERED during setback; g-switch power-on,Buy,Epson G330/G370 class / ADI class; IRDE transfer option,1,110000,55000,Biggest cost lever if indigenous gun-hard MEMS materializes; demo = ICM-42688
-GNC,2.4,GNC processor board,Dual MCU lockstep (STM32F405-class x2 on dia87 demo PCB); flight: rugged FPGA+MCU; potted,Make,PCB fab + in-house,1,50000,30000,
-GNC,2.5,Setback g-switch + power sequencing,Acceleration-actuated; arms post-bore-exit,Buy,Indigenous electro-mech,1,15000,6000,
-GNC,2.6,De-spin bearing,"ONE thin-section gun-hard bearing, 61811 class (55x72x9), steel races",Buy,Indigenous bearing OEM (SRB/NBC custom),1,40000,18000,Single A-B isolation point per PGK_155mm.FCStd
-STRK,3.1,Ring torque motor,12-pole coil ring dia84 + rotor magnet ring; FOC; dual-mode torque + regen,Buy (custom winding),Indigenous actuation house (Alpha Design / Precimax class),1,110000,45000,One motor steers AND harvests
-STRK,3.2,Strake set,"4x fixed strakes, dia148 envelope, on de-spun frame",Make,Local CNC / composite vendor,1 set,30000,10000,Replaces 4-servo canard story
-STRK,3.3,De-spun stator body,"Machined dia106 dome-nosed frame, integral strake roots + bearing seat",Make,Local CNC vendor,1,35000,14000,
-STRK,3.4,Angle feedback,Dual Hall index + IMU/mag soft estimator,Buy,Indigenous,1,8000,3000,Replaces v1 resolver
-STRK,3.5,Detent launch lock,Pawl + solenoid D12x20 class; release = armed,Buy,Indigenous electro-mech,1,12000,5000,
-PWR,4.1,Spin-power regen front-end,Ring-motor drag mode; rectifier/boost only; no separate alternator,Make,In-house + winding subcontract,1,10000,4000,
-PWR,4.2,Power conditioning,3-phase rectifier + boost + LDO; potted,Make,In-house,1,20000,9000,
-PWR,4.3,Buffer energy bank,6x 14430 high-temp Li-ion hex bay (r36.5) + BMS,Buy,Indian cell OEM,1,18000,7000,
-PWR,4.4,Backup thermal battery (optional),"Short-duration, >125 C",Buy,HEBL (controlled procurement),1,60000,35000,CONTROLLED allocation only
-PWR,4.5,Gun-hard harness/connectors,"Potted, lock-wired",Make/Buy,Indigenous,1,20000,8000,
-FUZE,5.1,Fuze electronics board,MIL-STD-1316B-philosophy state machine; dual independent safety paths,Make,In-house + fab,1,55000,28000,No energetics design content
-FUZE,5.2,VT/Doppler sensor module,"Gun-hard K-band Doppler front-end, range-gated",Buy,Indigenous RF (Astra/ECIL class),1,45000,22000,
-FUZE,5.3,Safety & Arming (S&A) mechanism,STANAG 4187-compliant; setback+spin-actuated,Buy,OFB / DRDO channel,1,140000,70000,CONTROLLED ITEM - allocation only
-FUZE,5.4,Firing train,Standard OFB fuze-train components,Buy,OFB channel,1,50000,22000,CONTROLLED ITEM - allocation only; no energetics design
-STRUCT,6.1,Nose dome,Dome-nosed stator crown dia106->apex; RF window at apex for GNSS patch,Make,Composite vendor,1,35000,16000,CAD dome is machined metal for demonstrator; flight = RF-transparent
-STRUCT,6.2,Rotor hub + thread insert + seals,Machined 7075/SS; STANAG 2916 2-12UN insert dia56; dia63 hub w/ magnet ring + detent notches; dia96 O-ring,Make,Local CNC vendor,1,85000,38000,
-STRUCT,6.3,"Seals, coatings, keeper",JSS 55555 environmental sealing; lubricant for 250 rev/s,Buy,Indigenous,1,15000,5000,
-INTEG,7.1,"Assembly, potting, QA, acceptance test",Spin-table + environment screen,Make/Buy,Indigenous,1,40000,15000,
-INTEG,7.2,Gun-qualification amortization,Setback/spin/telemetry shots at TBRL/ARDE ranges,Make/Buy,TBRL/ARDE,1,120000,40000,
+GNC,2.1,GNSS receiver module,NavIC L1/L5 + multi-GNSS (SAC NavASIC V3 class); software-AJ via deep IMU coupling; gun-hard,Buy,Astra Microwave / DCB / Alpha Design; SAC reference design,1,150000,80000,Indigenous preferred; no SAASM/M-code
+GNC,2.2,GNSS patch antenna,dia 30 mm stacked patch (L1/L5) on dia42 ground; on-axis in S07 radome,Buy,Indigenous RF houses,1,15000,8000,
+GNC,2.3,Tactical MEMS IMU,Gun-hard 20000 g setback; roll gyro >=25000 deg/s variant; indigenous NavIC-integrated munitions IMU route,Buy,Indigenous SAC/IRDE transfer; SiIMU02-class = export-controlled reference,1,110000,55000,Biggest cost lever if indigenous gun-hard MEMS materializes
+GNC,2.4,Processor boards (split),M04 stator PCB (gate driver + 16-20 A bridge + FOC core) + S08 control ring (GNSS Rx + nav core + FRAM); potted,Make,PCB fab + in-house,2,50000,30000,
+GNC,2.5,Phase-0 inductive coupler + power-path mux,Ferrite-cup coupler (S07 z185.5-191.5; ~1 W; >=115 kbaud) + setter/bus auto-select; latch-off on fire,Make/Buy,Indigenous ferrite + electro-mech,1,25000,10000,EPIAFS-style setter interface; spec sheet 8.1
+GNC,2.6,Rotor bearings,TWO angular-contact dia40x52x8 class (M09: z130 z166); gun grease; rotor spins on static shaft tube - no de-spin bearing,Buy,Indigenous bearing OEM (SRB/NBC custom),2,60000,25000,
+GNC,2.7,Rotor-angle sensor set,2-pole diametral bias ring (S04 dia41/51.6x3 N42SH) + sin/cos Hall/MR array on shaft-tube board z163-166 + 3x digital Hall fallback,Buy,Indigenous sensor houses (ams/iC-Haus die class),1,8000,3000,
+GNC,2.8,Magnetometer roll module,RM3100-class / raw MR bridge; >=2 kHz sampling (body spin 258 rev/s); ring board on M01 z115-120,Buy,PNI / indigenous,1,8000,3000,
+GNC,2.9,VNS camera module,Gun-hard EO (or LWIR) camera + sapphire flank window; roll-gated exposure; scene-match correlator on S08 core 2 - GPS-denied terminal fallback (spec 9.10),Buy,Indigenous imaging (SAC/IRDE route),1,60000,28000,
+STRK,3.1,Ring PMSM (12s10p),Stator dia58.5 (S01 M250-35A + S02 coils); rotor dia70 (S04 back-iron + 10x N42SH arcs + bias ring); 0.75 mm gap; z138-163; FOC alternator<->servo,Buy (custom winding),Indigenous actuation house (Alpha Design / Precimax class),1,120000,48000,One machine generates AND steers
+STRK,3.2,Fin set,4x fins S05/S06 (+/-12 deg mirror pairs @0/90/180/270); root 25 tip 15 span 16 mm; 7075; bolted to S11 canard shell; dia108 < bore dia155 - no deployment mechanism,Make,Local CNC vendor,1 set,30000,10000,
+STRK,3.3,Canard shell (SLS),AlSi10Mg drum dia76 z136-172.5; carries fins (8x M5); sleeves back-iron (8x M4); seats bearing-B race; integral 8-station lateral impulse thruster cavities + nozzles + igniter bores (spec 2.7),Make (AM),Indian metal-AM bureau,1,85000,32000,
+STRK,3.4,Static structure,M01 shaft tube (dia30/40 7075 wire slots full-length datum flange + fwd ext) + M10 aft endbell,Make,Local CNC vendor,1,40000,15000,
+STRK,3.5,LIT propellant + igniters,Solid micro-grains (~5 g/kit) + e-match igniters; loading/qualification per STANAG 4187 philosophy,Buy,OFB / DRDO channel,1 set,40000,18000,CONTROLLED ITEM - cost allocation only; no energetics design in this document
+PWR,4.1,Spin-power regen front-end,Same three half-bridges as motor run as active rectifier; buck charger 85%; mode switch is software,Make,In-house + winding subcontract,1,10000,4000,
+PWR,4.2,Power conditioning,Wide-Vin bucks (54-20 V window) + 3.3/5 V rails + local holdup; potted,Make,In-house,1,20000,9000,
+PWR,4.3,Annular supercap stack,0.6 F @ 54 V = 875 J custom annular-wound EDLC (S09 dia49/31x30 + bus discs z70-100); charged in flight; no cells no BMS no battery,Buy (custom),Indian EDLC OEM / imported annular,1,25000,9000,Replaces v2 Li-ion buffer AND thermal battery (rejected - see legacy/)
+PWR,4.4,Gun-hard harness/connectors,Potted lock-wired; incl. S10 7-pin connector + flex through housing web slot,Make/Buy,Indigenous,1,20000,8000,
+FUZE,5.1,Fuze electronics board,Safety state machine per MIL-STD-1316B philosophy; dual independent safety paths (S10 firing PCB ring),Make,In-house + PCB fab,1,55000,28000,No energetics design content
+FUZE,5.2,VT/Doppler sensor module,Gun-hard microwave Doppler front-end (K-band); range-gated; microstrip ring antenna on S10,Buy,Indigenous RF (Astra/ECIL class),1,45000,22000,
+FUZE,5.3,Safety & Arming (S&A) mechanism,STANAG 4187-compliant; setback+set-forward+spin gates (S10 rotor z34-40),Buy,OFB / DRDO channel,1,140000,70000,CONTROLLED ITEM - cost allocation only; no energetics design in this document
+FUZE,5.4,Firing train,Standard OFB fuze-train components,Buy,OFB channel,1,50000,22000,CONTROLLED ITEM - cost allocation only; no energetics design in this document
+STRC,6.1,Nose RF section (S07),GFRP ogive radome (rho=109.55 z173-220 2.5 mm wall; RF-transparent full-time) + antenna support + coupler seat; flange to M10,Make,Composite vendor,1,35000,16000,
+STRC,6.2,Fuze-well structure (S10),Steel thread ring (2in-12UN) + 7075 double-wall housing (dia30.4 bore liner; cavity slot) + connector disc,Make,Local CNC vendor,1,70000,30000,
+STRC,6.3,Seals coatings keeper,Environmental sealing per JSS 55555; grease for two rotor bearings,Buy,Indigenous,1,15000,5000,
+INT,7.1,Assembly potting QA,Spin-table + inductive-setter BIT screen,Make,In-house,1,40000,15000,
+INT,7.2,Gun-qualification amortization,Setback/spin/telemetry shots at TBRL/ARDE ranges,Buy,TBRL/ARDE ranges,1,120000,40000,
