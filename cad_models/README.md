@@ -49,11 +49,8 @@ The dual-rotor design is retained only as a trade-study reference — do not bui
 6. Envelope references in assemblies: set link `Placement` AND `LinkPlacement` to the source
    object's Placement.
 
-## Verification gate (run before any release)
+## Verification gate (run before any release) — **honest gate revised this rev per `PGK_SPEC_SHEET.md:81`**
 
 Clash check at rotor phases 0/90/180/270°, bore clearance z0→173 (explosive-train parts in
 S10 are the allowed exception), envelope fit, mass rollup from Body tips only. Current
-canonical: 0 clashes (stator winding-overlap pairs S01∩S02, S01∩M04, S02∩M04 excluded as
-intended wrap geometry; S07 flange/S08 PCB seating interface tangent; S08 interior PCBs/modules inside shield can — clearance 0.6 mm radial/0.3 mm vertical verified), bore clear,
-Ø108.0 max, z0–220, ~1.20 kg PGK total (motor+shell 723 + caps 67 + nose 99 +
-control ring 35.4 + fuze stack 269).
+canonical: **solver clashes = 0 after intentional exclusions** (winding wrap overlaps S01∩S02, S01∩M04, S02∩M04 excluded as designed wrap; S07 flange bore↔S08 ring PCB tangent seating `PGK_SPEC_SHEET.md:526` not a clash — bore harness `PGK_SPEC_SHEET.md:504` passes through bore per §9.6; S08 interior PCBs/modules inside shield can — radial 0.6mm/vertical 0.3mm `PGK_SPEC_SHEET.md:550` verified as Inside-containment, not clash). **True clashes = 0.** Bore clear, Ø108.0 max `PGK_SPEC_SHEET.md:59` (fins tip 108 < Ø110 envelope `PGK_SPEC_SHEET.md:540`), z0–220, ~1.20 kg PGK total (motor+shell 723 `PGK_SPEC_SHEET.md:74` incl. 4.1g reserve + caps 67 + nose 99 + control ring 35.4 + fuze stack 269 + harness 12g pending potting `PGK_SPEC_SHEET.md:81`). Single-machine `PGK_Motor_Assembly.FCStd:18` + flattened `PGK_Full_Assembly.FCStd:19` + mated `PGK_Shell_Mated_Assembly.FCStd:37` all pass bore/envelope; `PGK_Motor_Assembly_DUAL_reference.FCStd:20` is read-only reference `AGENTS.md:3`.

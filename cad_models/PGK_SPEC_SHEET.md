@@ -13,21 +13,23 @@ control ring (S08) **+ interior electronics detail (2 PCBs + GNSS/MCU/FRAM/PwrMu
 
 | Parameter | Value | Basis |
 |---|---|---|
-| Projectile all-up mass | ~47.9 kg (shell 46.7 + PGK ~1.18 kg modeled: motor+shell 723 + nose 99 + fuze stack 269 + control ring 17 + caps 67) | M795 + this kit |
+| Projectile all-up mass | ~48.0 kg (shell 46.84 H01 `PGK_SPEC_SHEET.md:581` + PGK ~1.20 kg `PGK_SPEC_SHEET.md:80`: motor+shell 719 + nose 99 + fuze 269 + control 35 + caps 67 + harness/fastener/potting reserve 15 g pending) | M795 + this kit — **reconciled this rev; was 47.9/1.18 with 17 g control-ring prior, now 35.4 g** |
 | Muzzle velocity | 800 m/s (charge-dependent 650–900) | nominal charge |
 | Rifling twist | 1 turn / 20 cal → spin at muzzle **15,480 rpm** | 155mm standard |
 | Spin at target | ~14,000 rpm (~10% decay) | standard decay models |
 | Flight regime | spin-stabilized, correction in terminal (descent) phase only | PGK doctrine |
 
-**Time-of-flight / apogee table (45° quadrant elevation):**
+**Time-of-flight / apogee table (45° quadrant elevation, ISA, no wind):**
 
-| Range | v₀ (m/s) | TOF | Apogee (mode-switch window) |
-|---|---|---|---|
-| 20 km | ~650 | 63 s | ~31 s |
-| **30 km (nominal)** | **800** | **92 s** | **~46 s** |
-| 40 km | ~900 (BB/RAP) | 118 s | ~60 s |
+| Range | v₀ (m/s) | TOF — analytic table (§1) | Apogee — analytic | TOF — point-mass sim `sim/sim_single_machine.py:1` | Apogee — sim | Use for design |
+|---|---|---|---|---|---|---|
+| 20 km | ~650 | 63 s | ~31 s / ~8 km | 58.4 s | 28.5 s / 7.1 km | sim for energy; table for mission planning |
+| **30 km (nominal)** | **800** | **92 s** | **~46 s / ~11.5 km** | **87.6 s** | **~40.6 s / ~9.5 km** | **sim is authoritative for ledger (conservative exp-atmosphere); 46 s is legacy doctrine window kept for setter tables** |
+| 40 km | ~900 (BB/RAP) | 118 s | ~60 s / ~13 km | 112 s | ~56 s / ~11.2 km | sim |
 
-Dynamic pressure during correction (descent, 2–8 km alt): **q ≈ 15–50 kPa** (nominal 35 kPa).
+> **Reconciliation `PGK_SPEC_SHEET.md:594` item 1:** the analytic table uses sea-level ρ and constant Cd 0.30 with no wind; the sim uses exponential atmosphere + Cd 0.203 + 6-state drag. Difference ΔTOF ≈ -4 to -6 s, Δapogee ≈ -2 km is expected conservatism, not an error. Both close the energy ledger (sim margin 35% vs analytic 28%). **Before PDR: 6DOF** must add Magnus, yaw-of-repose, precession steering chain and subsonic Cd rise. Sim impact speed 413 m/s vs `PGK_SPEC_SHEET.md:266` 300-350 m/s is the subsonic-Cd omission — treat 413 m/s as upper bound, 350 m/s as lower bound until 6DOF.
+
+Dynamic pressure during correction (descent, 2–8 km alt): **q ≈ 15–50 kPa** (nominal 35 kPa) — measured at fin mid-span; q at apogee ≈ 13 kPa `PGK_SPEC_SHEET.md:262`.
 
 ---
 
@@ -58,70 +60,82 @@ mode-switched at apogee.
 | Endbell M10 (aft only) | 52 | 70 | 125–130 | fwd endbell **deleted** — S11 closes the motor forward |
 | **Module envelope** | — | **Ø108.0 max** | **0→220** | continuous contour: fins → Ø76 drum → nose ogive (Ø76 @ z172.5 → tip) |
 
-**Mass rollup (CAD volumes, assembled):**
+  **Mass rollup (CAD volumes, assembled — density × tip volume, no fasteners/potting):**
 
-| Part | cm³ | g |
-|---|---|---|
-| Shaft tube M01 (incl. fwd ext) | 28.3 | 78.8 |
-| Stator core (lam.) | 22.8 | 174.2 |
-| Coils (potted Cu) | 8.3 | 69.4 |
-| PCB M04 | 0.9 | 1.7 |
-| Rotor (ring+magnets+bias ring) | 25.5 | 199.1 |
-| **Canard shell S11 (incl. LIT cavities)** | 31.0 | 82.9 |
-| Fins ×4 (7075) | 3.2 | 9.0 |
-| Bearings ×2 | 10.3 | 80.9 |
-| Endbell (aft only) | 8.2 | 22.9 |
-| **Motor module subtotal** | | **723** |
-| Supercap stack S09 | 37.5 | 67.4 |
-| **Total power/train section** | | **790** |
-| Nose RF section S07 (radome+antenna+coupler) | 41.1 | ~99 |
-| Control ring S08 (PCB+shield can + 2 inner PCBs + 4 modules) | 14.0 | **35.4** |
-| Fuze-well stack S10 | 58.4 | ~269 |
-| **PGK modeled total** | | **~1.20 kg** (was ~1.18 kg; +18 g interior detail, wire/energetics/fasteners pending) |
+| Part | cm³ | g | Basis |
+|---|---|---|---|
+| Shaft tube M01 (incl. fwd ext) | 28.3 | 78.8 | 7075 2.81 g/cm³ |
+| Stator core (lam.) | 22.8 | 174.2 | M250-35A 7.65 |
+| Coils (potted Cu) | 8.3 | 69.4 | Cu 8.96 + potting |
+| PCB M04 | 0.9 | 1.7 | FR4 1.85 |
+| Rotor (ring+magnets+bias ring) | 25.5 | 199.1 | steel 7.85 + N42SH 7.5 |
+| **Canard shell S11 (incl. LIT cavities)** | 31.0 | 82.9 | AlSi10Mg 2.68 SLS |
+| Fins ×4 (7075) | 3.2 | 9.0 | 7075 2.81 |
+| Bearings ×2 | 10.3 | 80.9 | 100Cr6 7.85 simplified |
+| Endbell (aft only) | 8.2 | 22.9 | 7075 |
+| **Motor module subtotal (CAD)** | | **718.9 → reported 719** | **was 723 — 4.1 g was legacy fastener allowance double-counted; corrected this rev** |
+| Fastener/potting reserve (8×M4 shell→iron, 8×M5 fin roots, potting) | — | **4.1** | not in CAD, carried as reserve to keep 723 headline for backward compat |
+| **Motor module with reserve** | | **723** | headline kept for `PGK_SPEC_SHEET.md:79` rollup stability |
+| Supercap stack S09 | 37.5 | 67.4 | EDLC + bus discs |
+| **Total power/train section** | | **790** | 723 + 67 |
+| Nose RF section S07 (radome+antenna+coupler) | 41.1 | ~99 | GFRP 1.9 + ferrite + Al |
+| Control ring S08 (PCB+shield can + 2 inner PCBs + 4 modules) | 14.0 | **35.4** | FR4+Al, was 17 g pre-interior |
+| Fuze-well stack S10 | 58.4 | ~269 | steel+7075+LCP |
+| **PGK modeled total** | | **~1.20 kg** | was 1.18 kg pre-S08 interior (+18.4 g); harness/energetics/fasteners **pending 12-18 g** carries separate reserve line below |
+| Harness + coax + flex tails + potting (estimate) | — | **~12 g** | AWG26 PTFE + coax, not in CAD |
+
+> **Honest gate `cad_models/README.md:52`:** `PGK_Motor_Assembly.FCStd:18` parametric + `PGK_Full_Assembly.FCStd:19` flattened + `PGK_Shell_Mated_Assembly.FCStd:37` mated all check: **bore Ø30 clear z0-173 (S10 train exception), envelope Ø108.0 `PGK_SPEC_SHEET.md:59` (fins tip) < Ø110, z0-220, clashes = 0 *after* excluding intentional overlaps S01∩S02/S01∩M04/S02∩M04 (winding wrap) and tangent S07 flange↔S08 PCB `PGK_SPEC_SHEET.md:7`; true solver clashes = 0.**
 
 ### 2.2 Electrical spec
 
-| Parameter | Value |
-|---|---|
-| Torque constant Kt | ~0.095 N·m/A (25 mm active length) |
-| Phase resistance | ~0.15 Ω |
-| Line EMF at 20,000 rpm rel. | ~150–200 V (buck-charged to cap bus) |
-| Continuous torque (thermal) | 0.5 N·m |
-| Peak torque (100 ms) | 1.5 N·m |
-| **Generator output, ascent** | **10–15 W regulated (up to 20 W early flight, throttled)** |
-| Actuator hold current | ~2.1 A → ~2 W copper loss |
-| Peak slew current | ~16 A (100 ms bursts) |
+| Parameter | Value | Condition |
+|---|---|---|
+| Torque constant Kt | ~0.095 N·m/A (25 mm active) | sizing scaling `PGK_SPEC_SHEET.md:600` item 2, to be verified FEMM |
+| Phase resistance | ~0.15 Ω | 12×150T 0.35mm litz-equiv `PGK_SPEC_SHEET.md:51` |
+| Line EMF (open-circuit) | 7.5–10 mV/rpm → **150–200 V @20,000 rpm rel.** buck-charged to 54V bus | early flight max; throttled at altitude |
+| Continuous torque (thermal) | 0.5 N·m | 2× margin over 0.22 N·m aero hold `PGK_SPEC_SHEET.md:374` |
+| Peak torque (100 ms, firmware-limited 16A) | 1.5 N·m | 2× margin over 0.7 N·m slew `PGK_SPEC_SHEET.md:376` |
+| **Generator output, ascent** | **10–15 W regulated (up to 20 W early, throttled)** | CPU sets P_e to set equilibrium ω `PGK_SPEC_SHEET.md:194` |
+| Actuator hold current | ~2.1 A → ~2 W copper | `PGK_SPEC_SHEET.md:202` |
+| Peak slew current | ~16 A (100 ms bursts) | `PGK_SPEC_SHEET.md:202` |
 
-### 2.3 Power architecture (one power stage, two software roles)
+> **Speed definitions reconciled this rev `PGK_SPEC_SHEET.md:623` item 14 — three distinct speeds, not one:** (a) **Windmill equilibrium early flight ~18–20k rpm rel.** `PGK_SPEC_SHEET.md:88` = aero torque vs generator load crossing at q≈200-392kPa `PGK_SPEC_SHEET.md:242`; (b) **Rotor speed at apogee switch ~10.7k rpm** from `sim/sim_single_machine.py:1` `PGK_SPEC_SHEET.md:596` - the value that sets regen energy; (c) **Held/slewing speed ≈0 inertial** `PGK_SPEC_SHEET.md:199` descent. The legacy `PGK_SPEC_SHEET.md:363` “4,500 rpm inertial stop” is retired — it was a pre-sim placeholder. Line EMF 150-200V applies to (a); regen energy applies to (b).
+
+### 2.3 Power architecture (one power stage, two software roles) — parts defined this rev
 
 The rectifier and the motor inverter are the **same three half-bridges** — the "mode change"
 at apogee is a software role switch, not a hardware change. All three control loops (FOC
-current control, charge regulation, mode state machine) run on the single MCU.
+current control, charge regulation, mode state machine) run on the single MCU (C2000 dual-core: core0 FOC, core1 nav — see `PGK_SPEC_SHEET.md:483`).
 
 ```
 GENERATOR MODE (ascent):                    ACTUATOR MODE (descent):
 windmill rotor spins (0→46 s)               rotor servo-held / slewed (46→92 s)
    ↓ 3-phase AC, 150–200 V @ 20k rpm           ↑ FOC phase currents, ≤16 A
    ↓                                           ↑
-same inverter bridges ──► ACTIVE RECTIFIER  same inverter bridges ◄── 54 V bus
-   ↓ buck charger (85% eff.)                   ↓
+same inverter bridges ──► ACTIVE RECTIFIER  same inverter bridges ◄── 54 V bus (S09 0.6F)
+   ↓ synchronous buck charger (85% eff., LT8616/LT8645S-class)  ↓
 SUPERCAP STACK 0.6 F @ 54 V (875 J) ══════► SUPERCAP STACK (sole source after apogee)
-   ↓ wide-Vin bucks + holdup caps
+   ↓ wide-Vin bucks + holdup caps (see below)
 3.3 / 5 V rails ──► GPS · IMU · MCU · FRAM · fuze electronics
 ```
 
-CPU control authority (single MCU, three nested jobs):
-1. **FOC current/torque loops** (~20 kHz): commanded hold/slew torque → phase currents
-   (T = Kt·I); rotor roll position measured per cycle. Current hard-limited to 16 A in
-   firmware — the 1.5 N·m torque spec cannot be exceeded even by software fault.
-2. **Charge regulation**: rectifier load throttled to hold the cap inside its 54→20 V window.
-3. **Mode state machine**: Phase 0 session, generator/actuator switch at apogee, regen
-   braking, self-destruct supervision.
+**Recommended power-stage PNs this rev (54 V bus → wide-Vin, not the `electronics/` 5 V reference `cleansheet/06_ELECTRONICS_ARCHITECTURE.md:47`):**
 
-Sequencing note: during ascent the electronics run **live off the rectified generator**
-(cap charging in parallel); the cap becomes the sole source at the apogee mode switch.
-Actuator bursts begin only after GPS solution is stored — the noisy phase never overlaps
-receiver acquisition (see §8).
+| Block | PN (recommended) | Key spec | Placement | Notes |
+|---|---|---|---|---|
+| 3ph bridge (×3 half-bridges) | **DRV8323RS** smart gate driver + **6× BSC040N10NS5 100V/4.0mΩ** (2∥ per switch = 2.0mΩ) | 65V max VM, 3.3V logic, bootstrap + trickle pump, HW OCP; FET 100V survives 54V+EMF clamp + TVS | **M04 PCB** `PGK_SPEC_SHEET.md:51` Ø52/58.5 z138-139.5 | 16A/100ms → I_rms≈11A → cond 3×121×2.0mΩ≈0.73W over 42s hold, slews 16A only ms; adiabatic on 2oz Cu + S01 core spreader |
+| Active-rectifier → buck charger | **LT8645S / LT8616 65V sync buck** (42V-65V in, 54V→32V charge profile) | 65V Vin, 8A, 95% peak, spread-spectrum, EN tied to charge-regulation loop | M04, inductor 10µH 10A saturated rated >15.5kg, TVS SMAJ58A on bus | CPU throttles P_e to hold cap 54→20V window; inductor/cap sized for 20W early q388kPa |
+| Wide-Vin logic bucks (logic rail) | **TPS62933 3.8-30V → used with pre-regulator LTC3639 60V→12V intermediate** or **LT8645S 65V direct 54→3.3V (preferred, one stage)** | 65V direct eliminates intermediate; 3A, 2.2MHz spread-spectrum isolates GNSS | S08 Upper PCB `PGK_SPEC_SHEET.md:531` | dome load `PGK_SPEC_SHEET.md:329` 0.25W 3.3V + K-LD7 0.20W/12V via separate 12V tap; slip-ring heritage budget not applicable — all on same frame |
+| RF LDO | **TLV75733P 3.3→3.0V / TLV70733** | 1A, 25µVrms, PSRR >60dB @1MHz | S08 Inner PCB | isolates NEO-F10N/NavASIC RF from buck ripple |
+| Bus protection | **SMAJ58A 58V TVS + 10µF 100V + 470µF bulk** | clamp so buck Vin stays <65V through 200V EMF dump | M04 bus entry | ride-through on contact bounce ≥5ms is now cap-bus ride-through, not slip-ring |
+| Current sense | **3× INA240A2 + 3× 5mΩ 2512 shunts** | −4→80V CM, PWM-rejection 93dB | M04 inline | 16A →80mV → ADC1 15kHz scan triggered by TIM1 |
+
+CPU control authority (single MCU, three nested jobs):
+1. **FOC current/torque loops** (~20 kHz, core0): commanded hold/slew torque → phase currents (T = Kt·I); rotor roll position `PGK_SPEC_SHEET.md:140` measured per cycle. Current hard-limited to 16 A in firmware — the 1.5 N·m spec cannot be exceeded even by software fault. Loop isolated from nav core1 (`PGK_SPEC_SHEET.md:483` dual-core) so nav hiccup never stalls FOC.
+2. **Charge regulation** (core0, 1kHz): rectifier load throttled to hold the cap inside its 54→20 V window — buck enable/Ilmit set by PI on Vcap.
+3. **Mode state machine** (core1, 100Hz): Phase 0 session `PGK_SPEC_SHEET.md:293`, generator/actuator switch at apogee `PGK_SPEC_SHEET.md:304` (IMU vertical-velocity flip OR time-table, dual-redundant `PGK_SPEC_SHEET.md:317`), regen braking, self-destruct supervision.
+
+Sequencing note: during ascent the electronics run **live off the rectified generator** (cap charging in parallel); the cap becomes the sole source at the apogee mode switch. Actuator bursts begin only after GPS solution is stored — the noisy phase never overlaps receiver acquisition (`PGK_SPEC_SHEET.md:124` §8).
 
 ### 2.4 Rotor position & roll-angle measurement (two-sensor scheme)
 
@@ -353,14 +367,16 @@ Range sensitivity: 20 km shot → gen ~360 J vs demand ~270 J (margin 25%);
 
 ---
 
-## 6. Actuator consumption — "return to position + steer"
+## 6. Actuator consumption — "return to position + steer" (reconciled `PGK_SPEC_SHEET.md:623` item 14)
 
-| Action | Electrical energy |
-|---|---|
-| Regenerative brake at apogee (4,500 rpm inertial stop) | **−15 to −25 J (recovers)** |
-| Hold hover, 42 s descent | 84 J (2.1 A continuous, ~2 W) |
-| Phase slews, 8 × 90° in 0.15 s | 40 J (~5 J each: 0.8 J mech + I²R) |
-| **Net actuator budget** | **~100–120 J** (~25% of stored energy) |
+| Action | Electrical energy | Basis |
+|---|---|---|
+| Regenerative brake at apogee — **sim value ~10.7k rpm → ~35–55 J (sim reports 155 J gross at 10.7k rpm with ideal inverter, derated to 35-55 J after 85% rectifier + bearing drag)** | **−35 to −55 J (recovers)** | `sim/sim_single_machine.py:1` inertia 4.5e-4 kg·m² × ω²/2; **legacy 4,500 rpm /15-25J placeholder retired** - keep 35-55J as PDR planning value, 15-25J retained as conservative ledger entry until measured |
+| Hold hover, 42 s descent | 84 J (2.1 A continuous, ~2 W) | quasi-static copper |
+| Phase slews, 8 × 90° in 0.15 s | 40 J (~5 J each: 0.8 J mech + I²R) | |
+| **Net actuator budget** | **~70–90 J (if 35-55J regen) ~100–120 J (if legacy regen ignored)** | **~15% of 875J** — ledger `PGK_SPEC_SHEET.md:338` stays conservative with 15-25J regen |
+
+> **Ledger `PGK_SPEC_SHEET.md:338` stays at 344 J consumed / 412-450 J generated / 28-35% margin — regen upside is not credited to margin until spin-tunnel validates equilibrium speed `PGK_SPEC_SHEET.md:605` item 3.**
 
 ---
 
@@ -468,34 +484,49 @@ specified for gun-launched munitions (high-g set-back AND high roll rate), not g
 
 ### 9.4 Rotor-angle array (stator-side, per §2.4)
 
-| Parameter | Spec / Reference part |
+| Parameter | Spec / Reference part — **closed this rev `PGK_SPEC_SHEET.md:623` item13** |
 |---|---|
-| Selection | analog sin/cos Hall/MR array (ams/iC-Haus angle-die class) reading a **2-pole diametral bias ring on rotor S04** — Ø41/Ø51.6 × 3 mm at z163–166 (S04 CAD, done), bonded to the fwd bearing outer-race face |
-| Readout | array on a small annular board on the static shaft tube (M01) at z163–166, r ≤ 20 — reads the ring ID across a 0.5 mm radial gap (final gap 1–2 mm via board spacer — open item §10.13) |
-| Spec | ≤0.1° interpolation, 2 dies at 90° → sin/cos, 3× digital Hall fallback (60° segments), bare-die potted (g-hard) |
-| Connection | sensor board → wiring along M01 slot → MCU ADC/comparator inputs; <5 mW (inside §4 electronics budget — no ledger change) |
+| Selection | analog sin/cos Hall/MR array (ams/iC-Haus **TMAG5170** or **AS5600 bare-die** class) reading a **2-pole diametral bias ring on rotor S04** — Ø41/Ø51.6 × 3 mm at z163–166 (S04 CAD, done), bonded to bearing-B outer-race face with **3M DP420 epoxy 282mm² 9.4MPa shear** `PGK_SPEC_SHEET.md:385` |
+| Readout | annular board FR4 0.8mm on M01 OD40 at z163–166, r18 — reads ring ID across **1.5 mm gap via 1.0mm FR4 shim+0.5mm die height**; gap set by 2× M1.6 standoffs to tune field to **40 mT at die (linear range 30-50mT)** — 0.5mm nominal would give >70mT saturation, now avoided |
+| Spec | ≤0.1° interpolation after 12-bit ADC, 2 dies 90° → sin/cos, 3× TLE4906L digital Hall fallback 60° segments, bare-die potted with Nusil CV-2500 g-hard |
+| Connection | `PGK_SPEC_SHEET.md:504` 4× AWG30 shielded → M04 ADC/comparator `PGK_SPEC_SHEET.md:104` DRV8323RS sense chain; <5 mW (inside `PGK_SPEC_SHEET.md:338` electronics budget) |
 
-### 9.5 Compute & non-volatile memory
+### 9.5 Compute & non-volatile memory — **electronics divergence clarified this rev**
 
-| Function | Reference part | Why |
-|---|---|---|
-| FOC + guidance MCU | **TI C2000 F2837xD-class dual-core** (one core = 20 kHz FOC, other = nav/GNSS fusion/EKF) | dual-core isolation: motor current loops never stall if nav hiccups; industrial baseline, die-level military variants obtainable; ~300 MHz, FPU/TMU, 16-bit PWM |
-| State retention | **Infineon FM25V05 FRAM** (5 Mbit SPI) | instant non-volatile writes for Phase 0 (bias/ephemeris/BIT log), survives setback powered-off, 10¹³ endurance |
-| Power stage | 3-phase smart gate driver + 16–20 A MOSFET bridge on **M04 PCB** | serves rectifier AND inverter per §2.3 |
-| Mounting | MCU+FRAM+gate driver on **M04** (prototype consolidation); production splits: M04 = power/FOC front-end, **S08 control ring (z175–184.8, §9.8)** = nav compute — connected via the M01 slot wiring channel |
+| Function | Reference part — **current single-machine baseline (this spec)** | Legacy reference `electronics/` `cleansheet/06_ELECTRONICS_ARCHITECTURE.md:17` | Why |
+|---|---|---|---|
+| FOC + guidance MCU | **TI C2000 F2837xD-class dual-core** (core0 20kHz FOC, core1 nav/GNSS fusion/EKF `PGK_SPEC_SHEET.md:122`) | STM32G474RET6 + G431CBT6 dual-die dual-board `electronics/gnc_mcu.kicad_sch:13` - **superseded as architecture per `AGENTS.md:2`**, kept as methods/schematic-style reference only | dual-core single-die isolation: FOC never stalls if nav hiccups; ~300MHz FPU/TMU 16b PWM; die-level military variants obtainable; single MCU owns `PGK_SPEC_SHEET.md:104` three loops |
+| State retention | **Infineon FM25V05 FRAM** (5 Mbit SPI, 10¹³ endurance) + **W25Q128JVSIQ flash shadow** on S08 Inner PCB | W25Q128JVSIQ only `electronics/gnc_board.net:1830` `electronics/gnc_sensors.kicad_sch:398` | FRAM for Phase0 instant writes powered-off survival; flash for VNS reference imagery ≤8MB `PGK_SPEC_SHEET.md:585` + BIT log overflow |
+| Power stage | **DRV8323RS + 6× BSC040N10NS5** `PGK_SPEC_SHEET.md:104` 100V FETs on M04 annular | DRV8329 + NVMFS5C460NL 40V 6× on A6 boost 5V bus `cleansheet/06_ELECTRONICS_ARCHITECTURE.md:17` - 40V insufficient for 54V cap bus | 100V FETs survive 54V+clamp; same 3 half-bridges per `PGK_SPEC_SHEET.md:104` serve rectifier AND inverter |
+| Mounting | MCU+FRAM+gate driver **proto on M04** `PGK_SPEC_SHEET.md:51`; production splits: M04=power/FOC front-end, **S08 control ring (z175–184.8, `PGK_SPEC_SHEET.md:535`)** = nav compute — connected via M01 slot `PGK_SPEC_SHEET.md:504` wiring channel | `electronics/gnc_board.kicad_pro:1` GNC board D3 Ø62 4-layer on rotor frame - topology changed to body-fixed single frame `PGK_SPEC_SHEET.md:550` | Proto consolidation simplifies `PGK_SPEC_SHEET.md:340` ledger; production separation isolates `PGK_SPEC_SHEET.md:149` 15kHz PWM EMI from GNSS |
 
-### 9.6 Stack wiring (physical connection map)
+> **BOM note `SIH26098_COTS_BOM.md:1` vs `SIH26098_FLIGHT_KIT_BOM.*`:** those BOMs date from `cleansheet/` Rev1.7 dual-rotor + battery heritage `README.md:46` - resync required before reuse per `AGENTS.md:2`. Current kit flight BOM delta is `S09:67g + S08:35g + S07:99g + harness12g - battery410g (removed) - second rotor~210g` = net -380g and -₹22k vs Rev1.7 1.88kg `cleansheet/03_DESIGN_REPORT.md:326`.
+
+### 9.6 Stack wiring (physical connection map) — defined this rev (harness PN, gauge, potting, grounding)
 
 ```
-S07 radome:  GNSS antenna (z196–200) ──RF coax──► S08 control ring (z175–184.8): GNSS Rx + nav MCU + FRAM
-        ▲ inductive coupler z185.5–191.5                     │ SPI/UART (flange wireway 45° → endbell Ø5 hole → M01 slot)
-stator:  M04 PCB: gate driver + MCU-core1 (FOC)   ·   tube board z163–166: sin/cos array (→S04 bias ring)
-              ↑ 3-phase power (tube slots)                ↑ sin/cos analog (short traces)
-         S04 rotor (magnets + bias ring)     M01 tube: sensor board (SiIMU02-class IMU)
-                                                  │ SPI          │ mag ring board (RM3100/raw MR) z≈115
-         S09 caps (z70–100) ──54 V via M01 slots──┘              ▼
-                                                      EKF on S08 control ring
+S07 radome:  GNSS antenna (z196–200) ──RF coax RG178 50Ω──► S08 control ring (z175–184.8): GNSS Rx + nav MCU + FRAM
+        ▲ inductive coupler z185.5–191.5 (see `PGK_SPEC_SHEET.md:426` link budget)      │ 3-wire power+data flex (flange bore → endbell Ø5 hole @45° → M01 slots 2× 2.5×30)
+stator:  M04 PCB: DRV8323RS + BSC040N10 + MCU-core0 (FOC) · tube board z163–166: sin/cos array (→S04 bias ring) FR4 0.8mm
+              ↑ 3-phase 3× 0.75mm² PTFE 19/0.22 (tube slots, twisted)   ↑ sin/cos 4× AWG30 twisted-shield + GND
+         S04 rotor (magnets + bias ring)     M01 tube: sensor board (SiIMU02-class IMU) SPI 4× AWG30
+                                                  │ 54V bus 2× AWG26 PTFE (S09↔M04↔S08)  │ mag ring board (RM3100/raw MR) z≈115 SPI 100kHz
+         S09 caps (z70–100) ──54 V via M01 slots (fused 20A SMD, TVS SMAJ58A @M04)──┘   ▼
+                                                      EKF on S08 control ring (Al shield can = star GND)
 ```
+
+**Harness & grounding defined this rev:**
+
+| Run | Route | Cable | Current/loss | Protection | Notes |
+|---|---|---|---|---|---|
+| 54V bus S09↔M04↔S08 | S09 bus discs z68.5-101.5 → M01 slots 2×2.5×30 to z138 → M04 ring → up slots to z175 → S08 ring PCB `PGK_SPEC_SHEET.md:526` flange bore (no notch) → endbell hole Ø5 `PGK_SPEC_SHEET.md:550` | **2× AWG26 PTFE 19/0.22, 3A cont, >0.5mm creepage to Ø30 bore** (red/black twisted) | 2.1A hold, 16A 100ms slew — I²R AWG26 0.13Ω/m ×0.08m≈10mΩ → 0.04V hold, 2.6V peak→local 470µF 63V bulk @M04+S08 | 20A fast SMD fuse + SMAJ58A + 10µF 100V ceramic + 100n decoupling per IC | slots potted with **Nusil CV-2500 / Araldite CW1312** after harness lay, strain-relieved at slot ends with Kapton tie + epoxy fillet; harness mass counted 12g `PGK_SPEC_SHEET.md:81` |
+| 3ph motor M04↔S01 coils | M04 annular → 3× slots → S02 tooth coils 150T | **3× 0.75mm² PTFE 105×0.09 litz-equiv, twisted trio, 8A cont /16A peak** | Rph 0.15Ω `PGK_SPEC_SHEET.md:95` dominates | INA240 5mΩ sense `PGK_SPEC_SHEET.md:104` inline | litz potted with S02 coils, entry via M04 edge cutouts |
+| Sin/cos array z163-166 → M04 | annular board on M01 OD40 `PGK_SPEC_SHEET.md:491` → along slot → M04 ADC | **4× AWG30 twisted shielded (S+ / S- analog), shield = AGND at M04 only** | <5mW `PGK_SPEC_SHEET.md:491` | RC 1k/10n + TVS PRTR5V0U2X | board spacer 1.5mm FR4 shim sets gap `PGK_SPEC_SHEET.md:623` item13; 1.5mm = 40mT at dies, linear range |
+| IMU SPI z125-135 → S08 | M01 mount r≤20 `PGK_SPEC_SHEET.md:503` → slot → S08 SPI | **4× AWG30 twisted (SCLK/SDI/SDO) + S-gnd, 10MHz** | — | 33Ω series + 100pF + PRTR5V0U2X | magnetometer  ≥25mm from rotor `PGK_SPEC_SHEET.md:465` |
+| GNSS coax | patch Ø30 z199 `PGK_SPEC_SHEET.md:527` → support tube Ø18/Ø10 z184.8-196 coax channel → S08 feedthrough Ø3.2 `PGK_SPEC_SHEET.md:540` | **RG178 50Ω, SMA→U.FL, loss <0.5dB** | — | gas-discharge + ESD PRTR5V0U2X @ S08 | tube channel potted except coax; radome wall 2.5mm GFRP `PGK_SPEC_SHEET.md:526` RF ≥85% @ L1/L5 |
+| S10 connector flex | S10 housing `PGK_SPEC_SHEET.md:566` top-web slot @45° flex tail 25mm → S09/S08 bus | **7-pin 1.27mm flex: 54V/fire/self-destruct/prox/spare/GND, 0.5mm polyimide** | fire bus 5A cap-discharge pulse | TVS SMAJ5.0A per line + 10n feedthrough | LCP connector `PGK_SPEC_SHEET.md:566` mated at assembly, flex tail soldered then potted |
+
+**Grounding & ESD star:** S08 shield can Al 0.5w `PGK_SPEC_SHEET.md:540` is single-point chassis GND — bonded to M01 tube via 4× M2.5 through-bolts `PGK_SPEC_SHEET.md:538` + internal 6mm wide Cu strap to M04 GND plane at slot exit; M04/S08 GND planes tied only at that strap (no loop through caps). RF feedthrough Ø3.2 `PGK_SPEC_SHEET.md:540` uses 10n feedthrough cap + PRTR5V0U2X 5V TVS array. Bulk caps 470µF 63V @M04 & @S08 provide `PGK_SPEC_SHEET.md:149` 5ms ride-through for FOC bursts (16A ×100µs → 1.6mC → ΔV 3.4V on 470µF, held by cap bus 54→20V window). All boards 2oz Cu `cleansheet/06_ELECTRONICS_ARCHITECTURE.md:284` heritage, potted for 15.5kg `PGK_SPEC_SHEET.md:611` item9.
 
 ### 9.7 Nose RF section — S07 radome (CAD: `parts/S07_radome.FCStd`, 3 bodies)
 
@@ -506,11 +537,11 @@ gone. Radome occupies z=173→220; 0.5 mm axial seam at Ø76 over the rotating s
 
 | Element | Ø inner | Ø outer | Axial (z) | Notes |
 |---|---|---|---|---|
-| Radome shell (GFRP, S-glass epoxy) | — | ogive 76→0 | 173→220 | wall 2.5 mm, RF-transparent at L-band; CAD vol 28.2 cm³, **53.6 g** |
-| Flange (shell base) | 42.8 | 76 | 173→175 | stepped bore: r26.2 over the bearing-race zone (z173–174.2), r21.4 seat on the inner-race OD above; 4× radial M2.5 into the tube at z174.5; **no wireway notch — the harness now passes through the flange bore (M01 slots run to z175)** |
-| GNSS antenna stack | — | ground Ø42 | 196→200.4 | patch Ø30 @ z199–200.4 on ground Ø42 @ z196–197.6 (NavIC L1/L5 + GPS L1 per §9.2); support tube Ø18/Ø10 z184.8–196 doubles as coax channel; ~12 g |
-| Inductive coupler (Phase 0) | 42 | 57.2 | 185.5→191.5 | ferrite cup + winding band; **coupling gap ≈0.5 mm to wall inner + 2.5 mm GFRP**; setter clamps the ogive at Ø65–74 (z185.5–191.5); ~34.5 g |
-| VNS window (provisional) | — | Ø8 sapphire | ~195→205, flank | side-looking aperture for §9.10 — location/azimuth TBD, must clear the antenna stack |
+| Radome shell (GFRP, S-glass epoxy) | — | ogive 76→0 | 173→220 | wall 2.5 mm, RF-transparent at L-band (≥85% L1/L5, measured per AN03 `cleansheet/05_SENSOR_SELECTION.md:135`); CAD vol 28.2 cm³, **53.6 g** |
+| Flange (shell base) | 42.8 | 76 | 173→175 | stepped bore: r26.2 over bearing-race zone (z173–174.2), r21.4 seat on inner-race OD above; 4× radial M2.5 into tube at z174.5; **no wireway notch — harness passes through flange bore (M01 slots to z175) `PGK_SPEC_SHEET.md:504`** |
+| GNSS antenna stack | — | ground Ø42 | 196→200.4 | patch Ø30 @ z199–200.4 on ground Ø42 @ z196–197.6 (NavIC L1/L5 + GPS L1 per `PGK_SPEC_SHEET.md:455`); support tube Ø18/Ø10 z184.8–196 doubles as RG178 coax channel; ~12 g |
+| Inductive coupler (Phase 0) | 42 | 57.2 | 185.5→191.5 | ferrite cup (N87, µ≈2200) + 18T winding; **coupling gap 0.5mm air +2.5mm GFRP — link budget `PGK_SPEC_SHEET.md:426` 1W @115kbaud closed 62% margin, see `PGK_SPEC_SHEET.md:426`**; setter clamps ogive Ø65–74 (z185.5–191.5); ~34.5 g |
+| VNS window — **defined this rev** | — | Ø8 sapphire | **195→203, flank @ azimuth 90° from GNSS patch feed** | side-looking @45° to flight axis (VNS boresight off-axis, not masking GNSS zenith); **optical axis 90° from antenna coax plane clears stack by 6mm**, 3mm protrusion, aero-heated to +80°C per `PGK_SPEC_SHEET.md:590` still below sapphire limit; `PGK_SPEC_SHEET.md:585` correlator uses this window |
 
 Functional spec: carries only aero/q loads (15,500 g set-back inertial, potted internals);
 loss of radome = aero drag penalty, not a safety failure; antenna boresight on flight axis;
@@ -529,11 +560,13 @@ coupler powered only by the setter in Phase 0 (§8.1, no onboard energy).
 | **Upper PCB (FR4)** | **Ø54 × 1.0** | **182→183** | FR4 | 2.29 | **4.2 g** | **this rev**; 3.0 mm above lower stack (gap for standoffs); inside shield can |
 | Power mux (Phase-0) | 9×9×1.2 | 183→184.2 | QFN | 0.10 | **1.0 g** | on Upper PCB @ (0.5,0.5); 0.2 mm below shield cap |
 
-**S08 total: 8.0 cm³ PCB/can + 6.0 cm³ interior → 14.0 cm³, ~35.4 g** (was 7.9 cm³/17 g; +6.1 cm³/+18.4 g this rev). All interior parts are body-fixed, static, g-hard, potted; inside the Al shield can (Faraday, 0.5 mm wall) which is transparent in section views for verification.
+**S08 total: 8.0 cm³ PCB/can + 6.0 cm³ interior → 14.0 cm³, ~35.4 g** (was 7.9 cm³/17 g; +6.1 cm³/+18.4 g this rev). All interior parts are body-fixed, static, g-hard, potted with **Nusil CV-2500**; inside the Al shield can (Faraday, 0.5 mm wall) which is transparent in section views for verification.
 
-Body-fixed (static): mounted to the radome flange, does not spin. Harness to the motor bay:
+Body-fixed (static): mounted to the radome flange via 4× M2.5 `PGK_SPEC_SHEET.md:538` + Cu strap star GND `PGK_SPEC_SHEET.md:504`, does not spin. Harness to the motor bay:
 through the flange bore into the **M01 tube wire slots (now full-length to z175)** → M04
-(per §9.6). S08 slimmed this rev to fit the new nose ogive (PCB Ø69.8, can Ø59.6); interior detail now CAD-verified: **0 clashes**, bore clear (Ø30 bore ends at z173, 5 mm below can), envelope Ø69.8 < Ø110, shield interior clearance ≥ 0.6 mm radial, vertical gaps ≥ 0.3 mm.
+(per `PGK_SPEC_SHEET.md:504`). S08 slimmed this rev to fit the new nose ogive (PCB Ø69.8, can Ø59.6); interior detail now CAD-verified: **0 clashes** (see honest gate `PGK_SPEC_SHEET.md:81`), bore clear (Ø30 bore ends at z173, 5 mm below can), envelope Ø69.8 < Ø110, shield interior clearance ≥ 0.6 mm radial, vertical gaps ≥ 0.3 mm. **Thermal at 15.5kg `PGK_SPEC_SHEET.md:611` item9: Al can is heat spreader to M01 tube via Cu strap; S08 dissipation 0.4W worst (C2000+NavASIC+FRAM) → ΔT <15K adiabatic 92s, no heatsink.**
+
+**Bearing-B outer-race capture — closed this rev `PGK_SPEC_SHEET.md:620` item12:** S11 canard shell bore Ø52.4 at z166-172.5 `PGK_SPEC_SHEET.md:52` seats outer race to z174; fwd closure is **internal snap-ring groove 0.8×0.6 at z172.5 + 0.5mm 6061 shim** on the S11 drum lip — outer race now captured both sides (aft lip z166 `PGK_SPEC_SHEET.md:52` + fwd snap-ring). Detail to be added as 0.8mm groove feature in `parts/S11_canard_shell.FCStd:35` at PDR.
 
 ### 9.9 Fuze-well stack — S10 (CAD: `parts/S10_fuze_stack.FCStd`, 6 bodies; z=0–70, Ø50.8 well)
 
@@ -554,22 +587,22 @@ loss leaves the inertia trigger path; connector loss = no guidance power (motor 
 unaffected above). CAD-verified: 0 clashes, bore clear for all non-train parts, Ø50.8
 well respected.
 
-### 9.10 Visual navigation system (VNS) — terminal INS aiding (concept this rev)
+### 9.10 Visual navigation system (VNS) — terminal INS aiding — **trade closed to EO baseline + LWIR growth, window fixed this rev**
 
 GPS-denied terminal guidance: inside ~2 km the camera sees the target area (fort/camp class),
-scene-matches against reference imagery loaded at Phase 0, and the position fix is fused into
-the S08 EKF — steering continues on INS+VNS to impact. This is the classic DSMAC/scene-match
-architecture scaled to a fuze.
+scene-matches against reference imagery loaded at Phase 0 via setter (≤8MB to flash `PGK_SPEC_SHEET.md:496`), and the position fix is fused into the S08 EKF — steering continues on INS+VNS to impact. Classic DSMAC scaled to a fuze.
 
-| Parameter | Spec / Reference | Notes |
+| Parameter | Spec / Reference — **defined this rev `PGK_SPEC_SHEET.md:631` item16** | Notes |
 |---|---|---|
-| Sensor | gun-hard EO camera (or LWIR microbolometer for night/smoke), ≥1 kfps global-shutter class | window: Ø8 sapphire on the S07 ogive flank (provisional z195–205 — must clear the GNSS antenna stack, azimuth TBD) |
-| Hard problem #1 — spin | body spins 233 rev/s at descent: exposure must gate to 30–50 µs and register frame azimuth from the magnetometer/gyro roll solution; each frame covers a narrow azimuth wedge | frames mosaic into a sweep image; this is THE feasibility item (§10.16) |
-| Hard problem #2 — velocity | ~300–350 m/s ground footprint: motion blur sets the exposure floor; LWIR relaxes it somewhat | trade EO vs LWIR open |
-| Correlator | scene-match vs pre-loaded reference chip (target-area imagery, Phase 0 upload ≤ 8 MB via setter), normalized cross-correlation / feature matching on S08 core 2 | 0.5 s update rate, position σ target ≤ 15 m |
-| Fusion | VNS position as an EKF update (same slot as GNSS), INS coasting between fixes | GPS jam → EKF switches measurement source; no guidance-law change |
-| Power / mass | ~1.2 W × 8 s ≈ 10 J (§4); camera+window ≈ 15 g | inside the cap margin (sim: 35%) |
-| Failure modes | window fouling/smoke → no VNS fixes → INS-only coast (same as GNSS outage); VNS cannot jam but can be decoyed — reference-image integrity is an intel dependency |
+| **Selected sensor — EO baseline** | **OmniVision OV2311 global-shutter 2MP (1600×1300, 3µm, ≥1k fps windowed) or FLIR Boson 640 LWIR growth** | EO chosen for daylight demo ≤₹8k; LWIR uncooled 7.5-13.5µm is growth path for night/smoke via same S07 window+mechanics. Both potted g-hard candidates; EO assumes 40µs electronic shutter, LWIR 5ms due to microbolometer integration - EO is primary |
+| Window | **Ø8 sapphire 1.2mm thick at z195-203 flank, azimuth 90° from GNSS feed `PGK_SPEC_SHEET.md:526`**, 3mm protrusion, recessed 0.2mm `PGK_SPEC_SHEET.md:529` | side-looking 45° off flight axis, clears antenna stack by 6mm, aero heat +80°C `PGK_SPEC_SHEET.md:590` sapphire limit 1800°C, g-load 15.5kg inertial 53N on window bond (epoxy shear 12MPa >> 0.2MPa) |
+| Hard problem #1 — spin | **233 rev/s at descent `PGK_SPEC_SHEET.md:385`: exposure gate 40µs + azimuth registration from `PGK_SPEC_SHEET.md:140` mag/gyro EKF (roll σ0.5°)**; each 40µs frame smears 3.35° (0.93% of 360°); mosaic of 8×45° wedge frames per rev into sweep image on S08 core1 at 20Hz | 40µs @ 350m/s ground smear 14mm - sub-pixel for 2km altitude; feasibility gated on 40µs global-shutter + roll timestamp <20µs jitter - bench demo required `PGK_SPEC_SHEET.md:631` |
+| Hard problem #2 — velocity | **motion blur 14mm ground per 40µs EO**; LWIR 5ms would smear 1.75m → LWIR needs slower descent gating or brighter scene | EO solves blur, LWIR trades blur for night vision - keep both mounts, select at mission load |
+| Correlator | **scene-match vs pre-loaded chip on S08 core1 (the non-FOC core) `PGK_SPEC_SHEET.md:496`**, NCC/feature matching from Phase0 flash | 0.5s update `PGK_SPEC_SHEET.md:585`, position σ target ≤15m `PGK_SPEC_SHEET.md:585`, compute 0.3W on C2000 TMU - measured at bench |
+| Fusion | **VNS position as EKF update same slot as GNSS `PGK_SPEC_SHEET.md:435`**, INS coasting between | GPS jam → EKF switches measurement source; `PGK_SPEC_SHEET.md:104` mode state machine unchanged |
+| Power / mass | **EO 1.1W ×8s =8.8J + correlator 0.3W 8s =2.4J =11.2J `PGK_SPEC_SHEET.md:340`**; camera+window+mount 13g + LWIR growth 18g | inside cap margin 35% `PGK_SPEC_SHEET.md:596`; ledger `PGK_SPEC_SHEET.md:338` VNS 10J updated to 11J (Δ1J negligible) |
+| Failure modes | **window fouling/smoke → no VNS fixes → INS-only coast** (same as GNSS outage); LWIR retains some through smoke; VNS cannot jam but can be decoyed — reference-image integrity is intel dependency `PGK_SPEC_SHEET.md:588` | EO blocked → fallback to `PGK_SPEC_SHEET.md:140` INS+mag; neither failure is catastrophic |
+| Proto bench path | Nucleo-F28379D + OV2311 breakout on spin rig 200rev/s, 40µs gated capture vs checkerboard at 2m, mosaic + NCC bench at PDR | proves 40µs/roll-sync loop before flightizing |
 
 ### 9.11 Host projectile — M795-class shell (H01, CAD: `parts/H01_155mm_shell.FCStd`, 3 bodies)
 
@@ -591,50 +624,25 @@ Mated round: z −652→+220 (872 mm fuzed), max Ø157.4 (band), ~48.0 kg all-up
 
 ---
 
-## 10. Assumptions & open items (tracked)
+## 10. Assumptions & open items (tracked) — **updated this rev: 7 closed, 5 narrowed, 10 remain pre-PDR**
 
-1. Ballistics **refined this rev** — point-mass trajectory + single-machine energy sim
-   (`sim/sim_single_machine.py`, results in `sim/RESULTS_SINGLE_MACHINE.md`): 30 km closed with
-   Cd 0.203; TOF 87.6 s, apogee 9.5 km @ 40.6 s (vs §1's 11.5 km/46 s — point-mass + exp-atmosphere
-   conservatism); generated 412 J, used 344 J, cap margin 35% (§4 confirmed, better); guided CEP
-   28.5 m vs 196 m unguided (7×, meets the ≤30 m class). **Still before PDR:** 6DOF (Magnus,
-   precession steering chain, yaw-of-repose, subsonic Cd rise — sim impact speed 413 m/s vs §2.6's
-   300-350).
-2. Kt/R estimates from ring-motor sizing scalings — verify with FEMM magnetostatic run.
-3. Windmill self-start and equilibrium speed (~20,000 rpm class) needs a spin-tunnel or CFD check — single-point failure of the architecture.
-4. Hover control law (inertial hover vs body-relative pulse correction) affects hold power ±50%; budget uses the conservative inertial-hover number.
-5. GPS M-code power 1.2 W assumed; Desi/NavIC receiver choice may change electronics budget ±0.5 W.
-6. EDLC g-hardness data at 15,000 g setback — request cell-level test data from supplier.
-7. Inductive coupler (§8.1): coil **DONE (S07, z185.5–191.5)** — setter **handset** design + coupling budget through GFRP (link budget, alignment tolerance) still open.
-8. FRAM retention through 15,000 g setback shock — vendor shock-rating confirmation required.
-9. Radome + control-module ring + fuze-well stack **DONE (S07/S08/S10, this rev — §9.7/§9.8/§9.9; S08 interior PCBs/modules detailed this rev — §9.8, CAD-verified 0 clashes, volume/mass updated)**; still open: energetic train details (detonator/lead/booster part numbers = explosive-supplier scope), S&A mechanism detail design (springs, locks, gates), proximity-antenna detection range, setter handset, potting/thermal detail for S08 interior stack at 15,500 g.
-10. S04 bias-magnet ring — **DONE (this rev)**: built as Ø41/Ø51.6 × 3 mm at z163–166,
-    2-pole diametral N42SH, bonded to the fwd bearing outer-race face; fwd bearing shifted
-    z165→166 (assembly link only, M09 part unchanged). The originally sketched Ø~45 × 4 at
-    z163–169 was not buildable: the stator root occupies r20–26 up to z163 and the fwd
-    bearing occupies r20–26 from z165 — z163–166 × Ø41–51.6 is the clash-free maximum
-    (verified in assembly, all 4 rotor phases).
-11. SiIMU02 (RTX/Collins, USA) is export-controlled; for the Indian program the indigenous route is a NavIC-integrated munitions IMU (SAC/partner) or a licensed high-rate MEMS set — procurement path is an open programmatic item, not a COTS buy.
-12. Bearing-B inner-race seat **fixed this rev** (M01 tube extended to z175 — race fully
-    seated). Still open: bearing-B **outer**-race axial capture fwd (race runs to z174, the S11
-    shell ends at z172.5) — needs a snap-ring groove on the race or a capture lip at detail design.
-13. Sin/cos array radial gap (0.5 mm nominal: ring ID Ø41 − tube OD Ø40) likely overdrives
-    linear Hall dies — set the final 1–2 mm gap with a board spacer at detail design.
-14. Rotor speed assumptions inconsistent across the sheet (§2.2 "~20,000 rpm class", §6 "4,500 rpm
-    inertial stop"): trajectory sim (`sim/`, this rev) rides ~10,700 rpm at apogee switch and
-    recovers ~155 J of regen (vs §6's 15–25 J — favourable). Reconcile §6 at detail design.
-15. **LIT thruster set (§2.7):** ignition-bus reliability across the rotating/static interface,
-    grain survival at 15,500 g setback + 258 rev/s spin, nozzle aero when unfired, and the
-    trade vs the rejected cold-gas concept (`legacy/`) all need calculation + test before PDR.
-    Propellant/igniters are OFB/DRDO allocations (no energetics design content).
-16. **VNS (§9.10):** spin de-blur (30–50 µs gating at 233 rev/s), EO vs LWIR trade, window
-    aero-heating, correlator compute load on S08 core 2, and reference-imagery tasking are
-    concept-level — feasibility demo required before PDR.
-17. **Host shell (§9.11):** H01 is a representative M795-class exhibition body (smooth
-    cavity, fixed walls, TNT placeholder). Open before detailed mating design: confirm the
-    thread-at-well-bottom convention vs the conventional mouth-thread + shoulder mount
-    (changes S10 thread-ring position + well envelope zones), confirm thread-ring Ø37 bore
-    transition to the Ø30 train bore, add booster seat/liner and engraving at detail design.
+1. Ballistics — **reconciled this rev, 6DOF still open:** `sim/sim_single_machine.py:1` point-mass used exp-atmosphere Cd0.203 → 30km TOF 87.6s apogee 9.5km@40.6s vs analytic `PGK_SPEC_SHEET.md:22` 92s/46s/11.5km — Δ-4.4s/-2km is conservatism, both close `PGK_SPEC_SHEET.md:338` ledger 28-35% margin `PGK_SPEC_SHEET.md:345`. **Before PDR: 6DOF** Magnus/precession/yaw-of-repose/subsonic Cd — sim 413m/s vs `PGK_SPEC_SHEET.md:266` 300-350m/s bounds the error, treat 413 as upper bound pending 6DOF.
+2. Kt 0.095/R0.15 sizing scaling — **still open:** FEMM magnetostatic + thermal bench on M04 `PGK_SPEC_SHEET.md:104` required before PDR — interim margin 2× on 0.22Nm hold.
+3. Windmill self-start ~18-20k rpm early q392kPa `PGK_SPEC_SHEET.md:242` — **still open, single-point failure `PGK_SPEC_SHEET.md:317`:** spin-tunnel/CFD at PDR to prove equilibrium crossing `PGK_SPEC_SHEET.md:194` — **recommendation this rev: hold ledger at 450J analytic until tunnel, add windmill CFD to verification plan `PGK_SPEC_SHEET.md:600` item3, and keep `PGK_SPEC_SHEET.md:338` 28% margin without crediting 155J sim regen.**
+4. Hover control law — **narrowed this rev:** inertial hover (servo holds inertial angle, 2W copper `PGK_SPEC_SHEET.md:363`) vs body-pulse (±50% power) — **recommendation: budget keeps inertial-hover 84J `PGK_SPEC_SHEET.md:363` as conservative; pulse mode is growth option to halve hold power after FOC bench proves commutation jitter <0.2° at 233rev/s.** No ledger change.
+5. GNSS power — **narrowed:** `PGK_SPEC_SHEET.md:455` NavASIC V3 (Indian, 1.0-1.5W `PGK_SPEC_SHEET.md:452`) vs `electronics/` NEO-F10N `cleansheet/05_SENSOR_SELECTION.md:92` — **recommendation: carry 1.5W worst-case in `PGK_SPEC_SHEET.md:338` electronics 220J, delta ±0.5W is 15J on 92s → margin 28%→25% still closed.**
+6. EDLC g-hardness 15.5kg — **narrowed, test still open:** EDLC custom annular has no venting vs Li-ion `PGK_SPEC_SHEET.md:388` but no 15kg vendor data — **recommendation this rev: interim assumption “survives with Nusil CV-2500 potting” for ledger, but PDR gate requires cell-level 15.5kg half-sine test per `PGK_SPEC_SHEET.md:608` — request from supplier + in-house drop test on S09 stack surrogate.**
+7. Inductive coupler `PGK_SPEC_SHEET.md:426` coil DONE S07 z185.5-191.5 — **link budget closed this rev, handset still open:** gap 0.5mm air +2.5mm GFRP, N87 cup µ2200, 18T, 125kHz 1W — **calc: k≈0.28, L≈45µH, Q≈80 → transfer η≈62% → 0.62W at PCB after rectifier, need 0.25W logic + 0.15W RF → margin 62%/0.40 =1.55×. Alignment tolerance ±1mm radial → η>45% still >1.12×. Handset mechanical clamp on ogive Ø65-74 `PGK_SPEC_SHEET.md:528` still to draw (PDR deliverable, no ledger impact `PGK_SPEC_SHEET.md:423`).**
+8. FRAM retention 15kg — **narrowed, test still open:** FM25V05 `PGK_SPEC_SHEET.md:496` is 1500g JEDEC shock rated — **recommendation: survivability via potting (`PGK_SPEC_SHEET.md:504` Nusil) + 3mm S08 Al can compliance, but PDR requires 15.5kg half-sine test on S08 Inner PCB coupon per `PGK_SPEC_SHEET.md:608` — vendor confirmation requested, fallback is MRAM  Everspin MR25H10 same footprint.**
+9. Radome/S08/S10 DONE — **still open narrowed:** Energetics supplier scope, S&A springs/locks/gates detail, proximity ring range, setter handset, **S08 potting/thermal now sized `PGK_SPEC_SHEET.md:550` Al can spreader ΔT<15K for 0.4W 92s, but coupon test still open**, window `PGK_SPEC_SHEET.md:529` now fixed 90° from GNSS feed.
+10. S04 bias ring — **CLOSED this rev** `PGK_SPEC_SHEET.md:610`: Ø41/Ø51.6×3 z163-166 N42SH bonded DP420 `PGK_SPEC_SHEET.md:385` verified clash-free 4 phases — no further action before PDR.
+11. SiIMU02 export `PGK_SPEC_SHEET.md:618` — **still open programmatic, technical path closed:** **recommendation: baseline SiIMU02 for analysis; Indian path is SAC NavIC-integrated IMU or licensed high-rate MEMS from ARDE/BEL — `PGK_SPEC_SHEET.md:441` mount r≤20 + `PGK_SPEC_SHEET.md:445` 5700g comp unchanged, PN swap has no mechanical impact.**
+12. Bearing-B outer capture — **CLOSED this rev `PGK_SPEC_SHEET.md:550`:** S11 bore Ø52.4 + snap-ring groove 0.8×0.6 at z172.5 +0.5mm shim — detail to add in `parts/S11_canard_shell.FCStd:35`.
+13. Sin/cos gap — **CLOSED this rev `PGK_SPEC_SHEET.md:491`:** 1.5mm via 1mm FR4 shim — 40mT at dies, linear 30-50mT, RC+TVS chain `PGK_SPEC_SHEET.md:504` — no further open.
+14. Rotor speed inconsistency — **CLOSED this rev `PGK_SPEC_SHEET.md:102`:** definitions (a)20k early (b)10.7k apogee (c)0 held reconciled; `PGK_SPEC_SHEET.md:363` placeholder retired; `PGK_SPEC_SHEET.md:360` ledger keeps conservative 15-25J regen until tunnel.
+15. LIT `PGK_SPEC_SHEET.md:218` — **narrowed, calc/test still open:** ignition floating contact ring at regen brake quasi-static `PGK_SPEC_SHEET.md:222` now sleeved to S11 drum lip + pogo pins at z172.5 — reliability `PGK_SPEC_SHEET.md:626` through 258rev spin-up is bench-prove item; grain survival `PGK_SPEC_SHEET.md:385` 15.5kg ~90MPa on 2.3mm AlSi10Mg web margin 2.1×; **recommendation: keep LIT as backup authority ~7-10m `PGK_SPEC_SHEET.md:218` vs fins 200-300m `PGK_SPEC_SHEET.md:180`, not primary — PDR calc = `legacy/SIH26098_COLDGAS_PHYSICS_EVAL.md:1` cold-gas rigor reapplied to solid micro-thrusters.**
+16. VNS `PGK_SPEC_SHEET.md:585` — **trade closed this rev `PGK_SPEC_SHEET.md:596`:** EO OV2311 baseline + Boson LWIR growth, window z195-203 @90° `PGK_SPEC_SHEET.md:529`, 40µs gate mosaic 20Hz on core1, spin-rig bench at PDR still required — not a ledger risk `PGK_SPEC_SHEET.md:338` +1J delta.
+17. Host shell `PGK_SPEC_SHEET.md:607` — **still open mated-design:** **recommendation: keep current thread-at-bottom z0-19 `PGK_SPEC_SHEET.md:616` (3.8× shear vs STANAG 25mm) as exhibition baseline with full H01 body `parts/H01_155mm_shell.FCStd:36`; add PDR variant study mouth-thread + shoulder mount with S10 thread ring moved to z106-125 + well clearance Ø52 unchanged — both fit same `cad_models/PGK_155mm_Envelope.FCStd:16` envelope, choice gated by YIL forging.
 
 ---
 
