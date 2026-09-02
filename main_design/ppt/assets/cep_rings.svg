@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="330" viewBox="0 0 660 330" font-family="DejaVu Sans, Arial, sans-serif">
+  <defs>
+    <pattern id="grid" width="27.5" height="27.5" patternUnits="userSpaceOnUse">
+      <path d="M27.5,0 L0,0 0,27.5" fill="none" stroke="#e5eaf0" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <style>
+    .h  { font-size:11.5px; font-weight:bold; fill:#10263f; }
+    .v  { font-size:13px; font-weight:bold; }
+    .n  { font-size:10px; fill:#5b6b7a; }
+  </style>
+  <text x="20" y="22" font-size="12.5" font-weight="bold" fill="#10263f">WHAT 7&#215; CORRECTION MEANS ON THE GROUND [SIMULATION]</text>
+  <text x="640" y="22" text-anchor="end" font-size="10.5" font-weight="bold" fill="#1d5a38">PS requirement: CEP &#8804; 30 m</text>
+  <text x="20" y="38" class="n">100-run Monte Carlo, 30 km shot &#183; dispersions: v0 0.15%, aim 0.6 mrad, wind 3 m/s, Cd 0.8% &#183; grid = 50 m</text>
+
+  <!-- scale 0.55 px/m, 50 m grid = 27.5 px -->
+  <!-- UNGUIDED panel: center (150,195) r=107.8 -->
+  <g>
+    <rect x="30" y="55" width="240" height="240" fill="url(#grid)" stroke="#cfd8e0"/>
+    <circle cx="150" cy="195" r="107.8" fill="#c0392b" fill-opacity="0.13" stroke="#c0392b" stroke-width="1.8"/>
+    <line x1="150" y1="185" x2="150" y2="205" stroke="#37474f"/>
+    <line x1="140" y1="195" x2="160" y2="195" stroke="#37474f"/>
+    <text x="150" y="87" text-anchor="middle" class="h" fill="#7c2019">UNGUIDED</text>
+    <text x="150" y="316" text-anchor="middle" class="v" fill="#7c2019">CEP50 = 196 m</text>
+  </g>
+
+  <!-- GUIDED panel: center (470,195) r=15.7 -->
+  <g>
+    <rect x="350" y="55" width="240" height="240" fill="url(#grid)" stroke="#cfd8e0"/>
+    <circle cx="470" cy="195" r="15.7" fill="#2e8b57" fill-opacity="0.25" stroke="#2e8b57" stroke-width="2"/>
+    <line x1="470" y1="182" x2="470" y2="208" stroke="#37474f"/>
+    <line x1="457" y1="195" x2="483" y2="195" stroke="#37474f"/>
+    <text x="470" y="87" text-anchor="middle" class="h" fill="#1d5a38">GUIDED (this kit)</text>
+    <text x="470" y="316" text-anchor="middle" class="v" fill="#1d5a38">CEP50 = 28.5 m</text>
+    <text x="470" y="232" text-anchor="middle" class="n">&#8776; 47&#215; smaller footprint</text>
+  </g>
+</svg>

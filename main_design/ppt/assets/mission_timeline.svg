@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="190" viewBox="0 0 660 190" font-family="DejaVu Sans, Arial, sans-serif">
+  <style>
+    .lab { font-size:10.5px; fill:#37474f; }
+    .ph  { font-size:11px; font-weight:bold; }
+    .tt  { font-size:9.5px; fill:#5b6b7a; }
+  </style>
+  <text x="20" y="20" font-size="12.5" font-weight="bold" fill="#10263f">MISSION TIMELINE &#8212; 30 km shot (one machine, three roles)</text>
+
+  <!-- axis -->
+  <line x1="20" y1="150" x2="640" y2="150" stroke="#37474f" stroke-width="1.6"/>
+
+  <!-- phase bands (x: t=0..92s -> 20..620, 6.52 px/s) -->
+  <rect x="20" y="118" width="261" height="32" fill="#dbe9f6" stroke="#2f6fa8"/>
+  <text x="150" y="138" text-anchor="middle" class="ph" fill="#1d4f79">GENERATOR (ascent)</text>
+  <rect x="281" y="118" width="26" height="32" fill="#fde3c8" stroke="#e87722"/>
+  <rect x="307" y="118" width="261" height="32" fill="#def0e5" stroke="#2e8b57"/>
+  <text x="437" y="138" text-anchor="middle" class="ph" fill="#1d5a38">SERVO-HOLD FINS &#177;12&#176; (descent)</text>
+  <rect x="568" y="118" width="52" height="32" fill="#f9d7d3" stroke="#c0392b"/>
+
+  <!-- top annotations -->
+  <g>
+    <text x="24" y="88" class="ph" fill="#7c2019">t=0 launch</text>
+    <text x="24" y="102" class="tt">setback 15,000 g</text>
+
+    <text x="225" y="102" text-anchor="middle" class="tt">cap charges 10&#8211;15 W, bus live</text>
+
+    <line x1="294" y1="90" x2="294" y2="150" stroke="#e87722" stroke-width="1.6"/>
+    <text x="294" y="70" text-anchor="middle" class="ph" fill="#7a4a10">APOGEE</text>
+    <text x="294" y="84" text-anchor="middle" class="tt">regen brake, +15&#8211;25 J</text>
+
+    <text x="437" y="102" text-anchor="middle" class="tt">impact-point solution &#183; 8 phase slews</text>
+
+    <line x1="620" y1="90" x2="620" y2="150" stroke="#c0392b" stroke-width="1.6"/>
+    <text x="640" y="70" text-anchor="end" class="ph" fill="#7c2019">FUZE</text>
+    <text x="640" y="84" text-anchor="end" class="tt">PROX / TIME / IMPACT</text>
+    <text x="640" y="98" text-anchor="end" class="tt">t&#8776;92 s impact</text>
+  </g>
+
+  <!-- below-band annotations -->
+  <text x="44" y="170" class="tt">t&#8776;3 s GPS reacquire (ephemeris from FRAM)</text>
+  <text x="437" y="170" text-anchor="middle" class="tt">terminal: VNS window inside 2 km (GPS-denied fallback)</text>
+
+  <!-- tick labels -->
+  <g font-size="9" fill="#8a97a5">
+    <text x="20" y="183">0 s</text>
+    <text x="281" y="183" text-anchor="middle">40 s</text>
+    <text x="307" y="183" text-anchor="middle">44 s</text>
+    <text x="568" y="183" text-anchor="middle">84 s</text>
+    <text x="620" y="183" text-anchor="middle">92 s</text>
+  </g>
+</svg>

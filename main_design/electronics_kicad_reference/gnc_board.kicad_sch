@@ -1,0 +1,126 @@
+(kicad_sch
+	(version 20260101)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "e07d240d-20dd-5603-801e-23db4fd3138d")
+	(paper "A4")
+	(title_block
+		(title "PGK SIH26098 — GNC board (dome D3) schematic skeleton")
+		(date "2026-08-31")
+		(rev "1.0")
+		(company "PGK SIH26098 clean-sheet — see cleansheet/06_ELECTRONICS_ARCHITECTURE.md"))
+	(lib_symbols)
+
+	(sheet
+		(at 60 40)
+		(size 40 30)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0) (type solid))
+		(fill (color 0 0 0 0))
+		(uuid "13bea4c4-7f3a-5491-b252-22620ebd1770")
+		(property "Sheetname" "Power"
+			(at 60 38.8 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "gnc_power.kicad_sch"
+			(at 60 70.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.524 1.524)) (justify left top)))
+		(instances
+			(project "gnc_board"
+				(path "/e07d240d-20dd-5603-801e-23db4fd3138d"
+					(page "2"))
+			)
+	)
+	)
+	(sheet
+		(at 120 40)
+		(size 40 30)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0) (type solid))
+		(fill (color 0 0 0 0))
+		(uuid "f390509b-491e-5634-bdc9-d2ae76a69930")
+		(property "Sheetname" "MCU+buses"
+			(at 120 38.8 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "gnc_mcu.kicad_sch"
+			(at 120 70.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.524 1.524)) (justify left top)))
+		(instances
+			(project "gnc_board"
+				(path "/e07d240d-20dd-5603-801e-23db4fd3138d"
+					(page "3"))
+			)
+	)
+	)
+	(sheet
+		(at 60 90)
+		(size 40 30)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0) (type solid))
+		(fill (color 0 0 0 0))
+		(uuid "421ef555-c6bf-5c9b-a44a-2e840e966bf2")
+		(property "Sheetname" "Sensors"
+			(at 60 88.8 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "gnc_sensors.kicad_sch"
+			(at 60 120.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.524 1.524)) (justify left top)))
+		(instances
+			(project "gnc_board"
+				(path "/e07d240d-20dd-5603-801e-23db4fd3138d"
+					(page "4"))
+			)
+	)
+	)
+	(sheet
+		(at 120 90)
+		(size 40 30)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0) (type solid))
+		(fill (color 0 0 0 0))
+		(uuid "33a75fff-f33d-5704-ac3f-2e16e21ac84e")
+		(property "Sheetname" "Comms+slip"
+			(at 120 88.8 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "gnc_comms.kicad_sch"
+			(at 120 120.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.524 1.524)) (justify left top)))
+		(instances
+			(project "gnc_board"
+				(path "/e07d240d-20dd-5603-801e-23db4fd3138d"
+					(page "5"))
+			)
+	)
+	)
+	(sheet_instances
+		(path "/" (page "1"))
+	)
+	(embedded_fonts no)
+)

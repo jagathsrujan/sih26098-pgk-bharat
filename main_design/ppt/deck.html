@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SIH26098 — Idea Deck (LARP)</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #fff; }
+  body { font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif; color: #1c2b39; }
+
+  .slide {
+    width: 1280px; height: 720px; position: relative; overflow: hidden;
+    page-break-after: always; background: #ffffff;
+  }
+  .slide:last-child { page-break-after: auto; }
+
+  /* sidebar */
+  .side {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 52px;
+    background: #10263f; color: #fff; z-index: 5;
+  }
+  .side .vname {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(180deg);
+    writing-mode: vertical-rl; font-size: 21px; font-weight: bold; letter-spacing: 3px;
+  }
+
+  /* footer */
+  .foot {
+    position: absolute; left: 52px; right: 0; bottom: 0; height: 30px;
+    border-top: 1px solid #dfe6ee; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 18px; background: #f7f9fb;
+  }
+  .foot .f { font-size: 10.5px; color: #6b7280; }
+  .foot .pn {
+    font-size: 11.5px; font-weight: bold; color: #10263f;
+    border: 1px solid #c8d2dc; padding: 1px 9px; border-radius: 3px; background: #fff;
+  }
+
+  .body { position: absolute; left: 52px; right: 0; top: 0; bottom: 30px; padding: 22px 30px 10px 30px; }
+
+  .ptitle { font-size: 26px; font-weight: bold; color: #10263f; letter-spacing: 0.5px; }
+  .prule { height: 3px; background: #e87722; width: 110px; margin: 6px 0 12px 0; border-radius: 2px; }
+
+  /* evidence chips */
+  .chip { display: inline-block; font-size: 9.5px; font-weight: bold; padding: 1px 7px; border-radius: 9px; vertical-align: 1px; }
+  .t-tgt { background: #eef2f6; color: #4a5a68; border: 1px solid #b7c3cd; }
+  .t-sim { background: #e3eefb; color: #1d4f79; border: 1px solid #9cc0e2; }
+  .t-ver { background: #e3f2e9; color: #1d5a38; border: 1px solid #93c7ab; }
+
+  /* ===== P1 ===== */
+  .p1-band { font-size: 20px; font-weight: bold; color: #10263f; letter-spacing: 1.5px; margin: 6px 0 26px 4px; }
+  .p1-band .yr { color: #e87722; }
+  .p1-grid { display: flex; gap: 40px; }
+  .p1-fields { flex: 1.65; }
+  .p1-fields .fl { font-size: 16.5px; margin: 0 0 19px 0; line-height: 1.35; }
+  .p1-fields .fl b { color: #10263f; }
+  .p1-team {
+    flex: 1; background: #10263f; color: #fff; border-radius: 10px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    height: 380px; margin-top: 8px;
+  }
+  .p1-team .tn { font-size: 64px; font-weight: bold; letter-spacing: 10px; }
+  .p1-team .cap { font-size: 12px; letter-spacing: 2px; color: #9fb8cd; }
+  .p1-team .rule { width: 90px; height: 3px; background: #e87722; border-radius: 2px; }
+
+  /* ===== P2 ===== */
+  .p2-wrap { display: flex; gap: 22px; }
+  .p2-left { flex: 1.35; min-width: 0; }
+  .p2-right { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; }
+  .p2-head { font-size: 21.5px; font-weight: bold; color: #10263f; line-height: 1.3; margin-bottom: 12px; }
+  .pillars { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pillar { border: 1px solid #d7dfe7; border-left: 4px solid #2f6fa8; border-radius: 6px; padding: 9px 11px; background: #fbfdfe; }
+  .pillar h4 { font-size: 13px; color: #10263f; margin-bottom: 5px; }
+  .pillar p { font-size: 11.5px; line-height: 1.42; color: #33424f; }
+  .p2-map { margin-top: 12px; border: 1px solid #d7dfe7; background: #f4f8fb; border-radius: 6px; padding: 8px 11px; font-size: 10.3px; line-height: 1.55; color: #33424f; }
+  .p2-map b { color: #10263f; }
+  .p2-right img { max-width: 100%; max-height: 440px; border: 1px solid #d7dfe7; border-radius: 6px; }
+  .p2-right .cap { font-size: 10.5px; color: #6b7280; margin-top: 6px; text-align: center; }
+
+  /* ===== P3 ===== */
+  .p3-wrap { display: flex; gap: 20px; }
+  .p3-left { flex: 1.18; min-width: 0; }
+  .p3-left .diagram { margin-bottom: 10px; display: block; width: 100%; height: auto; }
+  .p3-left img, .p3-left svg { max-width: 100%; display: block; height: auto; }
+  .p3-right { flex: 1; min-width: 0; }
+  .sechead { font-size: 13.5px; font-weight: bold; color: #10263f; margin: 2px 0 6px 0; }
+  table.spec { width: 100%; border-collapse: collapse; font-size: 11px; }
+  table.spec th { background: #10263f; color: #fff; text-align: left; padding: 4px 8px; font-size: 11px; }
+  table.spec td { border: 1px solid #d7dfe7; padding: 4px 8px; vertical-align: top; line-height: 1.35; }
+  table.spec td.k { font-weight: bold; color: #10263f; width: 27%; background: #f7f9fb; }
+  .p3-inset { text-align: center; margin-top: 8px; }
+  .p3-inset img { max-width: 78%; max-height: 190px; border: 1px solid #d7dfe7; border-radius: 6px; }
+  .p3-inset .cap { font-size: 10px; color: #6b7280; margin-top: 4px; }
+
+  /* ===== P4 ===== */
+  .p4-wrap { display: flex; gap: 20px; }
+  .p4-left { flex: 1.12; min-width: 0; }
+  .p4-right { flex: 1; min-width: 0; }
+  .p4-left img { max-width: 100%; border: 1px solid #d7dfe7; border-radius: 6px; }
+  .fits { margin-top: 10px; }
+  .fits li { font-size: 11.6px; line-height: 1.5; margin: 0 0 6px 18px; }
+  table.risks { width: 100%; border-collapse: collapse; font-size: 10.8px; }
+  table.risks th { background: #10263f; color: #fff; text-align: left; padding: 4px 8px; }
+  table.risks td { border: 1px solid #d7dfe7; padding: 5px 8px; line-height: 1.4; vertical-align: top; }
+  .costbox { margin-top: 10px; border: 1px solid #d7dfe7; border-left: 4px solid #2e8b57; background: #f6fbf8; border-radius: 6px; padding: 8px 11px; font-size: 11px; line-height: 1.5; }
+  .costbox b { color: #1d5a38; }
+
+  /* ===== P5 ===== */
+  .p5-wrap { display: flex; gap: 20px; }
+  .p5-left { flex: 1.18; min-width: 0; }
+  .p5-left img { max-width: 100%; border: 1px solid #d7dfe7; border-radius: 6px; }
+  .p5-right { flex: 1; min-width: 0; }
+  .bblock { border: 1px solid #d7dfe7; border-radius: 6px; padding: 9px 12px; margin-bottom: 10px; background: #fbfdfe; }
+  .bblock h4 { font-size: 13px; color: #10263f; margin-bottom: 5px; border-left: 4px solid #e87722; padding-left: 8px; }
+  .bblock li { font-size: 11.4px; line-height: 1.45; margin: 0 0 4px 16px; }
+
+  /* ===== P6 ===== */
+  .refs { }
+  .refs .r { font-size: 12.4px; line-height: 1.5; margin: 0 0 9px 0; }
+  .refs .r b { color: #10263f; }
+  .legend { margin-top: 14px; border: 1px solid #d7dfe7; border-radius: 6px; background: #f7f9fb; padding: 10px 14px; display: flex; gap: 26px; align-items: baseline; }
+  .legend .li { font-size: 11px; line-height: 1.45; }
+  .legend .li b { font-size: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ================= PAGE 1 : TITLE PAGE ================= -->
+<div class="slide">
+  <div class="side"><div class="vname">LARP</div></div>
+  <div class="body">
+    <div class="p1-band">SMART INDIA HACKATHON <span class="yr">2026</span> &nbsp;&#183;&nbsp; TITLE PAGE</div>
+    <div class="p1-grid">
+      <div class="p1-fields">
+        <div class="fl"><b>&#8226;&nbsp;Problem Statement ID</b> &ndash; SIH26098</div>
+        <div class="fl"><b>&#8226;&nbsp;Problem Statement Title</b> &ndash; Development of a Low-Cost Precision
+          Guidance and Smart Electronic Fuze System for a 155 mm Artillery Shell</div>
+        <div class="fl"><b>&#8226;&nbsp;Theme</b> &ndash; Miscellaneous</div>
+        <div class="fl"><b>&#8226;&nbsp;PS Category</b> &ndash; Hardware</div>
+        <div class="fl"><b>&#8226;&nbsp;Team ID</b> &ndash; [Team ID &mdash; fill before upload]</div>
+        <div class="fl"><b>&#8226;&nbsp;Team Name</b> &ndash; LARP <span style="font-size:12px;color:#6b7280;">(Registered on portal)</span></div>
+      </div>
+      <div class="p1-team">
+        <div class="cap">YOUR TEAM NAME</div>
+        <div class="tn">LARP</div>
+        <div class="rule"></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><div class="f">(c)SIH Idea submission- Template</div><div class="pn">1</div></div>
+</div>
+
+<!-- ================= PAGE 2 : IDEA TITLE ================= -->
+<div class="slide">
+  <div class="side"><div class="vname">LARP</div></div>
+  <div class="body">
+    <div class="ptitle">IDEA TITLE</div>
+    <div class="prule"></div>
+    <div class="p2-wrap">
+      <div class="p2-left">
+        <div class="p2-head">One Machine, No Battery &mdash; Precision Guidance Kit +
+          3-Mode Electronic Fuze for the 155 mm Shell</div>
+        <div class="pillars">
+          <div class="pillar">
+            <h4>1 &#183; ONE MACHINE</h4>
+            <p>A single 12s10p ring PMSM time-shares two jobs: <b>ascent</b> = windmill
+            generator, <b>descent</b> = fin actuator for 4 mirror-pitched fins (&#177;12&#176;).</p>
+          </div>
+          <div class="pillar">
+            <h4>2 &#183; NO BATTERY</h4>
+            <p>Annular supercap 0.6 F @ 54 V stores <b>875 J</b> harvested from the shell's own
+            flight; mission needs <b>344 J</b> &rarr; ~2.5&#215; margin. <span class="chip t-sim">SIMULATION</span></p>
+          </div>
+          <div class="pillar">
+            <h4>3 &#183; 3-MODE FUZE</h4>
+            <p><b>Proximity</b> (FM-CW ring antenna) / <b>Time</b> (timed self-destruct) /
+            <b>Impact</b> (inertia); SAFE&#8594;ARM set via inductive programmer.</p>
+          </div>
+          <div class="pillar">
+            <h4>4 &#183; 7&#215; CEP</h4>
+            <p><b>28.5 m</b> CEP vs <b>196 m</b> unguided at 30 km &mdash; PS target &#8804; 30 m met.
+            <span class="chip t-sim">SIMULATION</span></p>
+          </div>
+        </div>
+        <div class="p2-map">
+          <b>Maps to every PS requirement:</b>
+          CAA &#10003;(S05/S06/S11) &#183; GNC &#10003;(EKF, sensor suite) &#183; 3 fuze modes &#10003; &#183;
+          embedded SW &#10003;(single MCU, 3 loops) &#183; power mgmt &#10003; &#183; programming interface &#10003;(inductive setter) &#183;
+          CEP &#8804; 30 m &#10003;(sim 28.5 m) &#183; standard-shell compatibility &#10003; &#183; high-g &#10003;(13,400&ndash;15,500 g) &#183;
+          SWaP-C &#10003;(1.18 kg kit) &#183; modularity &#10003;(S-series)
+        </div>
+      </div>
+      <div class="p2-right">
+        <img src="assets/complete_iso.png" alt="Mated 155 mm round with PGK kit">
+        <div class="cap">Mated round with the guidance kit &mdash; standard 155 mm casing, kit in the fuze well</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><div class="f">(c)SIH Idea submission- Template</div><div class="pn">2</div></div>
+</div>
+
+<!-- ================= PAGE 3 : TECHNICAL APPROACH ================= -->
+<div class="slide">
+  <div class="side"><div class="vname">LARP</div></div>
+  <div class="body">
+    <div class="ptitle">TECHNICAL APPROACH</div>
+    <div class="prule"></div>
+    <div class="p3-wrap">
+      <div class="p3-left">
+        <img class="diagram" src="assets/arch_diagram.svg" alt="System architecture">
+        <img src="assets/mission_timeline.svg" alt="Mission timeline">
+      </div>
+      <div class="p3-right">
+        <div class="sechead">TECHNOLOGIES / HARDWARE</div>
+        <table class="spec">
+          <tr><th colspan="2">Single time-share machine + kit</th></tr>
+          <tr><td class="k">Machine</td><td>12s10p ring PMSM &#183; Kt 0.095 N&#183;m/A <span class="chip t-tgt">TARGET</span> &#183; generated EMF 150&ndash;200 V</td></tr>
+          <tr><td class="k">Storage</td><td>Annular EDLC supercap 0.6 F @ 54 V &mdash; 875 J, charged in flight</td></tr>
+          <tr><td class="k">Actuation</td><td>4 mirror-pitched fins &#177;12&#176; &#183; 15&ndash;25 N lateral &#183; 200&ndash;300 m correction authority</td></tr>
+          <tr><td class="k">Navigation</td><td>NavIC L1/L5 + GPS &#183; EKF fusion &#183; RM3100-class mag &#8805;2 kHz &#183; gyro &#177;25,000&#176;/s</td></tr>
+          <tr><td class="k">Sensors (open)</td><td>Barometric altitude &mdash; optional GNC aiding (PS example; trade study open)</td></tr>
+          <tr><td class="k">Fuze</td><td>FM-CW proximity ring antenna / TIME (timed self-destruct) / inertia impact</td></tr>
+          <tr><td class="k">Interface</td><td>2&#8221;-12 UNEF inductive fuze setter &mdash; pre-fire programming</td></tr>
+          <tr><td class="k">Embedded</td><td>Single MCU &#183; 3 loops (power, guidance, fuze) &#183; C/C++ bare metal</td></tr>
+        </table>
+        <div class="p3-inset">
+          <img src="assets/sec_quarter_iso.png" alt="Quarter section">
+          <div class="cap">Quarter section &mdash; kit stack inside the fuze well, &#216;30 mm through-bore reserved</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><div class="f">(c)SIH Idea submission- Template</div><div class="pn">3</div></div>
+</div>
+
+<!-- ================= PAGE 4 : FEASIBILITY AND VIABILITY ================= -->
+<div class="slide">
+  <div class="side"><div class="vname">LARP</div></div>
+  <div class="body">
+    <div class="ptitle">FEASIBILITY AND VIABILITY</div>
+    <div class="prule"></div>
+    <div class="p4-wrap">
+      <div class="p4-left">
+        <div class="sechead">ENERGY LEDGER CLOSES</div>
+        <img src="assets/energy_ledger.svg" alt="Energy ledger">
+        <ul class="fits">
+          <li><b>Fits the existing shell:</b> 2&#8221;-12 UNEF fuze well, &#216;50.8 mm well, &#216;30 mm
+          through-bore leaves the explosive train untouched <span class="chip t-ver">VERIFIED</span> &#183; 1.18 kg kit (SWaP-C)</li>
+          <li><b>Gun-hard by construction:</b> 13,400&ndash;15,500 g setback &mdash; no battery chemistry,
+          no cold gas, no pyrotechnics; electronics dark through launch, state in FRAM, reboot ~2&ndash;3 s</li>
+        </ul>
+      </div>
+      <div class="p4-right">
+        <div class="sechead">CHALLENGES &rarr; STRATEGIES (GATES)</div>
+        <table class="risks">
+          <tr><th style="width:47%">Risk</th><th>Strategy / gate</th></tr>
+          <tr><td>Windmill self-start is the single-point failure (no generation <i>and</i> no actuation)</td>
+              <td>Self-start reliability target &#8805;0.999 + dedicated spin-tunnel test gate</td></tr>
+          <tr><td>3DOF point-mass sim not enough for terminal claims</td>
+              <td>6DOF rung (Magnus, precession, yaw-of-repose) before PDR</td></tr>
+          <tr><td>Motor Kt 0.095 N&#183;m/A is analytical <span class="chip t-tgt">TARGET</span></td>
+              <td>FEMM + prototype verification gate</td></tr>
+          <tr><td>Annular EDLC gun-hard qualification data lacking</td>
+              <td>Shock-test gate at 15,000 g on the stack</td></tr>
+        </table>
+        <div class="costbox">
+          <b>Manufacturability &amp; cost (qualitative):</b> YIL already manufactures the shell body &mdash;
+          the kit adds one custom motor, one custom supercap stack and COTS sensors; modular
+          S-series parts allow single-part upgrades without redesign. No invented cost figures.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><div class="f">(c)SIH Idea submission- Template</div><div class="pn">4</div></div>
+</div>
+
+<!-- ================= PAGE 5 : IMPACT AND BENEFITS ================= -->
+<div class="slide">
+  <div class="side"><div class="vname">LARP</div></div>
+  <div class="body">
+    <div class="ptitle">IMPACT AND BENEFITS</div>
+    <div class="prule"></div>
+    <div class="p5-wrap">
+      <div class="p5-left">
+        <img src="assets/cep_rings.svg" alt="CEP comparison rings">
+      </div>
+      <div class="p5-right">
+        <div class="bblock">
+          <h4>Impact on the target audience (YIL / MoD)</h4>
+          <li>Every existing 155 mm casing becomes a PGM by swapping the fuze &mdash; no casing
+          change, no new shell line; kit threads into the standard 2&#8221;-12 UNEF well</li>
+          <li>Ammunition-effectiveness multiplier ~7&#215;: median miss <b>196 m &rarr; 28.5 m</b>
+          <span class="chip t-sim">SIMULATION</span> &mdash; fewer rounds per target, less transport,
+          less exposure of firing positions</li>
+        </div>
+        <div class="bblock">
+          <h4>Economic benefits</h4>
+          <li>Casing stays YIL-made; kit = one custom motor + one custom supercap + COTS sensors
+          (qualitative cost levers only)</li>
+          <li>No battery &rarr; no shelf-life expiry, no battery-dated stock logistics (stack is
+          charged in flight, never stored charged)</li>
+        </div>
+        <div class="bblock">
+          <h4>Social &amp; environmental benefits</h4>
+          <li>30 m-class precision reduces collateral damage; TIME self-destruct mode removes dud risk</li>
+          <li>NavIC-based navigation &rarr; indigenous PNT supply chain (Atmanirbhar route)</li>
+          <li>Modular S-series parts &rarr; upgrades without redesign; no battery disposal stream</li>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><div class="f">(c)SIH Idea submission- Template</div><div class="pn">5</div></div>
+</div>
+
+<!-- ================= PAGE 6 : RESEARCH AND REFERENCES ================= -->
+<div class="slide">
+  <div class="side"><div class="vname">LARP</div></div>
+  <div class="body">
+    <div class="ptitle">RESEARCH AND REFERENCES</div>
+    <div class="prule"></div>
+    <div class="refs">
+      <div class="r">1. <b>PGK Spec Sheet &mdash; design of record</b> &mdash; single 12s10p ring-machine
+        architecture, power architecture, energy ledger, fin loads, sensors / electronics / fuze / shell sections.</div>
+      <div class="r">2. <b>Trajectory &amp; Energy Verification (single machine)</b> &mdash; 3DOF RK4
+        point-mass + 100-run Monte Carlo: Cd 0.203 @ 30 km, CEP 28.5 m guided vs 196 m unguided,
+        412 J generated / 344 J used.</div>
+      <div class="r">3. <b>Simulation script</b> &mdash; Python RK4 ballistic + guidance + energy model (reproducible run).</div>
+      <div class="r">4. <b>CAD assemblies &amp; S-series part library</b> &mdash; FreeCAD; mated round,
+        half / quarter sections, one-body-per-part parametric parts.</div>
+      <div class="r">5. <b>SIH 2026 Problem Statement SIH26098</b> &mdash; Ministry of Defence /
+        Yantra India Limited, Ambajhari (Nagpur).</div>
+      <div class="r">6. <b>SIH 2026 Idea Presentation Template</b> &mdash; official 6-slide format.</div>
+      <div class="r">7. <b>Internal trade studies (prior revisions)</b> &mdash; dual-rotor comparison and
+        prior-lineage design studies; historical reference for the single-machine decision.</div>
+    </div>
+    <div class="legend">
+      <div class="li"><b><span class="chip t-tgt">TARGET</span></b><br>design goal set by analysis,
+        not yet measured (e.g. Kt 0.095 N&#183;m/A)</div>
+      <div class="li"><b><span class="chip t-sim">SIMULATION</span></b><br>produced by the
+        trajectory / energy Monte Carlo (e.g. CEP 28.5 m)</div>
+      <div class="li"><b><span class="chip t-ver">VERIFIED</span></b><br>confirmed against the
+        dimensioned CAD model (e.g. interface diameters)</div>
+    </div>
+  </div>
+  <div class="foot"><div class="f">(c)SIH Idea submission- Template</div><div class="pn">6</div></div>
+</div>
+
+</body>
+</html>

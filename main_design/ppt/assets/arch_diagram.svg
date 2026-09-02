@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="372" viewBox="0 0 660 372" font-family="DejaVu Sans, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#37474f"/>
+    </marker>
+    <marker id="arrD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a97a5"/>
+    </marker>
+  </defs>
+  <style>
+    .box { rx:7; }
+    .t  { font-size:12.5px; font-weight:bold; fill:#10263f; }
+    .s  { font-size:10.5px; fill:#37474f; }
+    .sh { font-size:9.5px; fill:#5b6b7a; font-style:italic; }
+    .col{ font-size:10.5px; font-weight:bold; fill:#5b6b7a; letter-spacing:0.5px; }
+  </style>
+
+  <text x="14" y="16" class="col">SENSORS</text>
+  <text x="252" y="16" class="col">COMPUTE</text>
+  <text x="464" y="16" class="col">POWER / ACTUATION / FUZE</text>
+
+  <!-- sensors -->
+  <g>
+    <rect class="box" x="10" y="26" width="196" height="44" fill="#eaf2f9" stroke="#2f6fa8" stroke-width="1.4"/>
+    <text x="20" y="44" class="t">NavIC L1/L5 + GPS</text>
+    <text x="20" y="60" class="s">ephemeris preloaded, fast reacq.</text>
+
+    <rect class="box" x="10" y="80" width="196" height="44" fill="#eaf2f9" stroke="#2f6fa8" stroke-width="1.4"/>
+    <text x="20" y="98" class="t">IMU</text>
+    <text x="20" y="114" class="s">gyro &#177;25,000&#176;/s &#183; high-g accel</text>
+
+    <rect class="box" x="10" y="134" width="196" height="44" fill="#eaf2f9" stroke="#2f6fa8" stroke-width="1.4"/>
+    <text x="20" y="152" class="t">Magnetometer</text>
+    <text x="20" y="168" class="s">RM3100-class, &#8805;2 kHz roll sense</text>
+
+    <rect class="box" x="10" y="188" width="196" height="40" fill="#f4f6f8" stroke="#8a97a5" stroke-width="1.2" stroke-dasharray="5 4"/>
+    <text x="20" y="205" class="t" fill="#4a5a68">Barometric altitude</text>
+    <text x="20" y="220" class="sh">optional aiding &#8212; trade study open</text>
+  </g>
+
+  <!-- compute -->
+  <g>
+    <rect class="box" x="240" y="64" width="186" height="150" fill="#10263f" stroke="#10263f"/>
+    <text x="333" y="90" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#ffffff">SINGLE MCU</text>
+    <text x="333" y="108" text-anchor="middle" font-size="11" fill="#cfe0ef">EKF navigation</text>
+    <line x1="256" y1="118" x2="410" y2="118" stroke="#3b556e" stroke-width="1"/>
+    <text x="333" y="138" text-anchor="middle" font-size="11" fill="#cfe0ef">3 real-time control loops</text>
+    <text x="333" y="156" text-anchor="middle" font-size="10.5" fill="#9fb8cd">power management</text>
+    <text x="333" y="172" text-anchor="middle" font-size="10.5" fill="#9fb8cd">guidance &amp; fin steering</text>
+    <text x="333" y="188" text-anchor="middle" font-size="10.5" fill="#9fb8cd">fuze logic (SAFE&#8594;ARM)</text>
+    <text x="333" y="206" text-anchor="middle" font-size="10.5" fill="#9fb8cd">C/C++, bare metal</text>
+  </g>
+
+  <!-- right column -->
+  <g>
+    <rect class="box" x="458" y="26" width="192" height="52" fill="#fdf1e5" stroke="#e87722" stroke-width="1.6"/>
+    <text x="468" y="46" class="t" fill="#7a4a10">Ring PMSM drive</text>
+    <text x="468" y="62" class="s">12s10p &#183; generator &#8596; actuator</text>
+
+    <rect class="box" x="458" y="88" width="192" height="52" fill="#fdf1e5" stroke="#e87722" stroke-width="1.6"/>
+    <text x="468" y="108" class="t" fill="#7a4a10">Annular supercap</text>
+    <text x="468" y="124" class="s">0.6 F @ 54 V &#183; 875 J</text>
+
+    <rect class="box" x="458" y="150" width="192" height="52" fill="#fbe9e7" stroke="#c0392b" stroke-width="1.6"/>
+    <text x="468" y="170" class="t" fill="#7c2019">Electronic fuze</text>
+    <text x="468" y="186" class="s">PROX / TIME / IMPACT</text>
+
+    <rect class="box" x="458" y="212" width="192" height="44" fill="#f4f6f8" stroke="#8a97a5" stroke-width="1.2" stroke-dasharray="5 4"/>
+    <text x="468" y="230" class="t" fill="#4a5a68">Inductive setter</text>
+    <text x="468" y="246" class="sh">2&#8221;-12 UNEF &#183; pre-fire prog.</text>
+
+    <rect class="box" x="458" y="266" width="192" height="44" fill="#e8f5ee" stroke="#2e8b57" stroke-width="1.4"/>
+    <text x="468" y="284" class="t" fill="#1d5a38">4 fins, &#177;12&#176;</text>
+    <text x="468" y="300" class="s">servo-held, mirror-pitched</text>
+  </g>
+
+  <!-- arrows -->
+  <g stroke="#37474f" stroke-width="1.6" fill="none">
+    <line x1="206" y1="48"  x2="236" y2="90"  marker-end="url(#arr)"/>
+    <line x1="206" y1="102" x2="236" y2="128" marker-end="url(#arr)"/>
+    <line x1="206" y1="156" x2="236" y2="160" marker-end="url(#arr)"/>
+    <line x1="426" y1="118" x2="454" y2="60"  marker-end="url(#arr)"/>
+    <line x1="426" y1="140" x2="454" y2="278" marker-end="url(#arr)"/>
+    <line x1="426" y1="170" x2="454" y2="176" marker-end="url(#arr)"/>
+    <line x1="554" y1="78" x2="554" y2="88" stroke="#e87722" stroke-width="2.4"/>
+    <line x1="554" y1="140" x2="554" y2="150" stroke="#37474f" stroke-width="1.6" marker-end="url(#arr)"/>
+  </g>
+  <g stroke="#8a97a5" stroke-width="1.4" stroke-dasharray="5 4" fill="none">
+    <line x1="206" y1="208" x2="236" y2="196" marker-end="url(#arrD)"/>
+    <line x1="454" y1="234" x2="426" y2="206" marker-end="url(#arrD)"/>
+  </g>
+  <text x="20" y="330" font-size="9.5" fill="#8a97a5">solid = flight data &#183; dashed = pre-fire / open trade &#183; supercap: no battery</text>
+  <text x="20" y="348" font-size="10" fill="#5b6b7a">Time-share: ascent = generator charges supercap &#183; apogee = regen brake &#183; descent = FOC servo holds fins</text>
+  <text x="20" y="364" font-size="10" fill="#5b6b7a">&#216;30 mm through-bore reserved &#8212; explosive train untouched (VERIFIED in CAD)</text>
+</svg>

@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "pgk")(type "KiCad")(uri "${KIPRJMOD}/pgk.kicad_sym")(options "")(descr "PGK SIH26098 custom minimal symbols (flagged in HANDOFF)"))
+)

@@ -564,6 +564,24 @@ architecture scaled to a fuze.
 | Power / mass | ~1.2 W × 8 s ≈ 10 J (§4); camera+window ≈ 15 g | inside the cap margin (sim: 35%) |
 | Failure modes | window fouling/smoke → no VNS fixes → INS-only coast (same as GNSS outage); VNS cannot jam but can be decoyed — reference-image integrity is an intel dependency |
 
+### 9.11 Host projectile — M795-class shell (H01, CAD: `parts/H01_155mm_shell.FCStd`, 3 bodies)
+
+Exhibition/reference host round so the kit can be shown mated and sectioned
+(`PGK_Shell_Mated_Assembly.FCStd`). Built in PGK global coords: nose datum z=125 = shell
+surface; well per the design-of-record convention (thread band at well bottom z0–19,
+clearance bore above). Mated check: **PGK∩shell interference NONE** — thread ring Ø50.8 is
+tangent in the Ø50.8 thread band; M10 endbell (Ø52/70, z125–130) seats exactly on the
+well-mouth annulus Ø52–70 at z125; well clearance Ø52 = endbell bore; band tangent on Ø155.
+
+| Element | Ø | Axial (z) | Material | Notes |
+|---|---|---|---|---|
+| Shell body | 70 (mouth) → 155 → 138 (base) | −652→+125 | steel (~HB1 class) | tangent ogive ρ=1010.6 (tangent at the Ø155 joint, truncated at mouth); walls 13 (body) / 7.5 (ogive) / 12 (boattail) / 18 (base); fuze well Ø52 z19–125 clearance + Ø50.8 z0–19 thread band (2"-12 UNEF-2A internal, threads not modeled); **4267 cm³ / 33.5 kg** |
+| Fill (cast) | conforms to cavity | 0→−628 | TNT @1.6 g/cm³ | top face at z=0 = detonation-transfer interface under the Ø30 train bore; **8239 cm³ / 13.2 kg** |
+| Rotating band | 155/157.5 | −535→−505 | gilding metal | 30 mm wide, pre-engraving OD shown; **18.4 cm³ / 0.16 kg** |
+| **Shell total** | | **777 mm** | | **46.84 kg** (M795 ref 46.7 — fill is a smooth representative cavity; real round uses variable walls + IMX) |
+
+Mated round: z −652→+220 (872 mm fuzed), max Ø157.4 (band), ~48.0 kg all-up.
+
 ---
 
 ## 10. Assumptions & open items (tracked)
@@ -605,6 +623,11 @@ architecture scaled to a fuze.
 16. **VNS (§9.10):** spin de-blur (30–50 µs gating at 233 rev/s), EO vs LWIR trade, window
     aero-heating, correlator compute load on S08 core 2, and reference-imagery tasking are
     concept-level — feasibility demo required before PDR.
+17. **Host shell (§9.11):** H01 is a representative M795-class exhibition body (smooth
+    cavity, fixed walls, TNT placeholder). Open before detailed mating design: confirm the
+    thread-at-well-bottom convention vs the conventional mouth-thread + shoulder mount
+    (changes S10 thread-ring position + well envelope zones), confirm thread-ring Ø37 bore
+    transition to the Ø30 train bore, add booster seat/liner and engraving at detail design.
 
 ---
 

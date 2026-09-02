@@ -33,6 +33,8 @@ The dual-rotor design is retained only as a trade-study reference — do not bui
 | `parts/M09_bearing.FCStd` | CURRENT | Simplified angular-contact (×2: z130, z166) |
 | `parts/M10_endbell.FCStd` | CURRENT | Aft endbell (z125–130) only — fwd endbell deleted this rev (S11 closes forward) |
 | `parts/S11_canard_shell.FCStd` | CURRENT | **Canard shell (SLS AlSi10Mg): drum Ø76 z136–172.5 carrying the 4 fins + 8 LIT solid-thruster stations; sleeves back-iron, seats bearing-B race** |
+| `parts/H01_155mm_shell.FCStd` | CURRENT | **M795-class host shell (3 bodies): steel body w/ fuze well + TNT fill + rotating band; z −652→+125, Ø155/Ø138, 46.84 kg — exhibition/reference host, not a PGK part** |
+| `PGK_Shell_Mated_Assembly.FCStd` | CURRENT | **Flattened mated round (shell H01 + all 25 PGK bodies, no external links) with 3 view groups: COMPLETE / SECTION A-A half (view from −Y) / SECTION B-B quarter (iso); PGK∩shell interference = NONE** |
 
 ## Conventions for ALL new parts (radome, control ring, connector, S&A, PMU)
 

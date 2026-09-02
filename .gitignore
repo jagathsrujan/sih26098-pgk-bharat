@@ -31,7 +31,10 @@ Thumbs.db
 !cad_models/PGK_Full_Assembly.FCStd
 !cad_models/PGK_Motor_Assembly.FCStd
 !cad_models/PGK_Motor_Assembly_DUAL_reference.FCStd
+!cad_models/PGK_Shell_Mated_Assembly.FCStd
 !cad_models/parts/*.FCStd
+!main_design/design_CAD/*.FCStd
+!main_design/design_CAD/parts/*.FCStd
 
 # FreeCAD unpacked archive directories (generated extraction state)
 cad_models/PGK_Motor_Single_Assembly/
