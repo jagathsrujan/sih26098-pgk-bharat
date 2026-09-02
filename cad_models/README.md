@@ -27,7 +27,7 @@ The dual-rotor design is retained only as a trade-study reference — do not bui
 | `parts/S06_fin_mirror.FCStd` | CURRENT | −12° mirror fin — placed at φ=180 (completes reverse-differential pair) |
 | `parts/S09_supercap_stack.FCStd` | CURRENT | Annular EDLC ~625 J, z70–100, replaces PMU battery |
 | `parts/S07_radome.FCStd` | CURRENT | Nose section z173–220: ogive GFRP shell (ρ=48.63, base Ø76 @ z172.5 — continuous with the S11 drum) + GNSS antenna stack + inductive coupler (3 bodies) |
-| `parts/S08_control_ring.FCStd` | CURRENT | Nav control ring: PCB Ø69.8 + Al shield can, z175–184.8 (2 bodies) |
+| `parts/S08_control_ring.FCStd` | CURRENT | Nav control ring: PCB Ø69.8 + Al shield can, z175–184.8 (**2 bodies + 6 interior Part features this rev: InnerPCB Ø56×1.2 @178, GNSS 15×15×2.5, MCU 12×12×1.8, FRAM 7×9×1.5, UpperPCB Ø54×1.0 @182, PwrMux 9×9×1.2 @183 — all inside shield can, CAD-verified**) |
 | `parts/S10_fuze_stack.FCStd` | CURRENT | Fuze well z0–70: thread ring, housing, S&A rotor, train seat, firing PCB, connector (6 bodies; train lives in the reserved Ø30 bore by definition) |
 | `parts/M04_stator_pcb.FCStd` | CURRENT | Annular driver PCB z138–139.5 |
 | `parts/M09_bearing.FCStd` | CURRENT | Simplified angular-contact (×2: z130, z166) |
@@ -54,6 +54,6 @@ The dual-rotor design is retained only as a trade-study reference — do not bui
 Clash check at rotor phases 0/90/180/270°, bore clearance z0→173 (explosive-train parts in
 S10 are the allowed exception), envelope fit, mass rollup from Body tips only. Current
 canonical: 0 clashes (stator winding-overlap pairs S01∩S02, S01∩M04, S02∩M04 excluded as
-intended wrap geometry; S07 flange/S08 PCB seating interface tangent), bore clear,
-Ø108.0 max, z0–220, ~1.18 kg PGK total (motor+shell 723 + caps 67 + nose 99 +
-control ring 17 + fuze stack 269).
+intended wrap geometry; S07 flange/S08 PCB seating interface tangent; S08 interior PCBs/modules inside shield can — clearance 0.6 mm radial/0.3 mm vertical verified), bore clear,
+Ø108.0 max, z0–220, ~1.20 kg PGK total (motor+shell 723 + caps 67 + nose 99 +
+control ring 35.4 + fuze stack 269).

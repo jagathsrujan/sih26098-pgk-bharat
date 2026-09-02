@@ -4,8 +4,8 @@
 `cleansheet/` Rev 1.7 lineage, which remains as methods reference only). Every future design
 item in this workspace MUST add/update its section here (standing process, §11).
 Last synced with CAD: this rev — S-series build + bias ring (S04), nose RF section (S07),
-control ring (S08), fuze-well stack (S10); fwd bearing z166; assembly gate 0 clashes
-(4 rotor phases), bore clear, Ø108.0 × z0–220, PGK ~1.21–1.23 kg.
+control ring (S08) **+ interior electronics detail (2 PCBs + GNSS/MCU/FRAM/PwrMux inside shield can, this rev)**, fuze-well stack (S10); fwd bearing z166; assembly gate 0 clashes
+(4 rotor phases), bore clear, Ø108.0 × z0–220, PGK ~1.20 kg (was ~1.18 kg; +18 g S08 interior).
 
 ---
 
@@ -75,9 +75,9 @@ mode-switched at apogee.
 | Supercap stack S09 | 37.5 | 67.4 |
 | **Total power/train section** | | **790** |
 | Nose RF section S07 (radome+antenna+coupler) | 41.1 | ~99 |
-| Control ring S08 (PCB+shield can) | 7.9 | 17 |
+| Control ring S08 (PCB+shield can + 2 inner PCBs + 4 modules) | 14.0 | **35.4** |
 | Fuze-well stack S10 | 58.4 | ~269 |
-| **PGK modeled total** | | **~1.18 kg** (wire/energetics/fasteners pending) |
+| **PGK modeled total** | | **~1.20 kg** (was ~1.18 kg; +18 g interior detail, wire/energetics/fasteners pending) |
 
 ### 2.2 Electrical spec
 
@@ -516,17 +516,24 @@ Functional spec: carries only aero/q loads (15,500 g set-back inertial, potted i
 loss of radome = aero drag penalty, not a safety failure; antenna boresight on flight axis;
 coupler powered only by the setter in Phase 0 (§8.1, no onboard energy).
 
-### 9.8 Control-module ring — S08 (CAD: `parts/S08_control_ring.FCStd`, 2 bodies)
+### 9.8 Control-module ring — S08 (CAD: `parts/S08_control_ring.FCStd`, 2 bodies + 6 interior Part features)
 
-| Element | Ø | Axial (z) | Notes |
-|---|---|---|---|
-| Ring PCB (FR4) | Ø69.8 × 1.6 | 175→176.6 | sits on radome flange; 4× Ø2.7 @ r33 (45/135/225/315°), M2.5 through-bolts + locknuts; **12.2 g** |
-| Shield can (Al, 0.5 wall/0.4 cap) | Ø59.6 | 176.6→184.8 | center RF feedthrough Ø3.2 (antenna coax); **5.0 g** |
-| Contents (not in CAD) | — | — | SAC NavASIC V3 GNSS Rx + second MCU core (nav/EKF) + FRAM + Phase-0 power mux (§8.1) — per §9.2/§9.5 |
+| Element | Ø / L×W×H | Axial (z) | Material | Vol (cm³) | Mass | Notes |
+|---|---|---|---|---|---|---|
+| Ring PCB (FR4) | Ø69.8 × 1.6 | 175→176.6 | FR4 | 6.09 | **12.2 g** | sits on radome flange; 4× Ø2.7 @ r33 (45/135/225/315°), M2.5 through-bolts + locknuts |
+| Shield can (Al, 0.5 wall/0.4 cap) | Ø59.6 | 176.6→184.8 | Al 7075 | 1.84 | **5.0 g** | center RF feedthrough Ø3.2 (antenna coax) |
+| **Inner PCB (FR4, lower)** | **Ø56 × 1.2** | **178→179.2** | FR4 | 2.96 | **5.5 g** | **this rev — detailed interior**; inside shield can (r ≤ 28, clearance 1.3 mm to wall); carries GNSS + MCU + FRAM |
+| GNSS module (SAC NavASIC V3) | 15×15×2.5 | 179.2→181.7 | FR4/BGA | 0.56 | **4.0 g** | on Inner PCB @ (2.5,−7.5); RF coax to antenna feedthrough |
+| MCU (TI C2000 2nd core) | 12×12×1.8 | 179.2→181.0 | QFP | 0.26 | **3.0 g** | on Inner PCB @ (−16,0) |
+| FRAM (FM25V05) | 7×9×1.5 | 179.2→180.7 | SOIC | 0.09 | **0.5 g** | on Inner PCB @ (−13.5,−12.5) |
+| **Upper PCB (FR4)** | **Ø54 × 1.0** | **182→183** | FR4 | 2.29 | **4.2 g** | **this rev**; 3.0 mm above lower stack (gap for standoffs); inside shield can |
+| Power mux (Phase-0) | 9×9×1.2 | 183→184.2 | QFN | 0.10 | **1.0 g** | on Upper PCB @ (0.5,0.5); 0.2 mm below shield cap |
+
+**S08 total: 8.0 cm³ PCB/can + 6.0 cm³ interior → 14.0 cm³, ~35.4 g** (was 7.9 cm³/17 g; +6.1 cm³/+18.4 g this rev). All interior parts are body-fixed, static, g-hard, potted; inside the Al shield can (Faraday, 0.5 mm wall) which is transparent in section views for verification.
 
 Body-fixed (static): mounted to the radome flange, does not spin. Harness to the motor bay:
 through the flange bore into the **M01 tube wire slots (now full-length to z175)** → M04
-(per §9.6). S08 slimmed this rev to fit the new nose ogive (PCB Ø69.8, can Ø59.6).
+(per §9.6). S08 slimmed this rev to fit the new nose ogive (PCB Ø69.8, can Ø59.6); interior detail now CAD-verified: **0 clashes**, bore clear (Ø30 bore ends at z173, 5 mm below can), envelope Ø69.8 < Ø110, shield interior clearance ≥ 0.6 mm radial, vertical gaps ≥ 0.3 mm.
 
 ### 9.9 Fuze-well stack — S10 (CAD: `parts/S10_fuze_stack.FCStd`, 6 bodies; z=0–70, Ø50.8 well)
 
@@ -600,7 +607,7 @@ Mated round: z −652→+220 (872 mm fuzed), max Ø157.4 (band), ~48.0 kg all-up
 6. EDLC g-hardness data at 15,000 g setback — request cell-level test data from supplier.
 7. Inductive coupler (§8.1): coil **DONE (S07, z185.5–191.5)** — setter **handset** design + coupling budget through GFRP (link budget, alignment tolerance) still open.
 8. FRAM retention through 15,000 g setback shock — vendor shock-rating confirmation required.
-9. Radome + control-module ring + fuze-well stack **DONE (S07/S08/S10, this rev — §9.7/§9.8/§9.9)**; still open: energetic train details (detonator/lead/booster part numbers = explosive-supplier scope), S&A mechanism detail design (springs, locks, gates), proximity-antenna detection range, setter handset.
+9. Radome + control-module ring + fuze-well stack **DONE (S07/S08/S10, this rev — §9.7/§9.8/§9.9; S08 interior PCBs/modules detailed this rev — §9.8, CAD-verified 0 clashes, volume/mass updated)**; still open: energetic train details (detonator/lead/booster part numbers = explosive-supplier scope), S&A mechanism detail design (springs, locks, gates), proximity-antenna detection range, setter handset, potting/thermal detail for S08 interior stack at 15,500 g.
 10. S04 bias-magnet ring — **DONE (this rev)**: built as Ø41/Ø51.6 × 3 mm at z163–166,
     2-pole diametral N42SH, bonded to the fwd bearing outer-race face; fwd bearing shifted
     z165→166 (assembly link only, M09 part unchanged). The originally sketched Ø~45 × 4 at
